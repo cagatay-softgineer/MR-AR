@@ -1,0 +1,51 @@
+/.utmp
+/ARFishing_BurstDebugInformation_DoNotShip
+/Library/Artifacts
+/Library
+/Logs
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Uu]ser[Ss]ettings/
+.utmp/
+*_BurstDebugInformation_DoNotShip/
+
+# Project IDE files
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Build outputs (committing these is the leading cause of bloat in Unity repos)
+*.apk
+*.aab
+*.unitypackage
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Crash logs
+sysinfo.txt
+crashlytics-build.properties
