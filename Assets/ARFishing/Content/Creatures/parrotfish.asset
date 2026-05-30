@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: parrotfish
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: parrotfish
+  m_DisplayName: "Papa\u011Fan Bal\u0131\u011F\u0131"
+  m_Icon: {fileID: 0}
+  m_Category: 1
+  m_Habitat: 3
+  m_Diet: 2
+  m_EcosystemRole: 4
+  m_Threats:
+  - "mercan beyazlamas\u0131"
+  - avlanma
+  m_InterestingTrait: "Mercanlar\u0131 kemirir ve sindirdiklerinden ince kum \xFCretir."
+  m_ModelPrefab: {fileID: 3169896353281646669, guid: d7af28955d9d7d34ab31870a398c6fa7, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: b670e9af70acc7b46b4fbedabfd09ccc, type: 3}
+  m_ReferenceImageName: parrotfish

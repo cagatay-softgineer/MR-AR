@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9a0a757202928340a346dc4390e9a11, type: 3}
+  m_Name: CreatureDatabase
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDatabase
+  m_Creatures:
+  - {fileID: 11400000, guid: accb762cbee82514590b78541a31d245, type: 2}
+  - {fileID: 11400000, guid: 0df3a9b83a26d304e8dea777c253a71b, type: 2}
+  - {fileID: 11400000, guid: d2c81840a26f18546836e3e8a42e8b5c, type: 2}
+  - {fileID: 11400000, guid: bb8635cb03a752c499cbd8ce17919f34, type: 2}
+  - {fileID: 11400000, guid: 339be854c0e25ef44b090c07d6b6d731, type: 2}
+  - {fileID: 11400000, guid: eb225a073ec9ebb42987d176f0840002, type: 2}
+  - {fileID: 11400000, guid: 53cd4d6256e4bcf458307727cd98c918, type: 2}
+  - {fileID: 11400000, guid: 780cc5e0f2e72cf4991df2efe1bfddf9, type: 2}
+  - {fileID: 11400000, guid: 81706c9cb4e945142b86ef3a373d4df3, type: 2}
+  - {fileID: 11400000, guid: 96ec635a41a43d7449b543d03215c839, type: 2}
+  - {fileID: 11400000, guid: 61522e78cd05de54ab84c19f861b74c0, type: 2}
+  - {fileID: 11400000, guid: f58e1e3416107404683a1bbc027ef0e6, type: 2}
+  - {fileID: 11400000, guid: dd9fa0621b7cdc94ea0dd1d2dd57d42a, type: 2}
+  - {fileID: 11400000, guid: d7d45569bc4497549891bc1da1b70c88, type: 2}
+  - {fileID: 11400000, guid: 8c89a93c094ba8144b828b0fb555e244, type: 2}
+  - {fileID: 11400000, guid: 20aee15194127b2418ae637def161d49, type: 2}
+  - {fileID: 11400000, guid: 4e91707a623b2c54989948ebb170daa1, type: 2}
+  - {fileID: 11400000, guid: ea71b13f7110e02468a2ff5a7b39ee97, type: 2}
+  - {fileID: 11400000, guid: b5942de136c13b443b95921ae9b70557, type: 2}
+  - {fileID: 11400000, guid: c0a519bd01744e84c9e8665070562aae, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: anglerfish
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: anglerfish
+  m_DisplayName: "Fener Bal\u0131\u011F\u0131"
+  m_Icon: {fileID: 0}
+  m_Category: 5
+  m_Habitat: 5
+  m_Diet: 1
+  m_EcosystemRole: 1
+  m_Threats:
+  - "derin deniz bal\u0131k\xE7\u0131l\u0131\u011F\u0131"
+  m_InterestingTrait: "Ba\u015F\u0131ndaki \u0131\u015F\u0131kla av \xE7eker; g\xFCne\u015F
+    \u0131\u015F\u0131\u011F\u0131 g\xF6rmeyen derinliklerde ya\u015Far."
+  m_ModelPrefab: {fileID: 4948171552808895565, guid: ed233ac15138f5a4a82f1d69f1a6fd80, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: c0bc29049f6f68f41bc389404dcaf594, type: 3}
+  m_ReferenceImageName: anglerfish

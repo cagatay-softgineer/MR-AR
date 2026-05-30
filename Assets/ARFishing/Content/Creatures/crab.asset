@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: crab
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: crab
+  m_DisplayName: "Yenge\xE7"
+  m_Icon: {fileID: 0}
+  m_Category: 2
+  m_Habitat: 4
+  m_Diet: 3
+  m_EcosystemRole: 4
+  m_Threats:
+  - avlanma
+  - "habitat kayb\u0131"
+  m_InterestingTrait: "Yanlamas\u0131na y\xFCr\xFCr; sert kabu\u011Fu z\u0131rh gibi
+    koruma sa\u011Flar."
+  m_ModelPrefab: {fileID: 6221667213348446615, guid: 4e79c8817a225d3489ba540b9489b344, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 623a05d8f97cc81458912bab4da6cc8b, type: 3}
+  m_ReferenceImageName: crab

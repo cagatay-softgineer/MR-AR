@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: coral
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: coral
+  m_DisplayName: Mercan
+  m_Icon: {fileID: 0}
+  m_Category: 4
+  m_Habitat: 3
+  m_Diet: 4
+  m_EcosystemRole: 5
+  m_Threats:
+  - "mercan beyazlamas\u0131"
+  - "iklim de\u011Fi\u015Fikli\u011Fi"
+  - kirlilik
+  m_InterestingTrait: "Binlerce canl\u0131ya ev sahipli\u011Fi yapan canl\u0131 kayal\u0131klard\u0131r."
+  m_ModelPrefab: {fileID: 2915534278258566213, guid: 7b5da998162f8d943ba9a077c3a57d9a, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 04c67a65768e2e74d9928051b2686c47, type: 3}
+  m_ReferenceImageName: coral

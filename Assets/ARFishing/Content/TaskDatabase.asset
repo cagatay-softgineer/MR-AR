@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1972f0de5e6e74db3074d82d5231a4, type: 3}
+  m_Name: TaskDatabase
+  m_EditorClassIdentifier: ARFishing::ARFishing.Quiz.TaskDatabase
+  m_Tasks:
+  - {fileID: 11400000, guid: 9fda590ad8b50dd439e2b3201d878ea1, type: 2}
+  - {fileID: 11400000, guid: d6784c714be27284fbbd82206d989a4f, type: 2}
+  - {fileID: 11400000, guid: 5f40fac1dcd052c4781992c801a03af2, type: 2}
+  - {fileID: 11400000, guid: 66b07bb3a350d204aa230a152da2f55b, type: 2}
+  - {fileID: 11400000, guid: 5926021f703406745a6bdf4cc77a7085, type: 2}
+  - {fileID: 11400000, guid: 5a6ba6e10b3fe584db3428766efd3662, type: 2}
+  - {fileID: 11400000, guid: 87aad77664b29ec4d9a0a4c42eda3b07, type: 2}
+  - {fileID: 11400000, guid: f282dff3324a49140b9e650c2c2e8a3e, type: 2}

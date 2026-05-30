@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: mussel
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: mussel
+  m_DisplayName: Midye
+  m_Icon: {fileID: 0}
+  m_Category: 2
+  m_Habitat: 4
+  m_Diet: 4
+  m_EcosystemRole: 4
+  m_Threats:
+  - kirlilik
+  - "a\u015F\u0131r\u0131 toplama"
+  m_InterestingTrait: "Saatte litrelerce suyu s\xFCzerek deniz suyunu temiz tutar."
+  m_ModelPrefab: {fileID: 8396308864400606722, guid: 583e53dbded92fc4aa104bbee1eec8a9, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 9ad8a805a304da5439d4acf18be5da00, type: 3}
+  m_ReferenceImageName: mussel

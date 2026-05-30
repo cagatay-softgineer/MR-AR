@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: starfish
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: starfish
+  m_DisplayName: "Deniz Y\u0131ld\u0131z\u0131"
+  m_Icon: {fileID: 0}
+  m_Category: 2
+  m_Habitat: 4
+  m_Diet: 1
+  m_EcosystemRole: 1
+  m_Threats:
+  - kirlilik
+  - "deniz y\u0131ld\u0131z\u0131 hastal\u0131klar\u0131"
+  m_InterestingTrait: "Kopan bir kolunu yeniden b\xFCy\xFCtebilir; midyeleri a\xE7\u0131p
+    yiyebilir."
+  m_ModelPrefab: {fileID: 7394515518563841399, guid: 8557735f6023394429f8b8c2344a91ed, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 8789497e0a523524c9c682ff12689b92, type: 3}
+  m_ReferenceImageName: starfish

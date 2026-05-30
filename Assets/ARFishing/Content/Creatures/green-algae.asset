@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: green-algae
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: green-algae
+  m_DisplayName: "Ye\u015Fil Alg"
+  m_Icon: {fileID: 0}
+  m_Category: 3
+  m_Habitat: 1
+  m_Diet: 5
+  m_EcosystemRole: 3
+  m_Threats:
+  - kirlilik
+  - "a\u015F\u0131r\u0131 \xE7o\u011Falma"
+  m_InterestingTrait: "G\xFCne\u015F \u0131\u015F\u0131\u011F\u0131yla kendi besinini
+    \xFCretir ve denize oksijen verir."
+  m_ModelPrefab: {fileID: 5008927290765739269, guid: dbbbaf456f777b54e875214c3f475166, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 7874b324356fe4749a8fbd8af6a73508, type: 3}
+  m_ReferenceImageName: green-algae

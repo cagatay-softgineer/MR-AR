@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: sea-urchin
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: sea-urchin
+  m_DisplayName: Deniz Kestanesi
+  m_Icon: {fileID: 0}
+  m_Category: 2
+  m_Habitat: 4
+  m_Diet: 2
+  m_EcosystemRole: 4
+  m_Threats:
+  - "asit kirlili\u011Fi"
+  - "habitat kayb\u0131"
+  m_InterestingTrait: Dikenleriyle kendini korur ve algleri yiyerek resifi temiz
+    tutar.
+  m_ModelPrefab: {fileID: 5414952142719364227, guid: e4460b9cb805ac0468122592d6b81ffb, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: d04513d1746d8b848a40d7835abad166, type: 3}
+  m_ReferenceImageName: sea-urchin

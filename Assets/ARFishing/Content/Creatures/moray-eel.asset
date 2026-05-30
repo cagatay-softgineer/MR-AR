@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8977d20c97ebf4fad4fc242e96d641, type: 3}
+  m_Name: moray-eel
+  m_EditorClassIdentifier: ARFishing::ARFishing.Creatures.CreatureDefinition
+  m_CreatureId: moray-eel
+  m_DisplayName: "M\xFCren"
+  m_Icon: {fileID: 0}
+  m_Category: 1
+  m_Habitat: 3
+  m_Diet: 1
+  m_EcosystemRole: 1
+  m_Threats:
+  - avlanma
+  - "habitat kayb\u0131"
+  m_InterestingTrait: "Kayal\u0131klar\u0131n aras\u0131nda saklan\u0131r; iki \xE7ene
+    yap\u0131s\u0131yla av\u0131n\u0131 yakalar."
+  m_ModelPrefab: {fileID: 5281162814648046332, guid: 3a729e551c93d8140a55ef0bde2443ba, type: 3}
+  m_NarrationClip: {fileID: 8300000, guid: 1c437d7c5d7d0ec49a2bab5230ed22e3, type: 3}
+  m_ReferenceImageName: moray-eel
