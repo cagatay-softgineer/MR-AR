@@ -1,0 +1,121 @@
+name: Build Android (ARCore)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+      - ".github/workflows/build-android.yml"
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Build type"
+        required: true
+        default: "apk"
+        type: choice
+        options:
+          - apk
+          - aab
+
+env:
+  # Privacy stance: explicitly disable Unity's analytics/diagnostics paths in CI.
+  UNITY_ENABLE_ANALYTICS: "0"
+  UNITY_DISABLE_DIAGNOSTICS: "1"
+
+jobs:
+  build-android:
+    name: Build Android (ARCore)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+
+      - name: Cache Library/
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-android-
+            Library-
+
+      - name: Unity build
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 6000.4.9f1
+          targetPlatform: Android
+          androidAppBundle: ${{ github.event.inputs.build_type == 'aab' }}
+          androidKeystoreName: arfishing.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: arfishing
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+          buildName: arfishing
+          # Versioning: pull from ProjectSettings; CI bump in a separate step if needed.
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arfishing-android-${{ github.run_number }}
+          path: |
+            build/Android/*.apk
+            build/Android/*.aab
+          retention-days: 30
+          if-no-files-found: error
+
+  # ----------------------------------------------------------------------
+  # iOS (ARKit) — requires macOS runner. Disabled by default; enable when
+  # Apple Developer account + provisioning profile secrets are configured.
+  # ----------------------------------------------------------------------
+  # build-ios:
+  #   name: Build iOS (ARKit)
+  #   runs-on: macos-14
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         lfs: true
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: Library
+  #         key: Library-ios-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+  #     - uses: game-ci/unity-builder@v4
+  #       env:
+  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  #       with:
+  #         unityVersion: 6000.4.9f1
+  #         targetPlatform: iOS
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: arfishing-ios-xcodeproj-${{ github.run_number }}
+  #         path: build/iOS
+
+# ----------------------------------------------------------------------
+# Required GitHub repository secrets (Settings → Secrets and variables → Actions):
+#
+#   UNITY_LICENSE              Unity license file contents (XML). Run game-ci/unity-request-activation-file first.
+#   UNITY_EMAIL                Unity account email.
+#   UNITY_PASSWORD             Unity account password.
+#   ANDROID_KEYSTORE_BASE64    base64-encoded keystore file (cat keystore | base64 -w0).
+#   ANDROID_KEYSTORE_PASS      Keystore password.
+#   ANDROID_KEYALIAS_PASS      Key alias password.
+#
+# Keystore generation (one-time, run locally then encode):
+#   keytool -genkeypair -v -keystore arfishing.keystore \
+#     -alias arfishing -keyalg RSA -keysize 2048 -validity 10000
+#   base64 -w0 arfishing.keystore > keystore.b64   # paste contents into ANDROID_KEYSTORE_BASE64
+#
+# See Docs/BuildAndDistribution.html §3.3 for keystore detail.
+# ----------------------------------------------------------------------
