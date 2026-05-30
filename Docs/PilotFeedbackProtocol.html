@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilot Feedback Protokolü — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep: #0e2a47; --ocean: #1e5f8e; --surf: #4ea7c9;
+    --foam: #f0f7fb; --sand: #f7f3eb; --coral: #ff7a59;
+    --warn: #c0392b; --warn-soft: #fde5e5;
+    --good: #2e8b57; --good-soft: #e2f4ea;
+    --ink: #1b2733; --muted: #5a6b7a; --line: #e2e8ee;
+    --bg: #ffffff; --code-bg: #f3f5f8;
+
+    --sev-blocker: #c0392b;
+    --sev-major:   #d97706;
+    --sev-minor:   #4ea7c9;
+    --sev-note:    #6b7280;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.65; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; background: var(--code-bg); padding: 1px 6px; border-radius: 3px; }
+
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  aside.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 32px 0; border-right: 1px solid var(--line); font-size: 0.92em; }
+  aside.toc .toc-title { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72em; color: var(--muted); margin-bottom: 16px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a { text-decoration: none; color: var(--deep); display: block; padding: 4px 8px 4px 12px; border-left: 2px solid transparent; transition: all 0.15s; }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  .hero { background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%); color: white; padding: 56px 48px; border-radius: 16px; margin-bottom: 48px; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; right: -80px; bottom: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78em; opacity: 0.85; margin: 0 0 8px 0; }
+  .hero h1 { margin: 0 0 12px 0; font-size: 2.4em; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
+  .hero .sub { font-size: 1.05em; opacity: 0.92; max-width: 640px; margin: 0; }
+
+  h2 { margin: 56px 0 16px 0; font-size: 1.7em; color: var(--deep); letter-spacing: -0.01em; padding-bottom: 8px; border-bottom: 2px solid var(--coral); display: inline-block; }
+  h2 .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; text-align: center; background: var(--coral); color: white; border-radius: 50%; font-size: 0.7em; margin-right: 12px; vertical-align: middle; }
+  h3 { margin: 32px 0 12px 0; font-size: 1.2em; color: var(--ocean); }
+  h4 { margin: 20px 0 8px 0; font-size: 1em; color: var(--deep); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  p { margin: 0 0 14px 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px 0; font-size: 0.94em; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--foam); color: var(--deep); font-weight: 600; font-size: 0.86em; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  .sev-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.78em; font-weight: 600; color: white; }
+  .sev-badge.blocker { background: var(--sev-blocker); }
+  .sev-badge.major   { background: var(--sev-major); }
+  .sev-badge.minor   { background: var(--sev-minor); }
+  .sev-badge.note    { background: var(--sev-note); }
+
+  .callout { margin: 16px 0; padding: 14px 18px; border-radius: 8px; border-left: 4px solid; }
+  .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info { background: var(--foam); border-left-color: var(--ocean); }
+  .callout h4 { margin: 0 0 6px 0; }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  .checklist { list-style: none; padding: 0; margin: 12px 0 20px 0; }
+  .checklist li { padding: 8px 0 8px 32px; position: relative; border-bottom: 1px dashed var(--line); }
+  .checklist li::before { content: "☐"; position: absolute; left: 8px; color: var(--ocean); font-size: 1.2em; line-height: 1.2; }
+
+  pre.template { background: var(--code-bg); padding: 18px 22px; border-radius: 8px; overflow-x: auto; font-size: 0.86em; line-height: 1.55; margin: 14px 0 22px 0; border-left: 4px solid var(--coral); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+
+  @media print {
+    body { font-size: 10pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#kaynaklar">1. Feedback kaynakları</a></li>
+    <li><a href="#kategori">2. Kategorize sistemi</a></li>
+    <li><a href="#severity">3. Severity</a></li>
+    <li><a href="#matrix">4. Karar matrisi</a></li>
+    <li><a href="#dongu">5. İterasyon döngüsü</a></li>
+    <li><a href="#playbook">6. Doc-update playbook</a></li>
+    <li><a href="#log">7. Feedback log şablonu</a></li>
+    <li><a href="#versioning">8. Versioning</a></li>
+    <li><a href="#basari">9. Başarı kriterleri</a></li>
+    <li><a href="#next">10. Sonraki adımlar</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Pilot Feedback Protokolü · İterasyon Karar Matrisi</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">Sınıf pilot testlerinden toplanan geri bildirimin nasıl agregat edileceği, kategorize edileceği ve hangi dokümanların/dosyaların güncelleneceğine dair karar matrisi.</p>
+</header>
+
+<div class="callout info">
+<h4>★ Bu doküman ne zaman açılır?</h4>
+<p style="margin: 0;">Pilot test sırasında değil, <strong>pilot test sonrası iterasyon kararı verirken</strong>. Etkinlik yönetimi için <code>Docs/TeacherGuide.html</code>, cihaz testi için <code>Docs/DeviceTestProtocol.html</code>.</p>
+</div>
+
+<!-- 1 -->
+<h2 id="kaynaklar"><span class="num">1</span>Feedback kaynakları</h2>
+
+<p>Her pilot seans sonrası 3 kaynaktan veri gelir:</p>
+
+<table>
+<thead><tr><th>Kaynak</th><th>Format</th><th>Doldurur</th></tr></thead>
+<tbody>
+<tr><td><strong>Eğitmen gözlem rubriği</strong></td><td>7 madde × 4 puan + serbest not</td><td>TeacherGuide §6 doldurulmuş kopyası</td></tr>
+<tr><td><strong>Çocuk geri bildirimi</strong></td><td>4 açık uçlu soru (sözlü/yazılı)</td><td>TeacherGuide §7</td></tr>
+<tr><td><strong>QA gözlem notları</strong></td><td>Edge case'ler, teknik sorunlar, performance</td><td>Eğitmen veya gözlemci</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ 24 saat kuralı</h4>
+<p style="margin: 0;">Pilot bittikten 24 saat içinde tek bir Google Form / Notion / Linear ticket olarak yansıt. Geç yazılan not unutulur.</p>
+</div>
+
+<!-- 2 -->
+<h2 id="kategori"><span class="num">2</span>Kategorize sistemi</h2>
+
+<p>Her feedback öğesini 4 kategoriye ayır:</p>
+
+<table>
+<thead><tr><th>Kategori</th><th>Ne kapsar</th><th>Tipik aksiyon</th></tr></thead>
+<tbody>
+<tr><td><strong>UX</strong></td><td>Akış kafası karıştırıcı, button bulamadı, panel kayboldu</td><td>UI/UX revize, controller davranışı</td></tr>
+<tr><td><strong>Content</strong></td><td>Bilgi eksik / yanlış / yaşa uygun değil / anlatım uzun</td><td>CreatureDefinition/TaskDefinition asset</td></tr>
+<tr><td><strong>Technical</strong></td><td>Crash, tracker fail, ses yok, FPS düşük</td><td>Code fix, build settings, asset opt.</td></tr>
+<tr><td><strong>Pedagogical</strong></td><td>Çocuk anlamadı, eğitmen müdahalesi gerekti, kavram net değil</td><td>Doc revize, narration script revize</td></tr>
+</tbody>
+</table>
+
+<p>Bir feedback öğesi birden fazla kategoriye düşebilir — etiketle, ayrı ayrı işle.</p>
+
+<!-- 3 -->
+<h2 id="severity"><span class="num">3</span>Severity</h2>
+
+<table>
+<thead><tr><th>Seviye</th><th>Tanım</th><th>Aksiyon</th></tr></thead>
+<tbody>
+<tr><td><span class="sev-badge blocker">Blocker</span></td><td>Pilot tamamlanamadı / app çöktü / çocuk ağladı</td><td>Sonraki pilot ÖNCESİ fix zorunlu</td></tr>
+<tr><td><span class="sev-badge major">Major</span></td><td>Akış aksadı ama tamamlandı / etkinliğin değeri azaldı</td><td>Sonraki release ÖNCESİ fix</td></tr>
+<tr><td><span class="sev-badge minor">Minor</span></td><td>Polish opportunity, bir grup deneyimi etkilendi</td><td>Backlog'a, müsait olunca</td></tr>
+<tr><td><span class="sev-badge note">Note</span></td><td>Gözlem, değişiklik gerektirmez</td><td>Trend analizi için sakla</td></tr>
+</tbody>
+</table>
+
+<!-- 4 -->
+<h2 id="matrix"><span class="num">4</span>Karar matrisi — Hangi dosya güncellenecek?</h2>
+
+<table>
+<thead><tr><th>Feedback türü</th><th>Etkilenen dosya(lar)</th><th>Doc güncellemesi</th></tr></thead>
+<tbody>
+<tr><td>Çocuk anlatımı uzun bulduğunu söyledi</td><td><code>CreateMvpContentMenu.cs</code> (Trait kısalt), <code>narration_&lt;id&gt;.wav</code></td><td>ArtistBrief §7.&lt;id&gt;</td></tr>
+<tr><td>Card tracker takılmadı (tek bir kart için)</td><td><code>card_&lt;id&gt;_tracker.png</code></td><td>ArtistBrief §5</td></tr>
+<tr><td>Tracker tüm kartlarda yavaş</td><td>Aydınlatma rehberi, kart laminasyon</td><td>TeacherGuide §8, ArtistBrief §5</td></tr>
+<tr><td>Eğitmen "Quiz başlat"ı bulamadı</td><td><code>TeacherPanelController</code> UI revize</td><td>TeacherGuide §5.4</td></tr>
+<tr><td>Yanlış cevapta SFX rahatsız edici</td><td><code>SfxPlayer</code> volume / yeni SFX</td><td>ArtistBrief §11</td></tr>
+<tr><td>Idle splash'taki bubble distract ediyor</td><td><code>IdleBackgroundAnimator</code> param</td><td>—</td></tr>
+<tr><td>Quiz çok kolay / çok zor</td><td><code>CreateMvpContentMenu.cs</code> task seti, <code>m_TasksPerSession</code></td><td>TeacherGuide §5.4</td></tr>
+<tr><td>Narration tonu çok ciddi</td><td>Voice talent revize</td><td>ArtistBrief §4</td></tr>
+<tr><td>Bilimsel yanlışlık</td><td><code>CreateMvpContentMenu.cs</code> metadata + narration</td><td>ArtistBrief §7.&lt;id&gt;, eğitmen review</td></tr>
+<tr><td>Crash / freeze</td><td>Code fix</td><td>DeviceTestProtocol edge case</td></tr>
+<tr><td>FPS düşük</td><td>Asset optimization (texture, mesh)</td><td>BuildAndDistribution §5</td></tr>
+<tr><td>30 dk yeterli olmadı</td><td>Etkinlik akışı revize</td><td>TeacherGuide §5</td></tr>
+</tbody>
+</table>
+
+<!-- 5 -->
+<h2 id="dongu"><span class="num">5</span>İterasyon döngüsü</h2>
+
+<h3>Pilot N+1 öncesi (önerilen sequence)</h3>
+<ol>
+  <li><strong>Toplama</strong> (1 gün): tüm 3 grup pilot eğitmeninden geri bildirim agregat</li>
+  <li><strong>Triyaj</strong> (1 gün): kategorize + severity</li>
+  <li><strong>Plan</strong> (1 gün): blocker + major'leri sonraki release'e plan</li>
+  <li><strong>Fix</strong> (~1 hafta): code/content/doc güncelle</li>
+  <li><strong>Validation</strong> (1 gün): DeviceTestProtocol rerun, validator menüsü teyit</li>
+  <li><strong>Pilot N+1</strong></li>
+</ol>
+
+<h3>Minor + Note işleme</h3>
+<p>Blocker/Major sıkışıkken Minor/Note backlog'a düşer. Backlog'u 3 pilotta bir gözden geçir, batch'le.</p>
+
+<!-- 6 -->
+<h2 id="playbook"><span class="num">6</span>Doc-update playbook</h2>
+
+<table>
+<thead><tr><th>Doc</th><th>Ne değişirse güncelle</th></tr></thead>
+<tbody>
+<tr><td><strong>TeacherGuide</strong></td><td>Etkinlik akışı timing → §5 · Yeni sorun türü → §8 · Rubrik → §6 · Hızlı referans → §10</td></tr>
+<tr><td><strong>ArtistBrief</strong></td><td>Canlı metadata → §7.&lt;id&gt; · Narration script → §7.&lt;id&gt; · Kart kuralı → §5 · SFX → §11 · İllüstrasyon → §12</td></tr>
+<tr><td><strong>EngineerOnboarding</strong></td><td>Yeni faz → §3 · Yeni dev görev pattern'i → §9 · Yeni convention → §11</td></tr>
+<tr><td><strong>BuildAndDistribution</strong></td><td>Performance hedefi → §6 · Cihaz listesi → §6 · Store form cevabı → §7</td></tr>
+<tr><td><strong>DeviceTestProtocol</strong></td><td>Yeni edge case → §6 · Yeni test case → §3.x · Ölçüm yöntemi → §4</td></tr>
+<tr><td><strong>PrivacyPolicy</strong></td><td>Mevzuat → ilgili tablo satırı · Veri toplama politikası <strong>asla</strong> değişmez</td></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td>Asmdef → "Code layout" · Yeni convention → "Conventions" · Yeni doc → "Docs"</td></tr>
+</tbody>
+</table>
+
+<!-- 7 -->
+<h2 id="log"><span class="num">7</span>Feedback log şablonu</h2>
+
+<p>Pilot bittikten sonra doldurulacak tek-sayfa şablon:</p>
+
+<pre class="template">PİLOT FEEDBACK LOG
+
+Pilot tarih: __________
+Sınıf / okul: __________
+Eğitmen: __________
+Gözlemci: __________
+Build version: __________
+
+ÖZET (3-5 cümle):
+[Pilot'un genel akışı, dikkat çeken durumlar]
+
+GÖZLEM RUBRİĞİ TOPLAMI:
+1. Kartı rahat okutma: __ / 4
+2. Sesli anlatım: __ / 4
+3. Form yazımı: __ / 4
+4. Rol rotasyonu: __ / 4
+5. Birbirine soru: __ / 4
+6. Eğitmen sorusu derinleşmesi: __ / 4
+7. Quiz işbirliği: __ / 4
+
+ÇOCUKLARDAN ALINAN GERİ BİLDİRİM:
+[Şaşırtıcı bulduğu canlılar / en sevdiği aşama / "tekrar isterim"]
+
+EĞİTMEN NOTLARI:
+[Beklediğinden farklı giden, hangi soru cevap aldı, teknik sorun]
+
+FEEDBACK ITEMS:
+| # | Kategori | Severity | Aksiyon önerisi |
+|---|---|---|---|
+| 1 | __ | __ | __ |
+| 2 | __ | __ | __ |
+...
+
+KARAR:
+[Sonraki pilot için plan, blocker'lar, deadline]</pre>
+
+<!-- 8 -->
+<h2 id="versioning"><span class="num">8</span>Versioning ve değişim takibi</h2>
+<ul>
+  <li>Her doc'un sonunda <strong>v1</strong>, <strong>v2</strong> sürüm etiketi tut (footer'larda var)</li>
+  <li>Major content değişikliğinde sürüm bump</li>
+  <li>CHANGELOG.md tutulabilir ama zorunlu değil — git log yeterli</li>
+  <li>HTML versiyonu MD ile aynı sürümde tut</li>
+</ul>
+
+<!-- 9 -->
+<h2 id="basari"><span class="num">9</span>Pilot başarı kriterleri</h2>
+
+<p>Pilot programı bitirme kriterleri (3 pilot sonra değerlendir):</p>
+
+<ul class="checklist">
+  <li>Blocker severity ile karşılaşılmadı (son 3 pilotta)</li>
+  <li>Çocukların %80+'i pilot sonunda "tekrar etmek isterim" dedi</li>
+  <li>Eğitmenler "rehber yeterliydi" geri bildirimi verdi</li>
+  <li>Gözlem rubriği ortalaması ≥3 (her madde)</li>
+  <li>DeviceTestProtocol her cihazda PASS</li>
+</ul>
+
+<p>Pilot başarı kriterleri sağlanırsa public release planı başlar.</p>
+
+<!-- 10 -->
+<h2 id="next"><span class="num">10</span>Sonraki adımlar</h2>
+
+<ol>
+  <li>Pilot N+1'i planla (eğitmen, sınıf, tarih)</li>
+  <li>Bu protokole göre veri topla</li>
+  <li>Triyaj + iterasyon</li>
+  <li>Repeat</li>
+</ol>
+
+<p>Pilot başarı kriterleri sağlanırsa: <code>Docs/BuildAndDistribution.html</code> §10 release checklist.</p>
+
+<hr>
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Görünenin Ötesinde Bir Deniz · Pilot Feedback Protokolü · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>

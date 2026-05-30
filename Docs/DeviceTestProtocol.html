@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cihaz Test Protokolü — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep: #0e2a47; --ocean: #1e5f8e; --surf: #4ea7c9;
+    --foam: #f0f7fb; --sand: #f7f3eb; --coral: #ff7a59;
+    --warn: #c0392b; --warn-soft: #fde5e5;
+    --good: #2e8b57; --good-soft: #e2f4ea;
+    --ink: #1b2733; --muted: #5a6b7a; --line: #e2e8ee;
+    --bg: #ffffff; --code-bg: #f3f5f8;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.65; color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; background: var(--code-bg); padding: 1px 6px; border-radius: 3px; }
+
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  aside.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 32px 0; border-right: 1px solid var(--line); font-size: 0.92em; }
+  aside.toc .toc-title { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72em; color: var(--muted); margin-bottom: 16px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a { text-decoration: none; color: var(--deep); display: block; padding: 4px 8px 4px 12px; border-left: 2px solid transparent; transition: all 0.15s; }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  .hero { background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%); color: white; padding: 56px 48px; border-radius: 16px; margin-bottom: 48px; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; right: -80px; bottom: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78em; opacity: 0.85; margin: 0 0 8px 0; }
+  .hero h1 { margin: 0 0 12px 0; font-size: 2.4em; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
+  .hero .sub { font-size: 1.05em; opacity: 0.92; max-width: 640px; margin: 0; }
+  .hero .meta { display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap; font-size: 0.88em; }
+  .hero .meta strong { display: block; font-size: 0.72em; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-bottom: 2px; }
+
+  h2 { margin: 56px 0 16px 0; font-size: 1.7em; color: var(--deep); letter-spacing: -0.01em; padding-bottom: 8px; border-bottom: 2px solid var(--coral); display: inline-block; }
+  h2 .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; text-align: center; background: var(--coral); color: white; border-radius: 50%; font-size: 0.7em; margin-right: 12px; vertical-align: middle; }
+  h3 { margin: 32px 0 12px 0; font-size: 1.2em; color: var(--ocean); }
+  h4 { margin: 20px 0 8px 0; font-size: 1em; color: var(--deep); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  p { margin: 0 0 14px 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px 0; font-size: 0.94em; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--foam); color: var(--deep); font-weight: 600; font-size: 0.86em; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  td.center, th.center { text-align: center; }
+
+  .callout { margin: 16px 0; padding: 14px 18px; border-radius: 8px; border-left: 4px solid; }
+  .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info { background: var(--foam); border-left-color: var(--ocean); }
+  .callout h4 { margin: 0 0 6px 0; }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  .checklist { list-style: none; padding: 0; margin: 12px 0 20px 0; }
+  .checklist li { padding: 8px 0 8px 32px; position: relative; border-bottom: 1px dashed var(--line); }
+  .checklist li::before { content: "☐"; position: absolute; left: 8px; color: var(--ocean); font-size: 1.2em; line-height: 1.2; }
+
+  pre.code { background: var(--code-bg); padding: 14px 18px; border-radius: 8px; overflow-x: auto; font-size: 0.88em; line-height: 1.55; margin: 14px 0 22px 0; border-left: 3px solid var(--ocean); }
+
+  .signoff { background: var(--sand); border-radius: 10px; padding: 24px 28px; margin: 20px 0; }
+  .signoff .row { display: flex; gap: 16px; margin: 10px 0; align-items: baseline; flex-wrap: wrap; }
+  .signoff .label { font-weight: 600; color: var(--deep); min-width: 140px; }
+  .signoff .blank { flex: 1; border-bottom: 1px solid var(--muted); min-width: 200px; padding-bottom: 4px; }
+  .signoff .verdict { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line); }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+
+  @media print {
+    body { font-size: 10pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    table { break-inside: auto; }
+  }
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#hazirlik">1. Hazırlık</a></li>
+    <li><a href="#smoke">2. Smoke Test</a></li>
+    <li><a href="#functional">3. Functional Test</a></li>
+    <li><a href="#performance">4. Performance Test</a></li>
+    <li><a href="#privacy">5. Privacy doğrulama</a></li>
+    <li><a href="#edge">6. Edge case'ler</a></li>
+    <li><a href="#bug">7. Bug raporlama</a></li>
+    <li><a href="#signoff">8. Sign-off</a></li>
+    <li><a href="#next">9. Sonraki adım</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Cihaz Test Protokolü · QA Sign-off</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">Gerçek cihazlarda (Android + iOS tabletler) MVP build'in uçtan uca QA testi için adım-adım protokol. Pilot test öncesi ve her release döngüsü öncesi koşturulur.</p>
+  <div class="meta">
+    <div><strong>Süre</strong>~45 dk per cihaz</div>
+    <div><strong>Test fleet</strong>4 kategori önerilir</div>
+    <div><strong>Sign-off</strong>Pilot test izni için zorunlu</div>
+    <div><strong>Tekrar</strong>Her release öncesi</div>
+  </div>
+</header>
+
+<div class="callout info">
+<h4>★ Bu protokol gerçek cihaza ihtiyaç duyar</h4>
+<p style="margin: 0;">Unity Editor'da değil, <strong>gerçek tablette basılmış AR kartlarla</strong> çalıştırılır. Üretici (sen veya QA ekibi) cihaz + kart seti + test çekirdek malzemesi elindeyken uygular.</p>
+</div>
+
+<!-- 1 -->
+<h2 id="hazirlik"><span class="num">1</span>Test öncesi hazırlık</h2>
+
+<h3>1.1 Test fleet</h3>
+<p>Minimum bir cihaz, ideal olarak 4 farklı kategoride test:</p>
+
+<table>
+<thead><tr><th>Kategori</th><th>Önerilen</th><th>Hedef metrik</th></tr></thead>
+<tbody>
+<tr><td>Android orta-uç</td><td>Samsung Galaxy Tab A8, Xiaomi Pad 5</td><td>30 FPS min</td></tr>
+<tr><td>Android üst-uç</td><td>Samsung Galaxy Tab S8, Google Pixel Tablet</td><td>60 FPS hedef</td></tr>
+<tr><td>iOS orta-uç</td><td>iPad 9. nesil</td><td>30 FPS min</td></tr>
+<tr><td>iOS üst-uç</td><td>iPad Air (M1+), iPad Pro</td><td>60 FPS hedef</td></tr>
+</tbody>
+</table>
+
+<h3>1.2 Test materyali</h3>
+<ul class="checklist">
+  <li>APK / iOS build cihaza yüklenmiş</li>
+  <li>Tüm 20 basılı kart hazır (production print veya placeholder)</li>
+  <li>Sınıf veya benzeri ortam aydınlatması</li>
+  <li>HDMI / USB-C-to-HDMI kablo (projeksiyon testi için, opsiyonel)</li>
+  <li>Stopwatch (cold start ölçümü)</li>
+  <li>Network monitor (privacy doğrulama, opsiyonel)</li>
+</ul>
+
+<h3>1.3 Cihaz state</h3>
+<ul class="checklist">
+  <li>Cihaz tam şarjlı (%90+) — battery drain ölçümü için</li>
+  <li>Önceki uygulamalar kapalı (clean RAM baseline)</li>
+  <li>Wi-Fi açık ama uygulama hiçbir network çağrısı yapmamalı</li>
+  <li>Uygulamanın önceki install state'i temiz</li>
+</ul>
+
+<!-- 2 -->
+<h2 id="smoke"><span class="num">2</span>Smoke Test (5 dk)</h2>
+
+<p>İlk hızlı kontrol — uygulama açılıyor mu, temel akış çalışıyor mu.</p>
+
+<table>
+<thead><tr><th>#</th><th>Adım</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Uygulamayı aç</td><td>Splash → Bootstrap → Activity sahnesi yüklenir</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>İlk açılışta kamera permission</td><td>"İzin Ver" → kamera açılır</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Idle ekranı görünür</td><td>Title + subtitle + bubble animasyonu</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>Sağ üst ikona 1 sn basılı tut</td><td>Teacher Panel açılır</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>"Etkinliği başlat"</td><td>Scanning state, Idle Panel kaybolur</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>Bir karta (örn. octopus) kamerayı tut</td><td>Model spawn, InfoPanel, ses çalar</td><td class="center">☐</td></tr>
+<tr><td>7</td><td>Kartı kameradan çıkar</td><td>2 sn sonra InfoPanel kapanır</td><td class="center">☐</td></tr>
+<tr><td>8</td><td>Teacher Panel → "Mini quiz başlat"</td><td>Quiz panel görünür, modeller kaybolur</td><td class="center">☐</td></tr>
+<tr><td>9</td><td>Doğru kartı tara</td><td>Correct SFX + "Doğru!" + bounce</td><td class="center">☐</td></tr>
+<tr><td>10</td><td>3 görev tamam</td><td>Summary panel + score count-up</td><td class="center">☐</td></tr>
+<tr><td>11</td><td>"Yeniden başlat"</td><td>Idle state'e döner</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Eğer herhangi bir adım fail ederse</h4>
+<p style="margin: 0;">Devam etme. Bug detayını kaydet: cihaz model + OS sürümü, hangi adım, Console / logcat output, reproduce step'leri. <code>Bug raporlama şablonu</code> §7'de.</p>
+</div>
+
+<!-- 3 -->
+<h2 id="functional"><span class="num">3</span>Functional Test (15 dk)</h2>
+
+<h3>3.1 Tracker güvenilirliği</h3>
+
+<table>
+<thead><tr><th>#</th><th>Test</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Kartı 30 cm mesafede tut</td><td>Tracker 2 sn içinde kilitlenir</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>Kartı yavaşça 45° eğ</td><td>Tracker tracking devam eder</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Kartı hızla çek</td><td>Gone fires, model destroy</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>Aynı kartı tekrar göster</td><td>Spotted fresh, panel re-show</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>2 farklı kartı yan yana tut</td><td>İkisi de tracking, biri focused</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>Focused kartı kaldır</td><td>Diğer kart focus alır, switch</td><td class="center">☐</td></tr>
+<tr><td>7</td><td>Düşük ışıkta dene</td><td>Tracker hâlâ çalışır, biraz yavaş</td><td class="center">☐</td></tr>
+<tr><td>8</td><td>Parlak ışıkta dene</td><td>Tracker çalışır, yansıma yoksa</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 Tüm 20 canlı</h3>
+
+<table>
+<thead><tr><th>Kart</th><th class="center">Tracker</th><th class="center">Model</th><th class="center">Ses</th><th class="center">Info Panel</th></tr></thead>
+<tbody>
+<tr><td>octopus</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>moon-jellyfish</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>clownfish</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>great-white-shark</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>seahorse</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>moray-eel</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>stingray</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>anglerfish</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>parrotfish</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>crab</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>starfish</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>mussel</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>squid</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>sea-urchin</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>coral</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>green-algae</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>seagrass</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>plankton</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>sea-turtle</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+<tr><td>dolphin</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<h3>3.3 Quiz akışı</h3>
+
+<table>
+<thead><tr><th>#</th><th>Test</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Quiz başlat</td><td>3 random görev, ilk prompt</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>Doğru cevap tara</td><td>Correct SFX + "Doğru!" + 2 sn → next</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Yanlış cevap tara</td><td>Incorrect SFX + "Tam değil." + next</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>3/3 tamam</td><td>Summary panel görünür</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>Score count-up</td><td>0'dan final puana ~1.2 sn</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>Kapanış sorusu</td><td>"Eğer bu canlılardan biri yok olursa..."</td><td class="center">☐</td></tr>
+<tr><td>7</td><td>Restart</td><td>Idle, session sıfırlanır</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<h3>3.4 Teacher mode</h3>
+
+<table>
+<thead><tr><th>#</th><th>Test</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Kısa tıklama (toggle icon)</td><td>Hiçbir şey olmaz (child protection)</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>1 sn basılı tut</td><td>Panel açılır</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Idle'da panel</td><td>Sadece "Etkinliği başlat"</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>Scanning'de panel</td><td>"Mini quiz" + "Yeniden başlat"</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>Quiz'de panel</td><td>Sadece "Yeniden başlat"</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>"Yeniden başlat" Quiz'den</td><td>Direkt Idle'a düşer</td><td class="center">☐</td></tr>
+<tr><td>7</td><td>"Kapat"</td><td>Panel kaybolur, state değişmez</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<h3>3.5 Projeksiyon (opsiyonel)</h3>
+
+<table>
+<thead><tr><th>#</th><th>Test</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>HDMI bağla (uygulama açıkken)</td><td>2 sn'de ProjectionCanvas display 1'e route</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>Idle state</td><td>Idle splash projeksiyonda</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Scanning + card</td><td>Büyük preview projeksiyonda</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>Quiz</td><td>Prompt + progress projeksiyonda</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>Summary</td><td>Score + scanned grid projeksiyonda</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>HDMI çek</td><td>2 sn'de ProjectionCanvas gizlenir</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<!-- 4 -->
+<h2 id="performance"><span class="num">4</span>Performance Test (10 dk)</h2>
+
+<table>
+<thead><tr><th>Metrik</th><th>Hedef</th><th>Ölçüm yöntemi</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>Cold start (tıklama → Activity ready)</td><td>&lt;5 sn</td><td>Stopwatch</td><td class="center">_____ sn</td></tr>
+<tr><td>FPS (Viewing state)</td><td>≥30 (orta), ≥60 (üst)</td><td>Unity Profiler / Android GPU Inspector</td><td class="center">_____ FPS</td></tr>
+<tr><td>RAM peak (45 dk session)</td><td>&lt;600 MB</td><td>Settings / Xcode Memory Graph</td><td class="center">_____ MB</td></tr>
+<tr><td>Battery drain (45 dk)</td><td>&lt;%15</td><td>%90+ → bitiş %</td><td class="center">%_____</td></tr>
+<tr><td>APK / IPA size</td><td>&lt;150 MB</td><td>Settings → Storage</td><td class="center">_____ MB</td></tr>
+<tr><td>Cold camera permission dialog</td><td>&lt;1 sn</td><td>Manuel</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<!-- 5 -->
+<h2 id="privacy"><span class="num">5</span>Privacy stance doğrulama (5 dk)</h2>
+
+<div class="callout warn">
+<h4>⊘ Bu adım kritik</h4>
+<p style="margin: 0;">Privacy policy'nin doğru olduğunu cihaz seviyesinde teyitle. Tek bir HTTP isteği bile çıkarsa store listing'deki "no data collected" deklarasyonunu ihlal eder.</p>
+</div>
+
+<h3>5.1 Network monitor</h3>
+<ul class="checklist">
+  <li>Bir network monitor app yükle (NetGuard for Android, Charles Proxy)</li>
+  <li>Uygulamayı 5 dk kullan</li>
+  <li>Network log'unda <strong>hiçbir HTTP/HTTPS isteği görünmemeli</strong></li>
+  <li>DNS lookup da olmamalı</li>
+</ul>
+
+<h3>5.2 Android permission check</h3>
+<ul class="checklist">
+  <li>Settings → Apps → ARFishing → Permissions</li>
+  <li>Sadece <strong>Camera</strong> permission listede olmalı</li>
+  <li>Storage permission istemiyor olmalı</li>
+  <li><strong>Internet permission yok olmalı</strong> — manifest override çalışmış demek</li>
+</ul>
+
+<h3>5.3 iOS permission check</h3>
+<ul class="checklist">
+  <li>Settings → ARFishing</li>
+  <li>Sadece <strong>Camera</strong> access listede</li>
+  <li>Location, Photos, Contacts vb. <strong>gözükmemeli</strong></li>
+</ul>
+
+<h3>5.4 PlayerPrefs sınırı</h3>
+<ul class="checklist">
+  <li>Editor olmadan uygulamayı kaldırıp tekrar yükle</li>
+  <li>İlk açılışta default state'te olmalı (önceki skor silinmiş)</li>
+</ul>
+
+<!-- 6 -->
+<h2 id="edge"><span class="num">6</span>Edge case'ler (10 dk)</h2>
+
+<table>
+<thead><tr><th>#</th><th>Test</th><th>Beklenen</th><th class="center">Sonuç</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Uygulama açıkken ekran kilidi → tekrar aç</td><td>State korunur, kamera resume</td><td class="center">☐</td></tr>
+<tr><td>2</td><td>Telefonu yan yatır (landscape)</td><td>Portrait modunda kalır</td><td class="center">☐</td></tr>
+<tr><td>3</td><td>Düşük battery (%15)</td><td>Çalışmaya devam eder</td><td class="center">☐</td></tr>
+<tr><td>4</td><td>ARCore install yok (Android)</td><td>"ARCore yükle" prompt</td><td class="center">☐</td></tr>
+<tr><td>5</td><td>Karta parmak izi / leke</td><td>Mat laminasyon korur</td><td class="center">☐</td></tr>
+<tr><td>6</td><td>Aynı kartı 10 kez peş peşe tara</td><td>Memory leak yok (RAM stabil)</td><td class="center">☐</td></tr>
+<tr><td>7</td><td>Quiz tamamlanmadan uygulamayı kapat</td><td>Re-open → Idle state (beklenen)</td><td class="center">☐</td></tr>
+<tr><td>8</td><td>Cihaz sessiz modunda</td><td>SFX + narration çalmaz, görsel sorunsuz</td><td class="center">☐</td></tr>
+</tbody>
+</table>
+
+<!-- 7 -->
+<h2 id="bug"><span class="num">7</span>Bug raporlama şablonu</h2>
+
+<p>Bug bulundukça doldur:</p>
+
+<pre class="code">Cihaz: [model + OS sürümü]
+Build: [APK adı + version code]
+Adım numarası: [Bölüm.alt-bölüm.satır]
+Beklenen davranış: [...]
+Gerçekleşen davranış: [...]
+Reproduce step'leri:
+1. ...
+2. ...
+3. ...
+Frekans: [Her zaman / Bazen / İlk kez gördüm]
+Logcat / Console output (varsa): [...]
+Ek dosya: [video / screenshot path]</pre>
+
+<!-- 8 -->
+<h2 id="signoff"><span class="num">8</span>Sign-off</h2>
+
+<p>Pilot test izni için bu testin temiz olması gerekir.</p>
+
+<ul class="checklist">
+  <li>Smoke Test ✓</li>
+  <li>Functional Test (tüm 20 canlı) ✓</li>
+  <li>Quiz akışı ✓</li>
+  <li>Teacher Mode ✓</li>
+  <li>Performance hedefleri (30 FPS min, &lt;600 MB RAM, &lt;%15 battery) ✓</li>
+  <li>Privacy stance doğrulandı (network monitor temiz) ✓</li>
+  <li>Edge case'ler ✓</li>
+</ul>
+
+<div class="signoff">
+  <div class="row"><span class="label">Tester adı</span><span class="blank"></span></div>
+  <div class="row"><span class="label">Tarih</span><span class="blank"></span></div>
+  <div class="row"><span class="label">Build version</span><span class="blank"></span></div>
+  <div class="row"><span class="label">Test cihazı</span><span class="blank"></span></div>
+  <div class="verdict">
+    <div class="row"><span class="label">Sonuç</span><span>☐ PASS &nbsp;·&nbsp; ☐ FAIL (rapor ekte)</span></div>
+  </div>
+</div>
+
+<!-- 9 -->
+<h2 id="next"><span class="num">9</span>Sonraki adım</h2>
+
+<h3>PASS sonrası</h3>
+<ol>
+  <li>Build artifact'i pilot test cihazlarına yükle</li>
+  <li>Pilot eğitmenle koordinat (<code>Docs/TeacherGuide.html</code>)</li>
+  <li>3 sınıf pilot seansı planla</li>
+  <li>Pilot feedback toplama protokolü (TeacherGuide §6 + §7)</li>
+</ol>
+
+<h3>FAIL sonrası</h3>
+<ol>
+  <li>Bug listesi prioritize et</li>
+  <li>Severity blocker olan'ları code fix</li>
+  <li>Re-test full protocol</li>
+</ol>
+
+<hr>
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Görünenin Ötesinde Bir Deniz · Cihaz Test Protokolü · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>

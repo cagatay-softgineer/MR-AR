@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artist Brief — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:        #0e2a47;
+    --ocean:       #1e5f8e;
+    --surf:        #4ea7c9;
+    --foam:        #f0f7fb;
+    --sand:        #f7f3eb;
+    --coral:       #ff7a59;
+    --coral-soft:  #fde6df;
+    --warn:        #c0392b;
+    --warn-soft:   #fde5e5;
+    --good:        #2e8b57;
+    --good-soft:   #e2f4ea;
+    --ink:         #1b2733;
+    --muted:       #5a6b7a;
+    --line:        #e2e8ee;
+    --bg:          #ffffff;
+    --code-bg:     #f3f5f8;
+
+    --cat-fish:    #d6ecf7;
+    --cat-invert:  #fde6cd;
+    --cat-prod:    #d9f2dc;
+    --cat-coral:   #fcd6d0;
+    --cat-deep:    #d5cce6;
+    --cat-endang:  #f0e2c0;
+    --cat-mammal:  #dfe4eb;
+    --cat-reptile: #e4eccc;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, pre, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  aside.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 32px 0 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.92em;
+  }
+  aside.toc .toc-title {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  aside.toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a {
+    text-decoration: none;
+    color: var(--deep);
+    display: block;
+    padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  aside.toc a:hover {
+    border-left-color: var(--coral);
+    background: var(--foam);
+  }
+
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 56px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    bottom: -80px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78em;
+    opacity: 0.85;
+    margin: 0 0 8px 0;
+  }
+  .hero h1 {
+    margin: 0 0 12px 0;
+    font-size: 2.4em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hero .sub {
+    font-size: 1.05em;
+    opacity: 0.92;
+    max-width: 600px;
+    margin: 0;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .hero .meta div {
+    font-size: 0.88em;
+  }
+  .hero .meta strong {
+    display: block;
+    font-size: 0.72em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 2px;
+  }
+
+  /* ---------- typography ---------- */
+  h2 {
+    margin: 56px 0 16px 0;
+    font-size: 1.7em;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--coral);
+    display: inline-block;
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: var(--coral);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7em;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 {
+    margin: 32px 0 12px 0;
+    font-size: 1.2em;
+    color: var(--ocean);
+  }
+  h4 {
+    margin: 24px 0 8px 0;
+    font-size: 1em;
+    color: var(--deep);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  p { margin: 0 0 14px 0; }
+
+  a { color: var(--ocean); }
+
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  blockquote {
+    margin: 0;
+    padding: 16px 20px;
+    background: var(--sand);
+    border-left: 4px solid var(--coral);
+    border-radius: 6px;
+    font-style: italic;
+    color: var(--deep);
+  }
+
+  /* ---------- tables ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px 0;
+    font-size: 0.94em;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  th {
+    background: var(--foam);
+    color: var(--deep);
+    font-weight: 600;
+    font-size: 0.88em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--deep);
+  }
+
+  /* ---------- callouts ---------- */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  .callout.warn  { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good  { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info  { background: var(--foam);      border-left-color: var(--ocean); }
+  .callout.sand  { background: var(--sand);      border-left-color: var(--coral); }
+  .callout h4 {
+    margin: 0 0 8px 0;
+    color: inherit;
+  }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  /* ---------- card layout mockup ---------- */
+  .card-mockup {
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 220px;
+    margin: 20px 0;
+    font-size: 0.85em;
+  }
+  .card-mockup .top {
+    height: 200px;
+    background: linear-gradient(135deg, #cce4f5, #f5e0cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-style: italic;
+    padding: 12px;
+    text-align: center;
+  }
+  .card-mockup .bottom {
+    padding: 12px;
+    border-top: 1px solid var(--line);
+    background: white;
+  }
+  .card-mockup .bottom strong { display: block; font-size: 1.05em; color: var(--deep); }
+  .card-mockup .bottom span { color: var(--muted); font-size: 0.85em; }
+
+  /* ---------- creature cards ---------- */
+  .creature-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 24px 0;
+  }
+
+  .creature {
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .creature header {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .creature .badge-num {
+    background: var(--deep);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .creature h3 {
+    margin: 0;
+    color: var(--deep);
+    font-size: 1.25em;
+    flex: 1;
+    min-width: 200px;
+  }
+  .creature h3 .id {
+    display: block;
+    font-size: 0.65em;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 500;
+    margin-top: 2px;
+    letter-spacing: 0;
+  }
+  .creature .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .creature .tag {
+    font-size: 0.75em;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: var(--foam);
+    color: var(--deep);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .creature .body { padding: 4px 22px 20px 22px; }
+  .creature .art {
+    background: var(--sand);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 0.93em;
+  }
+  .creature .art strong {
+    color: var(--coral);
+    text-transform: uppercase;
+    font-size: 0.78em;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .creature .script {
+    background: white;
+    padding: 14px 18px;
+    border-left: 4px solid var(--ocean);
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 0.93em;
+  }
+  .creature .script strong {
+    color: var(--ocean);
+    text-transform: uppercase;
+    font-size: 0.78em;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .creature .script .quote {
+    font-style: italic;
+    color: var(--deep);
+  }
+
+  /* category color stripe on left of header */
+  .creature.cat-fish    header { background: var(--cat-fish); }
+  .creature.cat-invert  header { background: var(--cat-invert); }
+  .creature.cat-prod    header { background: var(--cat-prod); }
+  .creature.cat-coral   header { background: var(--cat-coral); }
+  .creature.cat-deep    header { background: var(--cat-deep); }
+  .creature.cat-endang  header { background: var(--cat-endang); }
+  .creature.cat-mammal  header { background: var(--cat-mammal); }
+  .creature.cat-reptile header { background: var(--cat-reptile); }
+
+  /* ---------- checklist ---------- */
+  .checklist {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist li {
+    padding: 8px 0 8px 32px;
+    position: relative;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 8px;
+    color: var(--ocean);
+    font-size: 1.2em;
+    line-height: 1.2;
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { font-size: 11pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .creature { break-inside: avoid; page-break-inside: avoid; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc {
+      position: static;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Proje Özeti</a></li>
+    <li><a href="#sanat-yonu">2. Sanat Yönü</a></li>
+    <li><a href="#spec-3d">3. 3D Model Spec</a></li>
+    <li><a href="#spec-ses">4. Ses Anlatımı Spec</a></li>
+    <li><a href="#spec-kart">5. Basılı Kart Spec</a></li>
+    <li><a href="#spec-ikon">6. UI İkon Spec</a></li>
+    <li><a href="#canlilar">7. 20 Canlı Detayı</a></li>
+    <li><a href="#uretim-akisi">8. Üretim Akışı</a></li>
+    <li><a href="#teslim-formati">9. Teslim Formatı</a></li>
+    <li><a href="#kabul">10. Kabul Kriterleri</a></li>
+    <li><a href="#spec-sfx">11. SFX Spec</a></li>
+    <li><a href="#spec-illustration">12. İllüstrasyon Spec</a></li>
+    <li><a href="#referanslar">13. Referanslar</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Artist Brief · Üretim Spec'i</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">AR destekli deniz ekosistemi eğitim uygulaması — 7–12 yaş çocuklar için sınıf etkinliği. 20 deniz canlısı içerik seti, 4 üretim hattı için eşgüdümlü teslim brief'i.</p>
+  <div class="meta">
+    <div><strong>Platform</strong>Unity 6 · AR Foundation 6.4 · iOS + Android</div>
+    <div><strong>Hedef kitle</strong>7–12 yaş</div>
+    <div><strong>Toplam asset</strong>80 (20 × 4 hat)</div>
+    <div><strong>Dil</strong>Türkçe (anlatım + UI)</div>
+  </div>
+</header>
+
+<!-- 1. Proje Özeti -->
+<h2 id="ozet"><span class="num">1</span>Proje Özeti</h2>
+
+<p>7–12 yaş çocuklar için sınıf etkinliği. Her grup (5 çocuk + 1 tablet) AR kartları tarar, canlının 3D modelini AR'da kartın üzerinde görür, sesli anlatımı dinler, ekosistem rolünü öğrenir. Etkinlik <strong>~35–45 dakika</strong>.</p>
+
+<p>Bu brief <strong>4 ayrı üretim hattının</strong> eşgüdümlü teslimini hedefler:</p>
+
+<table>
+<thead><tr><th>Hat</th><th>Adet</th><th>Format</th></tr></thead>
+<tbody>
+<tr><td>3D model + idle animasyon</td><td>20</td><td>Unity Prefab (<code>.prefab</code>) — FBX'ten wrap edilmiş</td></tr>
+<tr><td>Türkçe seslendirme anlatımı</td><td>20</td><td>WAV (mono, 22 kHz)</td></tr>
+<tr><td>Basılı AR kart (tracker + tasarım)</td><td>20</td><td>A6 print PDF + 1024×1024 tracker PNG</td></tr>
+<tr><td>UI ikonu</td><td>20</td><td>256×256 transparan PNG</td></tr>
+</tbody>
+</table>
+
+<p><strong>Toplam 80 asset.</strong> Pilot fazda 3 canlı tamamlanır; geri kalan 17 batch'ler hâlinde teslim edilir (Bölüm 8).</p>
+
+<!-- 2. Sanat Yönü -->
+<h2 id="sanat-yonu"><span class="num">2</span>Hedef Kitle ve Genel Sanat Yönü</h2>
+
+<p><strong>Yaş</strong>: 7–12. Çocuklar her canlıyı <strong>bakar bakmaz tanıyabilmeli</strong> — bilimsel doğruluk + tanınabilirlik dengesi.</p>
+
+<h3>Stil DNA'sı</h3>
+<ul>
+  <li>Sevimli ama bilimsel olarak tanınabilir. Sticker / illüstrasyon hissi — fotoğraf gerçekçiliği değil.</li>
+  <li>Hafif antropomorfik dokunuş (canlı bir karakter hissi). Aşırı kawaii, aşırı büyük göz değil.</li>
+  <li><strong>Korkutucu değil.</strong> Köpekbalığı bile "vahşi yaşam" hissi vermeli, tehdit değil.</li>
+  <li>Stilize düşük poly, temiz silüet, anlaşılır pose.</li>
+</ul>
+
+<h3>Renk paleti (habitat bazında öneri)</h3>
+<ul>
+  <li><strong>Resif canlıları</strong>: turuncu / sarı / kırmızı, doygun ama yumuşak</li>
+  <li><strong>Açık deniz</strong>: mavi-gri tonları, soft fade</li>
+  <li><strong>Derin deniz</strong>: koyu mor + selektif emissive vurgu (sadece fener balığı)</li>
+  <li><strong>Üreticiler</strong> (alg, çayır, plankton): pastel emerald yeşil</li>
+</ul>
+
+<div class="callout warn">
+<h4>⊘ Genel kaçınılacaklar</h4>
+<ul style="margin: 0;">
+  <li>Neon parlaklığı, aşırı saturasyon</li>
+  <li>Photogrammetry / sub-surface scattering / gerçekçi shader</li>
+  <li>Korkutucu pose veya ifade</li>
+  <li>Cinsiyetli karakterleştirme (her canlı nötr cins)</li>
+</ul>
+</div>
+
+<!-- 3. 3D Model Spec -->
+<h2 id="spec-3d"><span class="num">3</span>Teknik Spec — 3D Modeller</h2>
+
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Teslim format</td><td>FBX dosyası + texture PNG (Unity dev prefab'a sarar)</td></tr>
+<tr><td>Polygon bütçesi</td><td><strong>≤ 3,000 tris</strong> (mobil AR performansı)</td></tr>
+<tr><td>Texture</td><td>512×512 albedo (PNG), opsiyonel 512×512 emissive</td></tr>
+<tr><td>Material</td><td>URP/Lit shader, <strong>tek material per model</strong></td></tr>
+<tr><td>Pivot</td><td>Modelin transform pivot = (0, 0, 0) → kartın merkezinde</td></tr>
+<tr><td>Yön</td><td>Z+ ekseni kamera-yönü; Y+ kart-dik</td></tr>
+<tr><td>Doğal ölçek</td><td>scale = 1 iken model genişliği ≈ 1 unit (≈ 10 cm — kart genişliği)</td></tr>
+<tr><td>Animasyon</td><td>Tek <strong>Idle</strong> loop, 1–2 saniye, seamless döngü</td></tr>
+<tr><td>Animator Controller</td><td>Prefab'a embedded, tek state "Idle"</td></tr>
+<tr><td>Collider</td><td>YOK</td></tr>
+<tr><td>LOD</td><td>YOK</td></tr>
+<tr><td>Klasör (Unity tarafı)</td><td><code>Assets/ARFishing/Content/Models/</code></td></tr>
+<tr><td>Dosya adı</td><td><code>creature_&lt;creatureId&gt;.prefab</code> (örn. <code>creature_octopus.prefab</code>)</td></tr>
+</tbody>
+</table>
+
+<h3>Idle animation rehberi</h3>
+<table>
+<thead><tr><th>Tür</th><th>Animasyon karakteri</th></tr></thead>
+<tbody>
+<tr><td>Balıklar (palyaço, vatoz, müren, vb.)</td><td>Dorsal/caudal fin dalgalanması + omurga hafif sinüs eğrisi</td></tr>
+<tr><td>Ahtapot / mürekkep balığı</td><td>Kollar yumuşak dalgalanır, mantle nazikçe şişer-iner</td></tr>
+<tr><td>Mercan / anemon</td><td>Polipler uzar-kısalır, kolonu hafif sallanır</td></tr>
+<tr><td>Denizatı</td><td>Dorsal fin titreşim (5–10 Hz), kuyruk hafif kıvrım</td></tr>
+<tr><td>Köpekbalığı / yunus</td><td>Tek-yönlü caudal propulsion (sallanma değil ileri yüzme hissi)</td></tr>
+<tr><td>Plankton / alg</td><td>Nazik akıntı dalgalanması, asenkronize parçacık hareketi</td></tr>
+<tr><td>Yengeç</td><td>Kıskaçların yumuşak açılma-kapanma, bacak hafif değişim</td></tr>
+<tr><td>Deniz yıldızı / kestanesi</td><td>Çok hafif "nefes" + tüpe ayaklar opsiyonel hareket</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Reject kriterleri</h4>
+<ul style="margin: 0;">
+  <li>3,500+ tris</li>
+  <li>Birden fazla material</li>
+  <li>Animation loop'unda görünür pop / kesinti</li>
+  <li>Pivot model dışında / kenarda</li>
+  <li>Naked Standard shader (URP/Lit'e dönüştürülecek)</li>
+</ul>
+</div>
+
+<!-- 4. Ses -->
+<h2 id="spec-ses"><span class="num">4</span>Teknik Spec — Ses Anlatımı</h2>
+
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Dil</td><td>Türkçe</td></tr>
+<tr><td>Format</td><td>WAV (16-bit PCM) <strong>veya</strong> OGG, <strong>mono</strong>, <strong>22 kHz</strong></td></tr>
+<tr><td>Süre</td><td>İdeal <strong>15–18 sn</strong>, <strong>maksimum 25 sn</strong> (validator hard cap)</td></tr>
+<tr><td>Voice talent</td><td>Profesyonel TR seslendirme — <strong>proje genelinde tek ses</strong> (tutarlılık için)</td></tr>
+<tr><td>Ton</td><td>Anlatıcı, meraklı, sıcak — "hikaye anlat" hissi, "ders ver" değil</td></tr>
+<tr><td>Hız</td><td>Çocuklar için ortalama hızdan biraz yavaş (~180–200 hece/dakika)</td></tr>
+<tr><td>Background</td><td>Sessiz stüdyo kaydı, hum/hiss yok</td></tr>
+<tr><td>Müzik / SFX</td><td><strong>YOK</strong> — sadece kuru anlatım</td></tr>
+<tr><td>Normalize</td><td>Peak −3 dB, ortalama −18 LUFS</td></tr>
+<tr><td>Teslim format</td><td>WAV (lossless) — Unity dev OGG'ye gerekirse convert eder</td></tr>
+<tr><td>Klasör (Unity)</td><td><code>Assets/ARFishing/Content/Audio/</code></td></tr>
+<tr><td>Dosya adı</td><td><code>narration_&lt;creatureId&gt;.wav</code></td></tr>
+</tbody>
+</table>
+
+<h3>İçerik kalıbı (her anlatım için akış)</h3>
+<ol>
+  <li><strong>Tanıtım</strong> (1–2 sn): "Bu canlı bir [isim]."</li>
+  <li><strong>Yaşam alanı</strong> (3–4 sn): nerede yaşar</li>
+  <li><strong>Beslenme</strong> (2–3 sn): ne yer</li>
+  <li><strong>İlginç özellik</strong> (5–7 sn): "wow" anı</li>
+  <li><strong>Tehdit + koruma</strong> (2–3 sn): kapanış mesajı</li>
+</ol>
+
+<div class="callout warn">
+<h4>⊘ Yasaklı dil</h4>
+<ul style="margin: 0;">
+  <li>"Ölüm", "yok olmak" → "azalmak", "tehlikede"</li>
+  <li>Latin nomenklatür ("Octopus vulgaris" vb.)</li>
+  <li>Soyut bilimsel terimler ("bioluminans" → "ışık saçar")</li>
+  <li>Korkutucu ton ("yırtıcı", "tehlikeli avcı" yumuşatılmalı)</li>
+</ul>
+</div>
+
+<div class="callout warn">
+<h4>⊘ Reject kriterleri</h4>
+<ul style="margin: 0;">
+  <li>25+ sn süre</li>
+  <li>Stereo dosya (mono'ya dönüştürülmesi gerekir)</li>
+  <li>Background ortam sesi &gt;−60 dB</li>
+  <li>Müzik veya SFX yatağı</li>
+  <li>Birden fazla voice talent (tutarlılık bozulur)</li>
+</ul>
+</div>
+
+<!-- 5. Kart -->
+<h2 id="spec-kart"><span class="num">5</span>Teknik Spec — Basılı AR Kart</h2>
+
+<p>İki çıktı: <strong>(a)</strong> basılı kart (fiziksel ürün), <strong>(b)</strong> tracker PNG (Unity image library için).</p>
+
+<h3>Basılı kart (fiziksel)</h3>
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Boyut</td><td>A6 (105 × 148 mm)</td></tr>
+<tr><td>Stok</td><td><strong>350 gsm</strong> karton</td></tr>
+<tr><td>Laminasyon</td><td><strong>MAT</strong> (parlak / yarı-parlak yasak — tracker bozulur)</td></tr>
+<tr><td>Köşe</td><td>1.5–2 mm radius yuvarlanmış</td></tr>
+<tr><td>Kesim payı</td><td>3 mm bleed her kenarda</td></tr>
+<tr><td>Renk modu</td><td>CMYK</td></tr>
+<tr><td>Çözünürlük</td><td>300 DPI (1240 × 1748 px)</td></tr>
+<tr><td>Ön yüz</td><td>Tracker pattern + canlı adı (alt bantta, Türkçe)</td></tr>
+<tr><td>Arka yüz</td><td>Sade beyaz veya minimal bilgi metni (opsiyonel)</td></tr>
+<tr><td>Teslim format</td><td>Print-ready PDF, 3 mm bleed + crop marks</td></tr>
+</tbody>
+</table>
+
+<h3>Tracker source PNG (Unity image library)</h3>
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Boyut</td><td>1024 × 1024 px (kare; orijinal kart aspect kırpılıp doldurulabilir)</td></tr>
+<tr><td>Format</td><td>PNG, RGB (CMYK değil)</td></tr>
+<tr><td>Klasör (Unity)</td><td><code>Assets/ARFishing/Content/CardImages/</code></td></tr>
+<tr><td>Dosya adı</td><td><code>card_&lt;creatureId&gt;.png</code></td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Tracker pattern kuralları (zorunlu)</h4>
+<p style="margin: 0 0 8px 0;">Bu kuralları ihlal eden kart <strong>AR Foundation'da çalışmaz</strong>:</p>
+<ul style="margin: 0;">
+  <li><strong>Yüksek kontrast</strong> — siyah-beyaz veya yüksek-saturasyon renkler arasında</li>
+  <li><strong>Asimetrik kompozisyon</strong> — rotational symmetry <strong>yasak</strong> (yıldız, eşit-dörtlü, kar tanesi vb.)</li>
+  <li><strong>Repeating pattern yasak</strong> — texture / wallpaper / mozaik desen yok</li>
+  <li><strong>Geniş tek-renk alanı yasak</strong> — &gt;%30 solid background tracker'a feature vermez</li>
+  <li><strong>Orta detay densitesi</strong> — fazla detay yavaşlatır, az detay confidence düşürür</li>
+  <li><strong>Köşelerde özgün marker</strong> — köşelerdeki kontrast tracker'a oryantasyon verir</li>
+</ul>
+</div>
+
+<h3>İdeal kart kompozisyonu</h3>
+
+<div class="card-mockup">
+  <div class="top">Üst %70<br>Stilize canlı çizimi<br>(asimetrik kompozisyon)</div>
+  <div class="bottom">
+    <strong>AHTAPOT</strong>
+    <span>Octopus (opsiyonel)</span>
+  </div>
+</div>
+
+<div class="callout warn">
+<h4>⊘ Reject kriterleri</h4>
+<ul style="margin: 0;">
+  <li>Parlak / yarı-parlak laminasyon</li>
+  <li>Solid renk arka plan</li>
+  <li>Rotational simetri</li>
+  <li>20 kartın hepsi aynı kompozisyon şablonunda (tracker karıştırır — her kart silüet bakımından özgün olmalı)</li>
+</ul>
+</div>
+
+<!-- 6. Ikon -->
+<h2 id="spec-ikon"><span class="num">6</span>Teknik Spec — UI İkonları</h2>
+
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Boyut</td><td>256 × 256 px</td></tr>
+<tr><td>Format</td><td>PNG, transparan background</td></tr>
+<tr><td>Stil</td><td>Kart çizimin <strong>simplified versiyonu</strong> — sticker hissi</td></tr>
+<tr><td>Renk paleti</td><td>Kart imajıyla tutarlı</td></tr>
+<tr><td>Klasör (Unity)</td><td><code>Assets/ARFishing/Content/Icons/</code></td></tr>
+<tr><td>Dosya adı</td><td><code>icon_&lt;creatureId&gt;.png</code></td></tr>
+<tr><td>Unity import</td><td>Sprite (2D and UI), Pixels Per Unit = 256, Mesh Type = Tight</td></tr>
+</tbody>
+</table>
+
+<p><strong>Kullanım</strong>: InfoPanel'in canlı ikonu, ProjectionPanel preview, Summary scanned grid chip'leri.</p>
+
+<div class="callout info">
+<h4>★ İdeal ikon</h4>
+<p style="margin: 0;">Silüet net, arka plan transparan, gölge yok, 64×64'e küçültüldüğünde hâlâ tanınabilir.</p>
+</div>
+
+<!-- 7. 20 Canlı -->
+<h2 id="canlilar"><span class="num">7</span>20 Canlı — Sanat Yönü ve TR Anlatım Scripti</h2>
+
+<p>Her canlı için: ID + display name + sanat yönü ipuçları + TR anlatım scripti (voice talent'a verilecek metin).</p>
+
+<p>Anlatım scriptleri <strong>~40–50 TR kelime, ~15–18 sn</strong> hedeflenmiştir. Voice talent / copywriter ton uyumu için hafifçe revize edebilir; <strong>maksimum 25 sn aşılmamalıdır</strong>.</p>
+
+<div class="creature-grid">
+
+<!-- 1 octopus -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">1</span>
+    <h3>Ahtapot<span class="id">octopus</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yumuşak kırmızı-kahverengi tonlar. 8 kol zarif şekilde yayılır, mantle nefes alıyor gibi hafifçe şişer-iner. Hafif kamuflaj gradient'i (renk geçişi). Kompozisyon: spiral, kollar dışa açık.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir ahtapot. Mercan resiflerinde, kayalıkların arasında yaşar. Yengeçler ve küçük balıklarla beslenir. En şaşırtıcı özelliği renk değiştirerek kamufle olabilmesi - hatta dar yarıklara bile sığar! Avlanma ve habitat kaybı onu tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 2 moon-jellyfish -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">2</span>
+    <h3>Ay Denizanası<span class="id">moon-jellyfish</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Açık Deniz</span>
+      <span class="tag">Süzerek Beslenen</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yarı şeffaf mavi-beyaz, kubbeli üst, dokunaçlar uzun ince dalgalanır. Hafif iç ışıltı (subtle emissive). Açık deniz boşluğunda süzülme hissi.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir ay denizanası. Açık denizlerde, suyun içinde nazikçe süzülür. Süzerek beslenir - plankton ve küçük canlıları yakalar. Bazı denizanaları ışık saçabilir! Deniz kirliliği ve iklim değişikliği onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 3 clownfish -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">3</span>
+    <h3>Palyaço Balığı<span class="id">clownfish</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Hepçil</span>
+      <span class="tag">Av</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Parlak turuncu + beyaz dikey şeritler + siyah kontur. Sevimli ifade, küçük yuvarlak göz. Arka planda anemon dokunaçları ipucu opsiyonel.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir palyaço balığı. Mercan resiflerinde, anemonların arasında yaşar. Anemonun zehirli dokunaçlarından etkilenmez - ikisi birlikte yaşar! Plankton ve küçük canlıları yer. Mercan beyazlaması onların evini tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 4 great-white-shark -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">4</span>
+    <h3>Beyaz Köpekbalığı<span class="id">great-white-shark</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Açık Deniz</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Gri-mavi sırt, beyaz alt. Sleek torpedo silüet. Dişler hafifçe görünür ama <strong>korkutucu değil</strong> (ağzı kapalı veya hafif aralık). Güçlü ama dostça bir varlık.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir beyaz köpekbalığı. Açık denizlerde dolaşır. Bir damla kanı kilometrelerce uzaktan algılayabilir! Çok güçlü bir yüzücüdür ve küçük balıklarla beslenir. Avlanma ve plastik kirliliği onları azaltıyor. Onları korumalıyız.</p></div>
+  </div>
+</article>
+
+<!-- 5 seahorse -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">5</span>
+    <h3>Denizatı<span class="id">seahorse</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Süzerek Beslenen</span>
+      <span class="tag">Av</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Pastel sarı veya turkuaz. Karakteristik kıvrık kuyruk + at-başı silüeti. Küçük dorsal fin titreşim animasyonu.</div>
+    <div class="script"><strong>Narration (~18 sn)</strong><p class="quote">Bu canlı bir denizatı. Mercan resiflerinde, deniz çayırlarına tutunarak yaşar. Süzerek küçük canlıları yer. En özel yanı: erkekler yumurtaları kendi kesesinde taşır ve yavruları dünyaya getirir! Avlanma ve habitat kaybı onları azaltıyor.</p></div>
+  </div>
+</article>
+
+<!-- 6 moray-eel -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">6</span>
+    <h3>Müren<span class="id">moray-eel</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yeşil-sarı gradient gövde, uzun ince silüet. Başı kayalıktan çıkmış pozisyon (opsiyonel arka plan ipucu). Hafif yılansı dalgalanma.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir müren. Mercan resiflerinde kayalıkların arasında saklanır. Geceleri avlanır - balıkları ve ahtapotları yer. İki tane çenesi vardır - birini ileri uzatıp avını yakalar! Avlanma ve habitat kaybı onu tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 7 stingray -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">7</span>
+    <h3>Vatoz<span class="id">stingray</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yumuşak gri-mavi sırt, beyaz alt. Geniş diamond silüet. Kuyrukta belirgin ama abartılı olmayan diken. Hafif kanat çırpma hareketi.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir vatoz. Deniz tabanında, kumun altına saklanarak yaşar. Küçük balıkları ve kabukluları yer. Kuyruğundaki dikende zehir bulunur - bu onun savunmasıdır! Avlanma ve ağlara takılma onu tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 8 anglerfish -->
+<article class="creature cat-deep">
+  <header>
+    <span class="badge-num">8</span>
+    <h3>Fener Balığı<span class="id">anglerfish</span></h3>
+    <div class="tags">
+      <span class="tag">Derin Deniz</span>
+      <span class="tag">Derin Deniz</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Koyu mor / koyu mavi gövde. <strong>Başındaki ışık emissive material</strong> ile parlaklayan sarı (~1.5x base intensity). Geniş ağız belli ama abartılı değil — bilim olduğu kadar çocuk dostu. Karanlık derinlik hissi.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir fener balığı. Güneş ışığının ulaşamadığı çok derin denizlerde yaşar. Başındaki ışıkla avlarını çeker - karanlıkta yanan küçük bir lamba gibi! Etle beslenir. Derin deniz balıkçılığı onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 9 parrotfish -->
+<article class="creature cat-fish">
+  <header>
+    <span class="badge-num">9</span>
+    <h3>Papağan Balığı<span class="id">parrotfish</span></h3>
+    <div class="tags">
+      <span class="tag">Balık</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Otçul</span>
+      <span class="tag">Temizleyici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Çok renkli (mavi-yeşil-turuncu degradesi). Papağan gibi karakteristik <strong>gaga vurgusu</strong>. Pulları belirgin.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir papağan balığı. Mercan resiflerinde yaşar ve mercanları gagası gibi sert ağzıyla kemirir. Sindirdiği taşları kum hâline getirir - plajların kumu kısmen ondandır! Mercan beyazlaması habitatını tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 10 crab -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">10</span>
+    <h3>Yengeç<span class="id">crab</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Hepçil</span>
+      <span class="tag">Temizleyici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Kırmızı-turuncu kabuk, geniş kıskaçlar belli. Kabukta hafif doku detayı. Karakter pose'u: hafif yan duruş.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir yengeç. Deniz tabanında, kayalıklar arasında yaşar. Yanlamasına yürür! Yiyebileceği her şeyle beslenir - ölü canlıları temizler. Sert kabuğu zırh gibi onu korur. Avlanma ve habitat kaybı onu tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 11 starfish -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">11</span>
+    <h3>Deniz Yıldızı<span class="id">starfish</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Parlak turuncu veya pembe-mor. 5 kol simetrik (rotational simetri <strong>modelde OK</strong> ama kart tasarımında değil — kart asimetrik çevre öğeleriyle dengelenmeli). Yüzeyde küçük doku detayı.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir deniz yıldızı. Deniz tabanında, mercanların ve kayaların üzerinde yaşar. Midyeleri açıp içlerini yiyebilir! En şaşırtıcı özelliği: kopan bir kolunu yeniden büyütebilir. Kirlilik ve hastalıklar onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 12 mussel -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">12</span>
+    <h3>Midye<span class="id">mussel</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Süzerek Beslenen</span>
+      <span class="tag">Temizleyici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Koyu mavi-siyah dış kabuk, hafif aralık (içi görünür). İnci-beyaz iç. Suyu süzdüğünü gösteren çok hafif partikel akışı opsiyonel.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir midye. Deniz tabanında, kayalara yapışarak yaşar. Suyu süzerek beslenir. Bir midye saatte litrelerce suyu temizleyebilir - denizin doğal filtresidir! Kirlilik ve aşırı toplama onları azaltıyor.</p></div>
+  </div>
+</article>
+
+<!-- 13 squid -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">13</span>
+    <h3>Mürekkep Balığı<span class="id">squid</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Açık Deniz</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Pastel pembe-mor gradient. 10 dokunaç (8 kol + 2 uzun tentacle). Sleek torpido vücut. Yan fin'ler hafif dalgalanır.</div>
+    <div class="script"><strong>Narration (~16 sn)</strong><p class="quote">Bu canlı bir mürekkep balığı. Açık denizlerde yüzer ve küçük balıklarla beslenir. Tehlike anında siyah mürekkep bulutu salar ve hızla kaçar - sihirli bir kaçış! Avlanma ve plastik kirliliği onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 14 sea-urchin -->
+<article class="creature cat-invert">
+  <header>
+    <span class="badge-num">14</span>
+    <h3>Deniz Kestanesi<span class="id">sea-urchin</span></h3>
+    <div class="tags">
+      <span class="tag">Omurgasız</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Otçul</span>
+      <span class="tag">Temizleyici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Koyu mor küre + uzun siyah dikenler. Geometrik, neredeyse minimalist. Dikenler hafif radyal hareket.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir deniz kestanesi. Deniz tabanında, kayalıkların üzerinde yaşar. Algleri yer ve resifi temiz tutar - küçük ama önemli bir bahçıvan! Dikenleri onu korur. Asit kirliliği ve habitat kaybı onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 15 coral -->
+<article class="creature cat-coral">
+  <header>
+    <span class="badge-num">15</span>
+    <h3>Mercan<span class="id">coral</span></h3>
+    <div class="tags">
+      <span class="tag">Mercan</span>
+      <span class="tag">Mercan Resifi</span>
+      <span class="tag">Süzerek Beslenen</span>
+      <span class="tag">Barınak Sağlayıcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Çok renkli koloni (sarı, pembe, turuncu kombinasyonu). Branching coral şekli + polip detayı. Hafif polip animasyonu (uzar-kısalır). Bu <strong>resifin temel taşı</strong>, görsel olarak güçlü bir varlık olmalı.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir mercan. Sıcak ve sığ denizlerde, koloniler hâlinde yaşar. Süzerek beslenir. Aslında binlerce canlıya ev sahipliği yapan canlı kayalıklardır! Mercan beyazlaması ve iklim değişikliği mercanları azaltıyor.</p></div>
+  </div>
+</article>
+
+<!-- 16 green-algae -->
+<article class="creature cat-prod">
+  <header>
+    <span class="badge-num">16</span>
+    <h3>Yeşil Alg<span class="id">green-algae</span></h3>
+    <div class="tags">
+      <span class="tag">Üretici</span>
+      <span class="tag">Yüzey</span>
+      <span class="tag">Fotosentez Yapan</span>
+      <span class="tag">Üretici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Parlak emerald yeşil. Dalgalanan thallus / yaprak benzeri yapı. Su altı şaft hissi. Sudan ışıklar geçer (subtle emissive caustic dokunuş opsiyonel).</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir yeşil alg. Denizin yüzeyine yakın, güneş ışığının ulaştığı yerlerde yaşar. Güneş ışığıyla kendi besinini üretir ve denize oksijen verir! Tüm deniz canlılarının havasını sağlar. Kirlilik onları tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 17 seagrass -->
+<article class="creature cat-prod">
+  <header>
+    <span class="badge-num">17</span>
+    <h3>Deniz Çayırı<span class="id">seagrass</span></h3>
+    <div class="tags">
+      <span class="tag">Üretici</span>
+      <span class="tag">Deniz Tabanı</span>
+      <span class="tag">Fotosentez Yapan</span>
+      <span class="tag">Barınak Sağlayıcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yumuşak yeşil bıçak yapraklar, hafif akıntı dalgalanması. Taban çayırı kompozisyonu. Aralarında küçük balıklar (opsiyonel art direction çevre öğesi).</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir deniz çayırı. Deniz tabanında sualtı çayırları oluşturur. Güneşten besin üretir. Bu çayırlar küçük balıklara saklanacak yer verir - sualtı parkı gibi! Gemi çapaları ve kirlilik onları azaltıyor.</p></div>
+  </div>
+</article>
+
+<!-- 18 plankton -->
+<article class="creature cat-prod">
+  <header>
+    <span class="badge-num">18</span>
+    <h3>Plankton<span class="id">plankton</span></h3>
+    <div class="tags">
+      <span class="tag">Üretici</span>
+      <span class="tag">Yüzey</span>
+      <span class="tag">Fotosentez Yapan</span>
+      <span class="tag">Üretici</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Stilize tek karakter (mikroskobik görünüm büyütülmüş) <strong>veya</strong> abstract küme (çok sayıda partikel). Açık mavi-yeşil. Her iki yön de kabul.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı plankton. Gözle göremeyecek kadar küçüktür ama her yerdedir - milyarlarcası denizde süzülür! Güneşten besin üretir. Tüm deniz canlılarının yiyeceğinin başlangıcıdır. Deniz sıcaklığı artışı planktonu tehdit ediyor.</p></div>
+  </div>
+</article>
+
+<!-- 19 sea-turtle -->
+<article class="creature cat-reptile">
+  <header>
+    <span class="badge-num">19</span>
+    <h3>Deniz Kaplumbağası<span class="id">sea-turtle</span></h3>
+    <div class="tags">
+      <span class="tag">Sürüngen</span>
+      <span class="tag">Açık Deniz</span>
+      <span class="tag">Hepçil</span>
+      <span class="tag">Av</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Yumuşak yeşil-kahve kabuk pattern. Geniş yüzgeçler. Sevimli yüz ifadesi (büyük ama doğal göz). Yüzme pozu: yüzgeçler yana açık.</div>
+    <div class="script"><strong>Narration (~17 sn)</strong><p class="quote">Bu canlı bir deniz kaplumbağası. Açık denizlerde binlerce kilometre yüzer! Hem otçul hem etçildir. Doğduğu kıyıya yumurtlamak için geri döner - inanılmaz bir yolculuk! Plastik kirliliği ve avlanma onları tehlikeye atıyor.</p></div>
+  </div>
+</article>
+
+<!-- 20 dolphin -->
+<article class="creature cat-mammal">
+  <header>
+    <span class="badge-num">20</span>
+    <h3>Yunus<span class="id">dolphin</span></h3>
+    <div class="tags">
+      <span class="tag">Memeli</span>
+      <span class="tag">Açık Deniz</span>
+      <span class="tag">Etçil</span>
+      <span class="tag">Avcı</span>
+    </div>
+  </header>
+  <div class="body">
+    <div class="art"><strong>Sanat yönü</strong>Gümüş gri sırt + beyaz alt. Sleek torpedo silüet. <strong>Gülümseyen ağız ifadesi</strong> (yunus karakteristiği). Sıçrama veya yüzme pozu.</div>
+    <div class="script"><strong>Narration (~18 sn)</strong><p class="quote">Bu canlı bir yunus. Açık denizlerde gruplar hâlinde yaşar. Bir memelidir - akciğerle nefes alır! Sesle birbiriyle konuşur ve birlikte avlanır. Plastik kirliliği ve gürültü onları tehdit ediyor. Denizleri sessiz tutalım.</p></div>
+  </div>
+</article>
+
+</div>
+
+<!-- 8. Üretim Akışı -->
+<h2 id="uretim-akisi"><span class="num">8</span>Üretim Akışı</h2>
+
+<h3>Faz 1 — Pilot (3 canlı, ~2 hafta)</h3>
+<p>Stil rehberini valide etmek için 3 farklı <strong>ekosistem rolü</strong>nden örnek:</p>
+<ul>
+  <li><code>octopus</code> (Predator + Invertebrate + Reef)</li>
+  <li><code>coral</code> (ShelterProvider + Coral + Reef)</li>
+  <li><code>plankton</code> (Producer + Producer + Surface)</li>
+</ul>
+<p>Tüm 4 üretim hattı bu 3 için tamamlanır. <strong>Eğitmen + Unity dev review</strong>. Stil rehberi finalize.</p>
+
+<h3>Faz 2 — Geri kalan 17, batch'ler hâlinde</h3>
+<table>
+<thead><tr><th>Batch</th><th>Canlılar</th><th>Tema</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>clownfish, parrotfish, seahorse, moray-eel</td><td>Resif balıkları</td></tr>
+<tr><td>2</td><td>great-white-shark, dolphin, moon-jellyfish, squid, sea-turtle</td><td>Açık deniz</td></tr>
+<tr><td>3</td><td>crab, starfish, mussel, sea-urchin, stingray, seagrass</td><td>Deniz tabanı + üreticiler</td></tr>
+<tr><td>4</td><td>anglerfish, green-algae</td><td>Derin deniz + son üretici</td></tr>
+</tbody>
+</table>
+<p>Her batch teslimi sonrası <strong>review checkpoint</strong> (1–2 gün): Unity entegrasyonu + cihaz testi + revizyon listesi.</p>
+
+<h3>Pilot testi</h3>
+<p>20 canlı tamamlandıktan sonra <strong>3 sınıf pilot seansı</strong>:</p>
+<ul>
+  <li>5 öğrenci + 1 tablet, 35–45 dk</li>
+  <li>Eğitmen ve çocuk geri bildirimi toplanır</li>
+  <li>Voice talent ton uyumu, kart tracking güvenilirliği, model net görünürlüğü değerlendirilir</li>
+</ul>
+
+<!-- 9. Teslim Formatı -->
+<h2 id="teslim-formati"><span class="num">9</span>Teslim Formatı</h2>
+
+<p>Artist'lerin shared cloud folder'a teslim ettiği yapı:</p>
+
+<pre style="background: var(--code-bg); padding: 16px 20px; border-radius: 8px; overflow-x: auto;"><code>deliveries/
+  3d-models/
+    octopus/
+      creature_octopus.fbx           # rigged + animated
+      creature_octopus_albedo.png    # 512x512
+      creature_octopus_emissive.png  # 512x512, opsiyonel
+      preview.gif                    # 1-2 sn idle turntable, review için
+  audio/
+    octopus/
+      narration_octopus.wav          # mono, 22 kHz, ≤25 sn
+      transcript_octopus.txt         # okunan TR metin, kayıt sonrası finalize
+  cards/
+    octopus/
+      card_octopus_print.pdf         # CMYK, A6 + 3mm bleed, crop marks
+      card_octopus_tracker.png       # RGB, 1024x1024, Unity image library için
+  icons/
+    octopus/
+      icon_octopus.png               # 256x256 transparent PNG</code></pre>
+
+<div class="callout info">
+<h4>★ Unity dev'in entegrasyon adımları (sanatçının yapması gerekmez)</h4>
+<ol style="margin: 0;">
+  <li>FBX'i Unity'e import → URP/Lit material assign → Animator wrap → prefab kaydet</li>
+  <li>Prefab'ı <code>CreatureDefinition.ModelPrefab</code> field'ına drag</li>
+  <li>WAV'ı Unity'e import → <code>CreatureDefinition.NarrationClip</code> field'ına drag</li>
+  <li>Icon PNG'yi import (Texture Type = Sprite) → <code>CreatureDefinition.Icon</code> field'ına drag</li>
+  <li>Tracker PNG'yi <code>CardLibrary.asset</code> entry'sine drag (entry name = <code>creatureId</code>)</li>
+  <li><code>ARFishing → Validate All Creature Definitions</code> → temiz olmalı</li>
+</ol>
+</div>
+
+<!-- 10. Kabul Kriterleri -->
+<h2 id="kabul"><span class="num">10</span>Kabul Kriterleri</h2>
+
+<p>Bir canlının <strong>"tamamlandı"</strong> sayılması için <strong>tüm</strong> aşağıdaki kontrollerin geçmesi gerekir:</p>
+
+<h3>Otomatik kontroller</h3>
+<ul class="checklist">
+  <li><code>ARFishing → Validate All Creature Definitions</code> → 0 hata</li>
+  <li><code>CreatureDefinition</code> asset'inde 4 referans dolu (ModelPrefab, NarrationClip, Icon, ReferenceImageName)</li>
+  <li>Narration clip süresi ≤ 25 sn</li>
+  <li>Model prefab tek material, ≤3,000 tris</li>
+</ul>
+
+<h3>Manuel kontroller</h3>
+<ul class="checklist">
+  <li>Editor'da XR Simulation environment'a tracker PNG eklenmiş, <strong>2 farklı açıdan</strong> başarıyla algılanıyor</li>
+  <li>Gerçek Android tablet'te basılı kart <strong>2 farklı ışıkta</strong> (sınıf, hafif gölgeli) tracker'a takılıyor (&gt;2 sn hold tracking)</li>
+  <li>3D model kart üzerinde <strong>doğru ölçekte</strong> görünüyor (~10 cm), pivot kart merkezinde</li>
+  <li>Idle animation seamless döngü (pop yok)</li>
+  <li>Anlatım sesi tabletin hoparlöründen <strong>sınıf gürültüsünde anlaşılır</strong></li>
+  <li>Anlatım scripti eğitmen tarafından bilimsel doğruluk açısından onaylanmış</li>
+</ul>
+
+<h3>Pilot test kapısı</h3>
+<ul class="checklist">
+  <li>3 sınıf pilot testi tamamlandı</li>
+  <li>Çocukların %80+'i kartı 5 sn içinde tarayabildi</li>
+  <li>Eğitmen geri bildirimi entegre edildi</li>
+</ul>
+
+<!-- 11. SFX Spec -->
+<h2 id="spec-sfx"><span class="num">11</span>SFX Spec (Polish ses efektleri)</h2>
+
+<p>F9.1 fazında <code>SfxPlayer</code> service + 3 placeholder SFX scaffold'u kod tarafında hazır. Production'a geçişte gerçek SFX seti üretilmeli. Tek bir designer / composer üretmeli (brand consistency için).</p>
+
+<h3>Genel teknik spec</h3>
+
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Format</td><td>WAV (16-bit PCM) <strong>veya</strong> OGG, <strong>mono</strong>, <strong>22 kHz</strong></td></tr>
+<tr><td>Süre</td><td>0.05–1.0 sn (tek SFX)</td></tr>
+<tr><td>Loop (ambient için)</td><td>OGG, seamless döngü</td></tr>
+<tr><td>Normalize</td><td>Peak −6 dB (PlayOneShot ile mixed sound üst üste binebilir)</td></tr>
+<tr><td>Klasör</td><td><code>Assets/ARFishing/Content/Audio/Sfx/</code></td></tr>
+<tr><td>Dosya adı</td><td><code>sfx_&lt;id&gt;.wav</code></td></tr>
+</tbody>
+</table>
+
+<h3>Genel ses yönü</h3>
+<ul>
+  <li><strong>Mood</strong>: gentle, sea-themed, calming. Cartoonish overload yok (boing, slide whistle).</li>
+  <li><strong>Çocuk dostu</strong>: korkutucu / sert tonlar yok. Negatif feedback bile yumuşak.</li>
+  <li><strong>Tablet hoparlörü dostu</strong>: heavy bass distort eder. Mid-range odaklı.</li>
+  <li><strong>Sustained tone yok</strong> (&gt;1s): narration kesintisi yaratır.</li>
+</ul>
+
+<h3>SFX listesi (öncelik sırasıyla)</h3>
+
+<table>
+<thead><tr><th>ID</th><th>Kullanım</th><th>Süre</th><th>Ton karakteri</th></tr></thead>
+<tbody>
+<tr><td><code>sfx_correct</code></td><td>Quiz doğru cevap</td><td>~0.4 s</td><td>Yükselen majör arpej (placeholder C5-E5-G5)</td></tr>
+<tr><td><code>sfx_incorrect</code></td><td>Quiz yanlış cevap</td><td>~0.3 s</td><td>Alçalan, yumuşak (placeholder A4-F4)</td></tr>
+<tr><td><code>sfx_scan</code></td><td>Kart algılandı</td><td>~0.08 s</td><td>Kısa "ping" (placeholder D6 blip)</td></tr>
+<tr><td><code>sfx_tap</code></td><td>UI button tap</td><td>~0.05 s</td><td>Subtle click</td></tr>
+<tr><td><code>sfx_panel_open</code></td><td>Panel slide-in (PanelTween)</td><td>~0.2 s</td><td>Yumuşak swoosh</td></tr>
+<tr><td><code>sfx_panel_close</code></td><td>Panel slide-out</td><td>~0.2 s</td><td>Reverse swoosh</td></tr>
+<tr><td><code>sfx_quiz_start</code></td><td>Quiz state girişi</td><td>~0.6 s</td><td>Drum hit + chime</td></tr>
+<tr><td><code>sfx_summary</code></td><td>Summary'ye giriş</td><td>~0.8 s</td><td>Triumphant chord</td></tr>
+<tr><td><code>sfx_score_tick</code></td><td>ScoreTextAnimator her sayım</td><td>~0.04 s</td><td>Subtle tick</td></tr>
+<tr><td><code>sfx_creature_appear</code></td><td>3D model spawn</td><td>~0.4 s</td><td>Magic shimmer</td></tr>
+<tr><td><code>sfx_teacher_open</code></td><td>Teacher panel açma</td><td>~0.15 s</td><td>Authority tone</td></tr>
+<tr><td><code>sfx_long_press_charge</code></td><td>Toggle long-press tick</td><td>~0.05 s</td><td>Build-up tick</td></tr>
+<tr><td><code>sfx_idle_ambient</code></td><td>Idle state background loop</td><td>≤30 s loop</td><td>Sea ambient (ultra subtle, volume 0.15 max)</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Reject kriterleri</h4>
+<ul style="margin: 0;">
+  <li>1+ sn sustained tone</li>
+  <li>Stereo dosya</li>
+  <li>Heavy bass / sub-bass</li>
+  <li>Cartoon-style FX (boing, slide whistle)</li>
+  <li>Loud / piercing high frequencies (&gt;3 kHz peak)</li>
+  <li>Vocal samples (TR sözcükler narration'la çakışır)</li>
+</ul>
+</div>
+
+<h3>Teslim ve entegrasyon</h3>
+<p>Üretici WAV dosyalarını shared folder'a koyar. Unity dev:</p>
+<ol>
+  <li>WAV'ları <code>Assets/ARFishing/Content/Audio/Sfx/</code> altına import eder</li>
+  <li><code>SfxPlayer</code> inspector'ından clip referanslarını gerçek dosyalarla replace eder (placeholder otomatik override edilmez)</li>
+  <li>Volume slider'larından balans</li>
+</ol>
+
+<!-- 12. İllüstrasyon Spec -->
+<h2 id="spec-illustration"><span class="num">12</span>2D İllüstrasyon Spec</h2>
+
+<p>Idle splash + UI decoration için 2D illustration. F9'da <code>IdleBackgroundAnimator</code> procedural bubble particle üretir; production'da illustrated background + sahil dekorasyonu gerekir.</p>
+
+<h3>Genel teknik spec</h3>
+
+<table>
+<thead><tr><th>Alan</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Format</td><td>PNG (transparan veya solid), 24-bit</td></tr>
+<tr><td>Renk modu</td><td>sRGB</td></tr>
+<tr><td>Stil</td><td>Aynı palet ailesi (canlı kartlarıyla tutarlı line weight + saturation)</td></tr>
+<tr><td>Klasör</td><td><code>Assets/ARFishing/Content/UI/Illustrations/</code></td></tr>
+</tbody>
+</table>
+
+<h3>İhtiyaç listesi (öncelik sırasıyla)</h3>
+
+<table>
+<thead><tr><th>Asset</th><th>Kullanım</th><th>Boyut</th><th>Format</th><th>Öncelik</th></tr></thead>
+<tbody>
+<tr><td><code>illustration_idle_seascape</code></td><td>Idle panel background</td><td>2160×3840 (portrait tablet)</td><td>PNG</td><td><strong>P0</strong></td></tr>
+<tr><td><code>illustration_waves_top</code></td><td>Top header dekorasyon</td><td>2160×400, tileable</td><td>PNG transparent</td><td><strong>P0</strong></td></tr>
+<tr><td><code>illustration_waves_bottom</code></td><td>Bottom footer dekorasyon</td><td>2160×300</td><td>PNG transparent</td><td>P1</td></tr>
+<tr><td><code>illustration_quiz_thinking</code></td><td>Quiz wait state visual</td><td>512×512</td><td>PNG transparent</td><td>P1</td></tr>
+<tr><td><code>illustration_summary_celebration</code></td><td>Summary screen art</td><td>1024×1024</td><td>PNG transparent</td><td>P1</td></tr>
+<tr><td><code>illustration_mascot</code></td><td>Proje mascot (opsiyonel)</td><td>1024×1024</td><td>PNG transparent</td><td>P2</td></tr>
+<tr><td><code>illustration_parallax_far</code></td><td>Idle background derin su</td><td>2160×3840</td><td>PNG</td><td>P2</td></tr>
+<tr><td><code>illustration_parallax_mid</code></td><td>Idle background orta</td><td>2160×3840</td><td>PNG transparent</td><td>P2</td></tr>
+<tr><td><code>illustration_parallax_near</code></td><td>Idle background ön</td><td>2160×3840</td><td>PNG transparent</td><td>P2</td></tr>
+</tbody>
+</table>
+
+<h3>Sanat yönü</h3>
+<ul>
+  <li>Aynı stil ailesi (canlı kartları + UI ikonlarıyla tutarlı palet + line weight)</li>
+  <li>Pastel / yumuşak tonlar — overstimulating değil</li>
+  <li>Türkiye sahil estetiği opsiyonel (kıyı şeridi, Akdeniz tonları, sıcak coral + cool blue)</li>
+  <li>Bir bakışta tanınabilir (idle splash 3 sn'de "deniz keşfi" hissi vermeli)</li>
+</ul>
+
+<h3>Idle seascape kompozisyonu</h3>
+
+<p>3-layer parallax önerisi (sahne wiring'inde kullanılabilir):</p>
+
+<pre style="background: var(--code-bg); padding: 16px 20px; border-radius: 8px; overflow-x: auto;"><code>illustration_parallax_far       → derin mavi, uzak su, hafif silüetler
+illustration_parallax_mid       → mid-water, geçen balıklar (silüet)
+illustration_parallax_near      → ön plan dalgalar, su yüzeyi
+illustration_idle_seascape      → tüm 3 layer flat tek PNG (parallax istenmezse)</code></pre>
+
+<p>P0 fazda tek PNG (<code>illustration_idle_seascape</code>) yeterli. P2 fazda 3 layer açıp <code>IdleBackgroundAnimator</code>'ı disable ederek statik parallax sahnesi.</p>
+
+<div class="callout warn">
+<h4>⊘ Reject kriterleri</h4>
+<ul style="margin: 0;">
+  <li>Photorealistic render</li>
+  <li>Aşırı saturasyon / neon</li>
+  <li>Korkutucu deniz canavarları (ahtapot bile sevimli)</li>
+  <li>Çocuk olmayan figürler (sadece deniz canlıları)</li>
+  <li>Marka/brand referansları (üçüncü taraf logo, karakter)</li>
+</ul>
+</div>
+
+<h3>Teslim ve entegrasyon</h3>
+<p>Üretici PNG dosyalarını shared folder'a koyar. Unity dev:</p>
+<ol>
+  <li>PNG'leri <code>Assets/ARFishing/Content/UI/Illustrations/</code> altına import</li>
+  <li>Sprite import settings: Sprite (2D and UI), Mesh Type = Full Rect, sRGB color space</li>
+  <li>IdlePanel'in arka planına Image component olarak ekle</li>
+  <li>P0 senaryoda <code>IdleBackgroundAnimator</code>'ı ya disable et ya da bubble alpha'sını düşür (illüstrasyonu kapatmasın)</li>
+  <li>P2 senaryoda 3 layer'ı ayrı child Image olarak ekle, basit Update animation ile parallax tetikle</li>
+</ol>
+
+<!-- 13. Referanslar -->
+<h2 id="referanslar"><span class="num">13</span>Referanslar</h2>
+
+<p><strong>Kod tarafı referansı</strong>:</p>
+<ul>
+  <li>Veri kontratı: <code>Assets/ARFishing/Scripts/Creatures/CreatureDefinition.cs</code></li>
+  <li>Doğruluk validator: <code>Assets/ARFishing/Scripts/Editor/CreatureValidationTool.cs</code></li>
+  <li>MVP içerik scaffold: <code>Assets/ARFishing/Scripts/Editor/CreateMvpContentMenu.cs</code></li>
+  <li>SFX player: <code>Assets/ARFishing/Scripts/Narration/SfxPlayer.cs</code></li>
+  <li>Idle background: <code>Assets/ARFishing/Scripts/UI/IdleBackgroundAnimator.cs</code></li>
+  <li>Proje genel rehber: <code>CLAUDE.md</code> (kök) — "MVP creature content set (20)" ve "Physical card specs" bölümleri</li>
+</ul>
+
+<p><strong>Sorular için iletişim</strong>: Unity geliştirme tarafı asset entegrasyonunu yönetir; sanat yönü / kopya soruları için eğitsel danışman + ürün sahibi.</p>
+
+<hr style="margin: 64px 0 32px 0; border: none; border-top: 1px solid var(--line);">
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Görünenin Ötesinde Bir Deniz · Artist Brief · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>

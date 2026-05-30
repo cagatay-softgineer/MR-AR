@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dokümantasyon — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:        #0e2a47;
+    --ocean:       #1e5f8e;
+    --surf:        #4ea7c9;
+    --foam:        #f0f7fb;
+    --sand:        #f7f3eb;
+    --coral:       #ff7a59;
+    --coral-soft:  #fde6df;
+    --warn:        #c0392b;
+    --good:        #2e8b57;
+    --ink:         #1b2733;
+    --muted:       #5a6b7a;
+    --line:        #e2e8ee;
+    --bg:          #ffffff;
+    --code-bg:     #f3f5f8;
+
+    /* audience accents */
+    --aud-artist:    #ff7a59;
+    --aud-teacher:   #4ea7c9;
+    --aud-onboard:   #1e5f8e;
+    --aud-shipping:  #0e2a47;
+    --aud-privacy:   #2e8b57;
+    --aud-qa:        #c9802e;
+    --aud-iteration: #7c3aed;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 32px 96px 32px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 64px 56px;
+    border-radius: 16px;
+    margin-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -100px;
+    bottom: -100px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78em;
+    opacity: 0.85;
+    margin: 0 0 8px 0;
+  }
+  .hero h1 {
+    margin: 0 0 16px 0;
+    font-size: 2.8em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hero .sub {
+    font-size: 1.15em;
+    opacity: 0.92;
+    max-width: 700px;
+    margin: 0 0 12px 0;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+    font-size: 0.88em;
+  }
+  .hero .meta strong {
+    display: block;
+    font-size: 0.7em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 2px;
+  }
+
+  /* ---------- role finder ---------- */
+  .role-finder {
+    margin-bottom: 56px;
+  }
+  .role-finder h2 {
+    font-size: 1.5em;
+    color: var(--deep);
+    margin: 0 0 8px 0;
+  }
+  .role-finder p {
+    color: var(--muted);
+    margin: 0 0 20px 0;
+  }
+  .role-chips {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .role-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: var(--foam);
+    border-radius: 24px;
+    text-decoration: none;
+    color: var(--deep);
+    font-weight: 500;
+    font-size: 0.95em;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+  .role-chip:hover {
+    background: white;
+    border-color: var(--coral);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 42, 71, 0.08);
+  }
+  .role-chip .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .role-chip[data-aud="artist"]   .dot { background: var(--aud-artist); }
+  .role-chip[data-aud="teacher"]  .dot { background: var(--aud-teacher); }
+  .role-chip[data-aud="onboard"]  .dot { background: var(--aud-onboard); }
+  .role-chip[data-aud="shipping"] .dot { background: var(--aud-shipping); }
+  .role-chip[data-aud="qa"]       .dot { background: var(--aud-qa); }
+  .role-chip[data-aud="privacy"]  .dot { background: var(--aud-privacy); }
+  .role-chip[data-aud="iteration"] .dot { background: var(--aud-iteration); }
+
+  /* ---------- docs grid ---------- */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  .doc-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+  .doc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(14, 42, 71, 0.08);
+  }
+
+  .doc-card .accent-bar {
+    height: 5px;
+    width: 100%;
+  }
+  .doc-card[data-aud="artist"]   .accent-bar { background: var(--aud-artist); }
+  .doc-card[data-aud="teacher"]  .accent-bar { background: var(--aud-teacher); }
+  .doc-card[data-aud="onboard"]  .accent-bar { background: var(--aud-onboard); }
+  .doc-card[data-aud="shipping"] .accent-bar { background: var(--aud-shipping); }
+  .doc-card[data-aud="qa"]       .accent-bar { background: var(--aud-qa); }
+  .doc-card[data-aud="privacy"]  .accent-bar { background: var(--aud-privacy); }
+  .doc-card[data-aud="iteration"] .accent-bar { background: var(--aud-iteration); }
+
+  .doc-card .header {
+    padding: 24px 28px 16px 28px;
+  }
+  .doc-card .audience-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .doc-card[data-aud="artist"]   .audience-badge { background: rgba(255, 122, 89, 0.12); color: var(--aud-artist); }
+  .doc-card[data-aud="teacher"]  .audience-badge { background: rgba(78, 167, 201, 0.12); color: var(--aud-teacher); }
+  .doc-card[data-aud="onboard"]  .audience-badge { background: rgba(30, 95, 142, 0.12); color: var(--aud-onboard); }
+  .doc-card[data-aud="shipping"] .audience-badge { background: rgba(14, 42, 71, 0.12); color: var(--aud-shipping); }
+  .doc-card[data-aud="qa"]       .audience-badge { background: rgba(201, 128, 46, 0.12); color: var(--aud-qa); }
+  .doc-card[data-aud="privacy"]  .audience-badge { background: rgba(46, 139, 87, 0.12); color: var(--aud-privacy); }
+  .doc-card[data-aud="iteration"] .audience-badge { background: rgba(124, 58, 237, 0.12); color: var(--aud-iteration); }
+
+  .doc-card h2 {
+    margin: 0 0 6px 0;
+    font-size: 1.4em;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+  }
+  .doc-card .filename {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82em;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .doc-card .body {
+    padding: 8px 28px 20px 28px;
+    flex: 1;
+  }
+  .doc-card .summary {
+    color: var(--ink);
+    font-size: 0.95em;
+    margin: 12px 0 16px 0;
+  }
+  .doc-card .when {
+    background: var(--sand);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 0.88em;
+  }
+  .doc-card .when strong {
+    color: var(--coral);
+    text-transform: uppercase;
+    font-size: 0.74em;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .doc-card .inside h4 {
+    text-transform: uppercase;
+    font-size: 0.74em;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 16px 0 8px 0;
+  }
+  .doc-card .inside ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 0.9em;
+  }
+  .doc-card .inside li {
+    margin: 4px 0;
+    color: var(--ink);
+  }
+
+  .doc-card .stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    font-size: 0.82em;
+    color: var(--muted);
+  }
+  .doc-card .stats .stat strong {
+    color: var(--deep);
+    font-size: 1.05em;
+    display: block;
+  }
+
+  .doc-card .actions {
+    padding: 18px 28px;
+    background: var(--foam);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .doc-card .cta {
+    flex: 1;
+    text-align: center;
+    background: var(--deep);
+    color: white;
+    text-decoration: none;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: background 0.2s ease;
+  }
+  .doc-card[data-aud="artist"]   .cta { background: var(--aud-artist); }
+  .doc-card[data-aud="teacher"]  .cta { background: var(--aud-teacher); }
+  .doc-card[data-aud="onboard"]  .cta { background: var(--aud-onboard); }
+  .doc-card[data-aud="shipping"] .cta { background: var(--aud-shipping); }
+  .doc-card[data-aud="qa"]       .cta { background: var(--aud-qa); }
+  .doc-card[data-aud="privacy"]  .cta { background: var(--aud-privacy); }
+  .doc-card[data-aud="iteration"] .cta { background: var(--aud-iteration); }
+  .doc-card .cta:hover { filter: brightness(1.1); }
+
+  .doc-card .secondary {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.85em;
+    padding: 11px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  .doc-card .secondary:hover {
+    color: var(--deep);
+    background: white;
+  }
+
+  /* ---------- rulebook section ---------- */
+  .rulebook {
+    background: linear-gradient(135deg, var(--deep) 0%, #1a3a5e 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 56px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .rulebook .left {
+    min-width: 0;
+  }
+  .rulebook .label {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.74em;
+    opacity: 0.7;
+    margin: 0 0 8px 0;
+  }
+  .rulebook h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.5em;
+    color: white;
+    letter-spacing: -0.01em;
+  }
+  .rulebook p {
+    margin: 0;
+    opacity: 0.92;
+    font-size: 0.96em;
+  }
+  .rulebook code {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 1px 8px;
+    border-radius: 3px;
+  }
+  .rulebook .cta {
+    background: white;
+    color: var(--deep);
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.92em;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .rulebook .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ---------- decision matrix ---------- */
+  .matrix {
+    margin-bottom: 56px;
+  }
+  .matrix h2 {
+    font-size: 1.5em;
+    color: var(--deep);
+    margin: 0 0 8px 0;
+  }
+  .matrix > p {
+    color: var(--muted);
+    margin: 0 0 20px 0;
+  }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.94em;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .matrix-table th {
+    background: var(--foam);
+    color: var(--deep);
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 0.84em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--line);
+  }
+  .matrix-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table .ref {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+    color: var(--ocean);
+  }
+
+  /* ---------- footer ---------- */
+  footer.page-foot {
+    border-top: 1px solid var(--line);
+    padding: 32px 0;
+    color: var(--muted);
+    font-size: 0.88em;
+    text-align: center;
+  }
+  footer.page-foot a {
+    color: var(--ocean);
+    text-decoration: none;
+  }
+  footer.page-foot a:hover { text-decoration: underline; }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { font-size: 11pt; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .doc-card { break-inside: avoid; page-break-inside: avoid; }
+    .role-finder, .rulebook { break-inside: avoid; page-break-inside: avoid; }
+    a { color: var(--ink); }
+  }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 800px) {
+    main { padding: 20px 20px 80px 20px; }
+    .hero { padding: 40px 28px; border-radius: 12px; }
+    .hero h1 { font-size: 2em; }
+    .docs-grid { grid-template-columns: 1fr; }
+    .rulebook { grid-template-columns: 1fr; padding: 28px; }
+    .rulebook .cta { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Dokümantasyon · Tek Giriş</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">AR destekli deniz ekosistemi eğitim uygulaması. Üretim ekibi, eğitmenler ve geliştiriciler için yazılı dört doküman; hangisini ne zaman okuyacağını gösteren navigasyon.</p>
+  <div class="meta">
+    <div><strong>Platform</strong>Unity 6 · AR Foundation 6.4</div>
+    <div><strong>Hedef kitle</strong>7–12 yaş çocuk</div>
+    <div><strong>Doküman sayısı</strong>4 stakeholder + 1 rulebook</div>
+    <div><strong>Dil</strong>Türkçe</div>
+  </div>
+</header>
+
+<!-- Role finder -->
+<section class="role-finder">
+  <h2>Sen kimsin?</h2>
+  <p>Hangi dokümana ihtiyacın olduğunu hızlıca seç — sayfa otomatik kaydırılır.</p>
+  <div class="role-chips">
+    <a href="#artist-brief" class="role-chip" data-aud="artist">
+      <span class="dot"></span>
+      <span>Sanatçı / Vendor</span>
+    </a>
+    <a href="#teacher-guide" class="role-chip" data-aud="teacher">
+      <span class="dot"></span>
+      <span>Eğitmen / Öğretmen</span>
+    </a>
+    <a href="#engineer-onboarding" class="role-chip" data-aud="onboard">
+      <span class="dot"></span>
+      <span>Dev — Yeni katıldım</span>
+    </a>
+    <a href="#build-distribution" class="role-chip" data-aud="shipping">
+      <span class="dot"></span>
+      <span>Dev — Cihaza çıkarıyorum</span>
+    </a>
+    <a href="#device-test" class="role-chip" data-aud="qa">
+      <span class="dot"></span>
+      <span>QA — Cihazda test ediyorum</span>
+    </a>
+    <a href="#privacy-policy" class="role-chip" data-aud="privacy">
+      <span class="dot"></span>
+      <span>Privacy — Store listing</span>
+    </a>
+    <a href="#pilot-feedback" class="role-chip" data-aud="iteration">
+      <span class="dot"></span>
+      <span>Pilot sonrası — iterasyon karar verme</span>
+    </a>
+  </div>
+</section>
+
+<!-- Docs grid -->
+<section class="docs-grid">
+
+  <!-- Artist Brief -->
+  <article class="doc-card" id="artist-brief" data-aud="artist">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Sanatçı / Vendor</span>
+      <h2>Artist Brief</h2>
+      <p class="filename">ArtistBrief.html · ArtistBrief.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">20 deniz canlısı için 4 üretim hattının (3D model, TR seslendirme, basılı A6 kart, UI ikonu) tam spec'i.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        Üretim sözleşmesi öncesi spec olarak. Üretim sırasında reference. Pilot faz canlıları teslim edilirken kabul kriteri olarak.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>4 üretim hattının teknik spec'leri (poly count, ses format, kart laminasyon vb.)</li>
+          <li>20 canlının her biri için sanat yönü + tam TR anlatım scripti</li>
+          <li>Üretim akışı: pilot 3 + 4 batch</li>
+          <li>Teslim klasör yapısı + kabul kriterleri</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>11</strong>bölüm</div>
+        <div class="stat"><strong>~4.500</strong>kelime</div>
+        <div class="stat"><strong>~30–45 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="ArtistBrief.html" class="cta">HTML olarak aç</a>
+      <a href="ArtistBrief.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Teacher Guide -->
+  <article class="doc-card" id="teacher-guide" data-aud="teacher">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Eğitmen / Öğretmen</span>
+      <h2>Eğitmen Kılavuzu</h2>
+      <p class="filename">TeacherGuide.html · TeacherGuide.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">35–45 dk sınıf etkinliğini yöneten eğitmen için adım adım kılavuz, gözlem rubriği ve sınıfta masada tutulacak hızlı referans kartı.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        Etkinlik öncesi 1 gün hazırlık olarak. Etkinlik sırasında "hızlı referans" sayfası masada. Etkinlik sonrası geri bildirim toplama kılavuzu olarak.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>Hazırlık checklist (teknik, materyal, sınıf düzeni)</li>
+          <li>5-aşamalı oturum scripti (merak → ekosistem → keşif → quiz → kapanış)</li>
+          <li>7 maddelik gözlem rubriği (1–4 puan)</li>
+          <li>5 yaygın sorun + çözümleri</li>
+          <li>Yazdırılabilir hızlı referans kartı (tek sayfa)</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>10</strong>bölüm</div>
+        <div class="stat"><strong>~2.300</strong>kelime</div>
+        <div class="stat"><strong>~15–20 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="TeacherGuide.html" class="cta">HTML olarak aç</a>
+      <a href="TeacherGuide.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Engineer Onboarding -->
+  <article class="doc-card" id="engineer-onboarding" data-aud="onboard">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Dev · Yeni katıldım</span>
+      <h2>Engineer Onboarding</h2>
+      <p class="filename">EngineerOnboarding.html · EngineerOnboarding.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">Projeye yeni katılan Unity dev için repo turu — 8 fazlık inşaat tarihi, modül haritası, FSM diyagramı, sahne wiring, dev görev örnekleri.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        İlk gün cover-to-cover. Sonra reference olarak. Yeni feature eklerken pattern örnekleri için. Sahne wiring yaparken dönüş noktası.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>Day-one checklist (Unity Hub'dan Play tuşuna)</li>
+          <li>F1-F8 faz tarihi (her fazın ne eklediği)</li>
+          <li>Module map + ASCII Activity FSM diyagramı</li>
+          <li>Sahne wiring sıkıştırılmış özeti (CLAUDE.md detay)</li>
+          <li>Editor menü referansı + yaygın dev görev örnekleri</li>
+          <li>Conventions + privacy stance + AR Foundation 6.x API gotcha'lar</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>14</strong>bölüm</div>
+        <div class="stat"><strong>~3.500</strong>kelime</div>
+        <div class="stat"><strong>~45–60 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="EngineerOnboarding.html" class="cta">HTML olarak aç</a>
+      <a href="EngineerOnboarding.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Build & Distribution -->
+  <article class="doc-card" id="build-distribution" data-aud="shipping">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Dev · Cihaza çıkarıyorum</span>
+      <h2>Build & Distribution</h2>
+      <p class="filename">BuildAndDistribution.html · BuildAndDistribution.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">Production build pipeline: Android (ARCore) + iOS (ARKit), signing, store/MDM/TestFlight dağıtım, KVKK/GDPR/COPPA compliance.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        İlk production build öncesi cover-to-cover. Her release döngüsü öncesi checklist olarak. Store/TestFlight submission öncesi compliance teyit.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>Tek seferlik proje ayarları (identifier, signing, icon)</li>
+          <li>Android: keystore + Custom AndroidManifest (INTERNET removal)</li>
+          <li>iOS: Player Settings + Xcode signing + Camera Usage Description</li>
+          <li>9 dağıtım kanalı karşılaştırması (Play Store / App Store / TestFlight / MDM / Enterprise / Apple School Manager + diğer)</li>
+          <li>Build size optimization + performance hedefleri</li>
+          <li>Privacy compliance formları + sorun giderme + 15 maddelik release checklist</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>11</strong>bölüm</div>
+        <div class="stat"><strong>~3.500</strong>kelime</div>
+        <div class="stat"><strong>~30 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="BuildAndDistribution.html" class="cta">HTML olarak aç</a>
+      <a href="BuildAndDistribution.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Device Test Protocol -->
+  <article class="doc-card" id="device-test" data-aud="qa">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">QA · Cihazda test ediyorum</span>
+      <h2>Cihaz Test Protokolü</h2>
+      <p class="filename">DeviceTestProtocol.html · DeviceTestProtocol.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">Gerçek tablet'te (Android + iOS) MVP build'in uçtan uca QA testi için adım-adım protokol. Pilot test öncesi sign-off için.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        Her release döngüsü öncesi cihaz testi olarak. Pilot test izni için sign-off zorunlu. Bug raporlama şablonu eklenmiş — tester direkt doldurabilir.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>4 cihaz kategorisi önerisi + test materyali</li>
+          <li>Smoke test (5 dk) + functional test (15 dk) — 11 + 35+ test case</li>
+          <li>Tüm 20 canlı için kart başına 4 kontrol</li>
+          <li>Performance ölçüm hedefleri (FPS, RAM, battery)</li>
+          <li>Privacy stance cihaz seviyesinde doğrulama (network monitor)</li>
+          <li>8 edge case + bug raporlama şablonu + sign-off sayfası</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>9</strong>bölüm</div>
+        <div class="stat"><strong>~3.500</strong>kelime</div>
+        <div class="stat"><strong>~45 dk</strong>test/cihaz</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="DeviceTestProtocol.html" class="cta">HTML olarak aç</a>
+      <a href="DeviceTestProtocol.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Privacy Policy -->
+  <article class="doc-card" id="privacy-policy" data-aud="privacy">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Privacy · Store listing</span>
+      <h2>Gizlilik Politikası</h2>
+      <p class="filename">PrivacyPolicy.html · PrivacyPolicy.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">Store listing için minimal privacy policy. "Zero data collected" deklarasyonu + KVKK/GDPR/COPPA referansları + store form cevap şablonu.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        Apple App Store + Google Play submission öncesi. Privacy policy URL store form alanlarında zorunlu — bu HTML'i bir static host'a (GitHub Pages, Netlify) yükle, URL'i form'a yapıştır.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>"Hiçbir veri toplanmaz" net deklarasyonu</li>
+          <li>Toplanmayanlar listesi (kimlik, konum, telemetri, vb.)</li>
+          <li>Network kullanımı yok + Android INTERNET permission removal</li>
+          <li>Mevzuat uyum tablosu (KVKK / GDPR / COPPA / Apple / Google)</li>
+          <li>Google Play Data Safety + App Store Connect Privacy form cevapları</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>9</strong>bölüm</div>
+        <div class="stat"><strong>~700</strong>kelime</div>
+        <div class="stat"><strong>~5 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="PrivacyPolicy.html" class="cta">HTML olarak aç</a>
+      <a href="PrivacyPolicy.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+  <!-- Pilot Feedback Protocol -->
+  <article class="doc-card" id="pilot-feedback" data-aud="iteration">
+    <div class="accent-bar"></div>
+    <div class="header">
+      <span class="audience-badge">Pilot · İterasyon karar matrisi</span>
+      <h2>Pilot Feedback Protokolü</h2>
+      <p class="filename">PilotFeedbackProtocol.html · PilotFeedbackProtocol.md</p>
+    </div>
+    <div class="body">
+      <p class="summary">Sınıf pilot testlerinden toplanan geri bildirimin nasıl agregat / kategorize / triyaj edileceği ve hangi doc'un/dosyanın güncelleneceğine dair karar matrisi.</p>
+
+      <div class="when">
+        <strong>Ne zaman</strong>
+        Pilot seans tamamlandıktan 24 saat içinde — feedback agregat sırasında. İterasyon planı + sonraki pilot çıktıları kararı için. Pilot başarı kriterleri sağlandıktan sonra public release planı başlar.
+      </div>
+
+      <div class="inside">
+        <h4>İçerde</h4>
+        <ul>
+          <li>3 feedback kaynağı (eğitmen rubrik, çocuk, QA gözlem)</li>
+          <li>4-kategori sistem (UX / Content / Technical / Pedagogical)</li>
+          <li>4-severity ladder (Blocker / Major / Minor / Note) renkli badge'ler</li>
+          <li>12 senaryolu karar matrisi (feedback → dosya)</li>
+          <li>Doc-update playbook (her doc için ne durumda güncellenir)</li>
+          <li>Feedback log şablonu (tester direkt doldurabilir)</li>
+          <li>Pilot başarı kriterleri (3 pilot ortalama)</li>
+        </ul>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>10</strong>bölüm</div>
+        <div class="stat"><strong>~2.500</strong>kelime</div>
+        <div class="stat"><strong>~15 dk</strong>okuma</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="PilotFeedbackProtocol.html" class="cta">HTML olarak aç</a>
+      <a href="PilotFeedbackProtocol.md" class="secondary">Markdown</a>
+    </div>
+  </article>
+
+</section>
+
+<!-- Rulebook -->
+<section class="rulebook">
+  <div class="left">
+    <p class="label">Always-on Reference</p>
+    <h2>CLAUDE.md — Mühendislik kural kitabı</h2>
+    <p>Repo root'unda. asmdef yapısı, sahne wiring, naming conventions, MVP içerik seti tablosu, privacy stance, AR Foundation 6.x API kuralları. <strong>Her dev seansında yanında açık olmalı.</strong> Yukarıdaki 4 doküman walkthrough; <code>CLAUDE.md</code> referans.</p>
+  </div>
+  <a href="../CLAUDE.md" class="cta">CLAUDE.md'yi aç</a>
+</section>
+
+<!-- Decision matrix -->
+<section class="matrix">
+  <h2>Karar matrisi</h2>
+  <p>"Şunu yapmak istiyorum, nereye bakmalıyım?" — kısa cevap tablosu.</p>
+
+  <table class="matrix-table">
+    <thead>
+      <tr><th>Yapmak istiyorum</th><th>Bak</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Yeni bir 3D canlı modeli sipariş etmek</td><td><span class="ref">ArtistBrief §3 + §7 (per-canlı)</span></td></tr>
+      <tr><td>Voice talent bulup TR anlatım kaydettirmek</td><td><span class="ref">ArtistBrief §4 + §7 (script'ler)</span></td></tr>
+      <tr><td>Sınıf etkinliğini ilk kez yönetmek</td><td><span class="ref">TeacherGuide §1-7</span></td></tr>
+      <tr><td>Etkinlik sırasında tek sayfa cheat sheet</td><td><span class="ref">TeacherGuide §10 (Hızlı Referans)</span></td></tr>
+      <tr><td>Projeye yeni dev olarak ilk gün</td><td><span class="ref">EngineerOnboarding §1-3 + §14</span></td></tr>
+      <tr><td>Yeni bir creature ya da quiz task eklemek</td><td><span class="ref">EngineerOnboarding §9</span></td></tr>
+      <tr><td>Activity sahnesini sıfırdan wire etmek</td><td><span class="ref">CLAUDE.md "Scene wiring"</span></td></tr>
+      <tr><td>Sahne wiring özetini hızlıca görmek</td><td><span class="ref">EngineerOnboarding §7</span></td></tr>
+      <tr><td>İlk Android APK'yı build etmek</td><td><span class="ref">BuildAndDistribution §2-3</span></td></tr>
+      <tr><td>İlk iOS Xcode projesini çıkarmak</td><td><span class="ref">BuildAndDistribution §4</span></td></tr>
+      <tr><td>Play Store data safety form'unu doldurmak</td><td><span class="ref">BuildAndDistribution §7</span></td></tr>
+      <tr><td>Production release öncesi checklist</td><td><span class="ref">BuildAndDistribution §10</span></td></tr>
+      <tr><td>Privacy stance gerekçesini açıklamak</td><td><span class="ref">CLAUDE.md "Privacy stance"</span></td></tr>
+      <tr><td>20 canlının metadata tablosunu görmek</td><td><span class="ref">CLAUDE.md "MVP creature content set"</span></td></tr>
+      <tr><td>Cihazda gerçek QA testi koşturmak</td><td><span class="ref">DeviceTestProtocol §2-6</span></td></tr>
+      <tr><td>Tüm 20 kartı cihazda doğrulamak</td><td><span class="ref">DeviceTestProtocol §3.2</span></td></tr>
+      <tr><td>Pilot test öncesi sign-off</td><td><span class="ref">DeviceTestProtocol §8</span></td></tr>
+      <tr><td>Privacy policy URL'i store'a vermek</td><td><span class="ref">PrivacyPolicy</span></td></tr>
+      <tr><td>Play Store Data Safety form cevabı</td><td><span class="ref">PrivacyPolicy "Store Listing Cevap Şablonu"</span></td></tr>
+      <tr><td>App Store App Privacy section cevabı</td><td><span class="ref">PrivacyPolicy "Store Listing Cevap Şablonu"</span></td></tr>
+      <tr><td>SFX seti veya 2D illustration sipariş etmek</td><td><span class="ref">ArtistBrief §11-12</span></td></tr>
+      <tr><td>Pilot sonrası feedback'i triyaj etmek</td><td><span class="ref">PilotFeedbackProtocol §2-4</span></td></tr>
+      <tr><td>Hangi doc'un hangi durumda güncelleneceği</td><td><span class="ref">PilotFeedbackProtocol §6</span></td></tr>
+      <tr><td>Pilot başarı kriterleri sağlandı mı kontrolü</td><td><span class="ref">PilotFeedbackProtocol §9</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer class="page-foot">
+  <p>Görünenin Ötesinde Bir Deniz · Dokümantasyon · v1<br>
+  Tüm dokümanlar self-contained HTML — internet bağlantısı gerekmez. <a href="../CLAUDE.md">CLAUDE.md</a> tüm zorunlu kuralları içerir.</p>
+</footer>
+
+</main>
+
+</body>
+</html>

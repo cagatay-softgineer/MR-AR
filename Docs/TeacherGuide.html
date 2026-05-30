@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eğitmen Kılavuzu — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:        #0e2a47;
+    --ocean:       #1e5f8e;
+    --surf:        #4ea7c9;
+    --foam:        #f0f7fb;
+    --sand:        #f7f3eb;
+    --coral:       #ff7a59;
+    --coral-soft:  #fde6df;
+    --warn:        #c0392b;
+    --warn-soft:   #fde5e5;
+    --good:        #2e8b57;
+    --good-soft:   #e2f4ea;
+    --ink:         #1b2733;
+    --muted:       #5a6b7a;
+    --line:        #e2e8ee;
+    --bg:          #ffffff;
+    --code-bg:     #f3f5f8;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, pre, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  aside.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.92em;
+  }
+  aside.toc .toc-title {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a {
+    text-decoration: none;
+    color: var(--deep);
+    display: block;
+    padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  aside.toc a:hover {
+    border-left-color: var(--coral);
+    background: var(--foam);
+  }
+
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 56px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    bottom: -80px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78em;
+    opacity: 0.85;
+    margin: 0 0 8px 0;
+  }
+  .hero h1 {
+    margin: 0 0 12px 0;
+    font-size: 2.4em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hero .sub {
+    font-size: 1.05em;
+    opacity: 0.92;
+    max-width: 600px;
+    margin: 0;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .hero .meta div { font-size: 0.88em; }
+  .hero .meta strong {
+    display: block;
+    font-size: 0.72em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 2px;
+  }
+
+  /* ---------- typography ---------- */
+  h2 {
+    margin: 56px 0 16px 0;
+    font-size: 1.7em;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--coral);
+    display: inline-block;
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: var(--coral);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7em;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 {
+    margin: 32px 0 12px 0;
+    font-size: 1.2em;
+    color: var(--ocean);
+  }
+  h4 {
+    margin: 18px 0 8px 0;
+    font-size: 1em;
+    color: var(--deep);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  p { margin: 0 0 14px 0; }
+  a { color: var(--ocean); }
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  blockquote {
+    margin: 0;
+    padding: 16px 20px;
+    background: var(--sand);
+    border-left: 4px solid var(--coral);
+    border-radius: 6px;
+    font-style: italic;
+    color: var(--deep);
+  }
+
+  /* ---------- tables ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px 0;
+    font-size: 0.94em;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  th {
+    background: var(--foam);
+    color: var(--deep);
+    font-weight: 600;
+    font-size: 0.88em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--deep);
+  }
+
+  /* ---------- callouts ---------- */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  .callout.warn  { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good  { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info  { background: var(--foam);      border-left-color: var(--ocean); }
+  .callout.sand  { background: var(--sand);      border-left-color: var(--coral); }
+  .callout h4 { margin: 0 0 8px 0; }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  /* ---------- printable checklist ---------- */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 20px 0;
+  }
+  .checklist li {
+    padding: 8px 0 8px 32px;
+    position: relative;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 8px;
+    color: var(--ocean);
+    font-size: 1.2em;
+    line-height: 1.2;
+  }
+
+  /* ---------- timeline ---------- */
+  .timeline {
+    display: flex;
+    gap: 8px;
+    margin: 24px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .timeline-phase {
+    flex: 1;
+    padding: 16px 14px;
+    color: white;
+    text-align: center;
+    font-size: 0.85em;
+    position: relative;
+  }
+  .timeline-phase .duration {
+    display: block;
+    font-size: 0.75em;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .timeline-phase .name {
+    font-weight: 600;
+    font-size: 1em;
+  }
+  .timeline-phase:nth-child(1) { background: #5a8fbf; flex: 1; }
+  .timeline-phase:nth-child(2) { background: #4a82b5; flex: 1; }
+  .timeline-phase:nth-child(3) { background: #2e699f; flex: 3.5; }
+  .timeline-phase:nth-child(4) { background: #225685; flex: 1; }
+  .timeline-phase:nth-child(5) { background: #163f66; flex: 1; }
+
+  /* ---------- role grid ---------- */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .role-card {
+    background: var(--sand);
+    border-radius: 10px;
+    padding: 16px;
+    border-top: 4px solid var(--coral);
+  }
+  .role-card .name {
+    font-weight: 700;
+    color: var(--deep);
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+  .role-card .desc {
+    font-size: 0.9em;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ---------- phase blocks ---------- */
+  .phase {
+    background: var(--foam);
+    border-left: 4px solid var(--ocean);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 20px 0;
+  }
+  .phase header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .phase header .stage {
+    background: var(--ocean);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .phase header .stage-title {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--deep);
+  }
+  .phase header .duration {
+    margin-left: auto;
+    background: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ---------- troubleshooting Q&A ---------- */
+  .qa {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .qa .q {
+    background: var(--warn-soft);
+    color: var(--warn);
+    padding: 12px 18px;
+    font-weight: 600;
+    font-size: 0.95em;
+    border-bottom: 1px solid var(--line);
+  }
+  .qa .q::before { content: "⚠ "; }
+  .qa .a {
+    padding: 14px 18px;
+    background: white;
+  }
+  .qa .a ul { margin: 0; padding-left: 18px; }
+
+  /* ---------- rubric ---------- */
+  .rubric { font-size: 0.92em; }
+  .rubric th.score, .rubric td.score { text-align: center; width: 60px; }
+
+  /* ---------- quick reference card ---------- */
+  .quick-ref {
+    background: var(--deep);
+    color: white;
+    padding: 32px;
+    border-radius: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.95em;
+    line-height: 1.7;
+    margin: 24px 0;
+  }
+  .quick-ref h3 {
+    margin: 0 0 24px 0;
+    color: white;
+    font-family: -apple-system, sans-serif;
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 1em;
+    opacity: 0.85;
+  }
+  .quick-ref .section {
+    margin: 16px 0;
+    border-left: 3px solid var(--coral);
+    padding-left: 16px;
+  }
+  .quick-ref .section .label {
+    color: var(--coral);
+    text-transform: uppercase;
+    font-size: 0.78em;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .quick-ref hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin: 24px 0;
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { font-size: 11pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .phase, .quick-ref { break-inside: avoid; page-break-inside: avoid; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    .quick-ref { page-break-before: always; }
+    .timeline-phase { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc {
+      position: static;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+    .timeline { flex-direction: column; }
+    .timeline-phase { flex: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Etkinlik Özeti</a></li>
+    <li><a href="#hazirlik">2. Hazırlık Listesi</a></li>
+    <li><a href="#kurulum">3. Etkinlik Günü Kurulum</a></li>
+    <li><a href="#roller">4. Grup Rolleri</a></li>
+    <li><a href="#akis">5. Oturum Akışı</a></li>
+    <li><a href="#gozlem">6. Gözlem Rubriği</a></li>
+    <li><a href="#geribildirim">7. Geri Bildirim</a></li>
+    <li><a href="#sorun-giderme">8. Sorun Giderme</a></li>
+    <li><a href="#gizlilik">9. Veri Gizliliği</a></li>
+    <li><a href="#hizli-referans">10. Hızlı Referans</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Eğitmen Kılavuzu · Sınıf Etkinlik Yönetimi</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">AR destekli deniz ekosistemi eğitimi. Sınıf etkinliğini yönetecek eğitmen için adım adım rehber, gözlem rubriği, sorun giderme ve sınıfta kullanılacak hızlı referans kartı.</p>
+  <div class="meta">
+    <div><strong>Yaş aralığı</strong>7–12 yaş</div>
+    <div><strong>Süre</strong>35–45 dakika</div>
+    <div><strong>Grup yapısı</strong>5 öğrenci + 1 tablet</div>
+    <div><strong>Mekan</strong>Sınıf / atölye / müze</div>
+  </div>
+</header>
+
+<!-- 1 -->
+<h2 id="ozet"><span class="num">1</span>Etkinlik Özeti</h2>
+
+<p><strong>Görünenin Ötesinde Bir Deniz</strong>, 7–12 yaş çocuklara deniz canlılarını ve ekosistem ilişkilerini AR kartlar aracılığıyla keşfettiren bir eğitim etkinliğidir.</p>
+
+<table>
+<thead><tr><th>Parametre</th><th>Değer</th></tr></thead>
+<tbody>
+<tr><td>Süre</td><td>35–45 dakika</td></tr>
+<tr><td>Grup yapısı</td><td>5 öğrenci + 1 tablet</td></tr>
+<tr><td>Kart başına süre</td><td>~2–3 dakika (her grup ~10 kart, ~20 dk keşif)</td></tr>
+<tr><td>Mekan</td><td>Sınıf, atölye, müze etkinlik alanı</td></tr>
+</tbody>
+</table>
+
+<h3>Öğrenme kazanımları</h3>
+<p>Çocuklar etkinlik sonunda:</p>
+<ul>
+  <li>Deniz ekosisteminin sadece balıklardan ibaret olmadığını fark eder.</li>
+  <li>Farklı yaşam alanlarını (yüzey, açık deniz, resif, taban, derin deniz) tanır.</li>
+  <li>Beslenme şekli ve ekosistem rolü gibi temel kavramları öğrenir.</li>
+  <li>Tehlike altındaki canlıları ve nedenlerini görür.</li>
+  <li>Bilgi keşfi için AR teknolojisinin nasıl kullanılabileceğini deneyimler.</li>
+</ul>
+
+<!-- 2 -->
+<h2 id="hazirlik"><span class="num">2</span>Etkinlik Günü Öncesi Hazırlık Listesi</h2>
+
+<h3>Teknik</h3>
+<ul class="checklist">
+  <li>Tabletler tam şarjda (her 30 dk seans için min %70)</li>
+  <li>Uygulama her tablete yüklü</li>
+  <li>Bir test tableti üzerinde uygulama açılıp test taraması yapıldı</li>
+  <li>Opsiyonel: projeksiyon kurulu, HDMI / USB-C kablo hazır</li>
+  <li>Sınıfta yeterli aydınlatma — tracker doğal veya yapay ışıkta net çalışır</li>
+</ul>
+
+<h3>Materyal</h3>
+<ul class="checklist">
+  <li>Kart setleri hazır — her grup için 10 kart (rastgele seçilmiş)</li>
+  <li>Kart kutuları gruplanmış ve etiketlenmiş</li>
+  <li>Opsiyonel: keşif formları basılmış (her öğrenciye 1)</li>
+  <li>Opsiyonel: görev kartları basılmış (her gruba 1)</li>
+</ul>
+
+<h3>Sınıf düzeni</h3>
+<ul class="checklist">
+  <li>5 kişilik gruplar belirlenmiş</li>
+  <li>Her grup masasında tablet için yer var</li>
+  <li>Opsiyonel: projeksiyon merkez görüş açısında</li>
+</ul>
+
+<!-- 3 -->
+<h2 id="kurulum"><span class="num">3</span>Etkinlik Günü Kurulum (15 dk önce)</h2>
+
+<ol>
+  <li><strong>Tabletleri aç</strong>, her birinde uygulamayı başlat.</li>
+  <li>Her tablette "Görünenin Ötesinde Bir Deniz" karşılama ekranını gör.</li>
+  <li><strong>Test taraması yap</strong> — bir kartı kamera önüne tut, model + ses gelmeli.</li>
+  <li>Kart kutularını gruplar için ayrıştır.</li>
+  <li>Opsiyonel: projeksiyona bağla, ProjectionCanvas otomatik tespit etmeli.</li>
+  <li><strong>Öğretmen modunu test et</strong> — sağ üst köşede gizli ikona <strong>1 saniye basılı tut</strong> → Öğretmen Paneli açılmalı.</li>
+</ol>
+
+<!-- 4 -->
+<h2 id="roller"><span class="num">4</span>Grup Rolleri</h2>
+
+<p>Her grup içinde 5 rol — seans içinde rotasyon önerilir.</p>
+
+<div class="role-grid">
+  <div class="role-card">
+    <div class="name">Tablet Sorumlusu</div>
+    <div class="desc">Tableti tutar, kartları kameraya gösterir.</div>
+  </div>
+  <div class="role-card">
+    <div class="name">Kart Sorumlusu</div>
+    <div class="desc">Kart kutusundan sırayla kart seçer.</div>
+  </div>
+  <div class="role-card">
+    <div class="name">Dinleme Sorumlusu</div>
+    <div class="desc">Sesli anlatımı takip eder, gruba özet geçer.</div>
+  </div>
+  <div class="role-card">
+    <div class="name">Not Sorumlusu</div>
+    <div class="desc">Canlı bilgilerini keşif formuna yazar.</div>
+  </div>
+  <div class="role-card">
+    <div class="name">Sunum Sorumlusu</div>
+    <div class="desc">Etkinlik sonunda grubu sınıfa temsil eder.</div>
+  </div>
+</div>
+
+<p>Roller eşit önemde. 35 dk içinde rotasyon yapılabilir veya seans sonunda toplu tartışma yapılır.</p>
+
+<!-- 5 -->
+<h2 id="akis"><span class="num">5</span>Oturum Akışı</h2>
+
+<div class="timeline">
+  <div class="timeline-phase"><span class="duration">5 dk</span><span class="name">Merak</span></div>
+  <div class="timeline-phase"><span class="duration">5 dk</span><span class="name">Ekosistem</span></div>
+  <div class="timeline-phase"><span class="duration">15–20 dk</span><span class="name">AR Keşif</span></div>
+  <div class="timeline-phase"><span class="duration">5 dk</span><span class="name">Quiz</span></div>
+  <div class="timeline-phase"><span class="duration">5 dk</span><span class="name">Kapanış</span></div>
+</div>
+
+<div class="phase">
+  <header>
+    <span class="stage">1</span>
+    <span class="stage-title">Merak Uyandırma</span>
+    <span class="duration">5 dk</span>
+  </header>
+  <p>Çocukların ön bilgilerini ortaya çıkar, merak duygusu oluştur. <strong>Henüz tableti dağıtma.</strong></p>
+  <p>Sorulardan 4–5'ini seç:</p>
+  <ul>
+    <li>"Denizde kimler yaşar?"</li>
+    <li>"Sizce denizde sadece balıklar mı vardır?"</li>
+    <li>"Her deniz canlısı aynı yerde mi yaşar?"</li>
+    <li>"Karanlıkta yaşayan canlılar olabilir mi?"</li>
+    <li>"Bazı canlılar neden ışık saçar veya kamufle olur?"</li>
+  </ul>
+  <blockquote>Denizi sadece dışarıdan görmek yetmez. Şimdi AR kartlarımızla denizin görünmeyen tarafını keşfedeceğiz.</blockquote>
+</div>
+
+<div class="phase">
+  <header>
+    <span class="stage">2</span>
+    <span class="stage-title">Ekosistem Tanıtımı</span>
+    <span class="duration">5 dk</span>
+  </header>
+  <p>Sade bir zincir çiz veya projeksiyona göster:</p>
+  <p style="text-align: center; font-size: 1.15em; color: var(--deep); padding: 12px; background: white; border-radius: 6px;"><strong>Canlı → Yaşam Alanı → Besin Ağı → Uyum</strong></p>
+  <ul>
+    <li><strong>Canlı</strong>: Denizde yaşayan her varlık ekosistemin bir parçasıdır.</li>
+    <li><strong>Yaşam Alanı</strong>: Bazıları yüzeye yakın, bazıları derinlerde, bazıları mercanların arasında.</li>
+    <li><strong>Besin Ağı</strong>: Canlılar birbirinin yiyeceği olabilir — kim kimi yer?</li>
+    <li><strong>Uyum</strong>: Kamuflaj, zehir, ışık saçma, hızlı yüzme — yaşamak için kendine özgü çözümler.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <header>
+    <span class="stage">3</span>
+    <span class="stage-title">AR Keşif</span>
+    <span class="duration">15–20 dk</span>
+  </header>
+  <p>Her gruba tablet + 10 kart dağıt. Kurallarını açıkla:</p>
+  <blockquote>Her kart bir deniz canlısı tanıtır. Kartı tablete tut, canlının modelini gör, sesini dinle, bilgileri not et.</blockquote>
+  <div class="callout info">
+    <h4>★ Eğitmen rolü</h4>
+    <p style="margin: 0;">Dolaşarak gözlem yap. Müdahale etme — çocuklar kendi keşif tempolarını bulsun. Sadece teknik sorun çıkarsa yaklaş.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <header>
+    <span class="stage">4</span>
+    <span class="stage-title">Mini Quiz</span>
+    <span class="duration">5 dk</span>
+  </header>
+  <ol>
+    <li>Bir tableti projeksiyona bağla (opsiyonel — gruplar kendi tabletlerinde de yapabilir).</li>
+    <li>Sağ üst köşedeki ikonu <strong>1 saniye basılı tut</strong> → Öğretmen Paneli açılır.</li>
+    <li><strong>"Mini quiz başlat"</strong> butonuna bas.</li>
+    <li>Quiz panelinde rastgele 3 görev gelir, örnek:
+      <blockquote style="margin-top: 8px;">Mercan resifinde yaşayan canlıyı bul.</blockquote>
+    </li>
+    <li>Gruplar görevini düşünür, doğru olduğunu sandıkları kartı tablete tarar.</li>
+    <li>Doğru/yanlış geri bildirimi gösterilir, puan birikir.</li>
+  </ol>
+  <div class="callout info">
+    <h4>★ Eğitmen rolü</h4>
+    <p style="margin: 0;">Doğru cevabı söyleme. Yanlış cevap geldiğinde tartışmayı kolaylaştır: "Neden böyle düşündünüz? Doğru cevap ne olabilir?"</p>
+  </div>
+</div>
+
+<div class="phase">
+  <header>
+    <span class="stage">5</span>
+    <span class="stage-title">Ekosistem Haritası + Kapanış</span>
+    <span class="duration">5 dk</span>
+  </header>
+  <p>Quiz bitince Summary ekranı gelir. Kapanış sorusunu sınıfa yönelt:</p>
+  <blockquote>Eğer bu canlılardan biri yok olursa deniz ekosistemi nasıl etkilenir?</blockquote>
+  <p>Sunum sorumluları gruplarının en çarpıcı keşfini anlatır.</p>
+</div>
+
+<!-- 6 -->
+<h2 id="gozlem"><span class="num">6</span>Sırasında Gözlem (Observation Rubric)</h2>
+
+<p>Etkinlik boyunca yanı sıra notlar al. Her madde için 1–4 (yetersiz → çok iyi):</p>
+
+<table class="rubric">
+<thead>
+<tr>
+  <th>Gözlem</th>
+  <th class="score">1</th>
+  <th class="score">2</th>
+  <th class="score">3</th>
+  <th class="score">4</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Çocuklar kartları rahat okutabiliyor mu?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Sesli anlatımı dinliyorlar mı?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Keşif formuna yazıyorlar mı?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Grup üyeleri roller arasında rotasyon yapıyor mu?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Birbirine sorular soruyorlar mı?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Eğitmene sordukları sorular ne kadar derinleşiyor?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+<tr><td>Quiz aşamasında işbirliği var mı?</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td><td class="score">☐</td></tr>
+</tbody>
+</table>
+
+<div class="callout sand">
+<h4>★ Notlar</h4>
+<p style="margin: 0;">Hangi canlılar en çok ilgi çekti, hangi sorular geldi, hangi karışıklıklar yaşandı.</p>
+</div>
+
+<!-- 7 -->
+<h2 id="geribildirim"><span class="num">7</span>Sonrası Geri Bildirim</h2>
+
+<h3>Çocuklara (5 dk sözlü veya yazılı)</h3>
+<ul>
+  <li>Hangisi sana en şaşırtıcı geldi? Niye?</li>
+  <li>En çok hangisi ilgini çekti?</li>
+  <li>Bir canlı yok olursa ekosistemde ne olur?</li>
+  <li>Tekrar yapmak ister misin?</li>
+</ul>
+
+<h3>Eğitmen kendi notları için</h3>
+<ul>
+  <li>Hangi aşama beklediğimden farklı gitti?</li>
+  <li>Hangi soru en çok cevap aldı?</li>
+  <li>Hangi teknik sorun yaşandı?</li>
+  <li>Bir dahaki seans için ne değiştirirdim?</li>
+</ul>
+
+<!-- 8 -->
+<h2 id="sorun-giderme"><span class="num">8</span>Sorun Giderme</h2>
+
+<div class="qa">
+  <div class="q">Kart tarandığında bir şey olmuyor</div>
+  <div class="a">
+    <ul>
+      <li><strong>Aydınlatma yetersiz</strong> → ışığı artır veya pencereye yakın tut</li>
+      <li><strong>Mesafe yanlış</strong> → 20–40 cm arasında tut</li>
+      <li><strong>Açı yanlış</strong> → kartı düz tut, kameraya tam dönük</li>
+      <li><strong>Kart yüzeyi parlak</strong> → kuru bezle sil</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="q">Ses gelmiyor</div>
+  <div class="a">
+    <ul>
+      <li>Tablet sesi açık mı? Yan tuşları kontrol et.</li>
+      <li>Diğer bir uygulama sesi kesti mi? Uygulamayı tekrar başlat.</li>
+      <li>Hoparlör tıkalı olabilir → toz/cisim kontrol</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="q">Uygulama donuyor / kapanıyor</div>
+  <div class="a">
+    <ul>
+      <li>Tabletten tüm uygulamaları kapat, tekrar aç.</li>
+      <li>İki seansta tekrar olursa tablet modelini not edip raporla.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="q">Quiz başlamıyor</div>
+  <div class="a">
+    <ul>
+      <li>Sağ üst ikona <strong>kısa tıklama değil, 1 saniye basılı tut</strong> (çocuk korumalı).</li>
+      <li>Öğretmen Paneli'nde "Mini quiz başlat" görünmüyorsa önce "Etkinliği başlat" gerekiyor olabilir.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="q">Projeksiyon görünmüyor</div>
+  <div class="a">
+    <ul>
+      <li>HDMI / USB-C kabloyu kontrol et.</li>
+      <li>Tabletin sistem ayarlarında "External Display" aktif mi?</li>
+      <li>Kabloyu çıkar-tak (uygulama 2 sn içinde otomatik re-route eder).</li>
+      <li>Tablet ikinci ekranı desteklemiyorsa, sınıf-paylaşım moment'lerini tek tablet üzerinde tut.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 9 -->
+<h2 id="gizlilik"><span class="num">9</span>Veri Gizliliği</h2>
+
+<div class="callout good">
+<h4>✓ Bu uygulama hiçbir kullanıcı verisi toplamaz</h4>
+<ul style="margin: 8px 0 0 0;">
+  <li><strong>İnternet bağlantısı gerekmez</strong> — tüm içerik tablette yereldir.</li>
+  <li><strong>Çocuk adı veya skor cihazı terk etmez</strong> — opsiyonel grup adı sadece tabletin yerel ayarlarında.</li>
+  <li><strong>Analytics, telemetri, crash report yok.</strong></li>
+  <li><strong>KVKK uyumlu</strong> — 18 yaş altı veri toplama yok.</li>
+</ul>
+</div>
+
+<p>Öğretmen olarak çocuklara güvenle söyleyebilirsin: <strong>"bu tablet hiçbir bilgiyi dışarı göndermiyor"</strong>.</p>
+
+<!-- 10 -->
+<h2 id="hizli-referans"><span class="num">10</span>Hızlı Referans Kartı</h2>
+
+<p>Etkinlik sırasında masada tutulmak üzere — bu sayfa yazdırıldığında tek sayfa olarak çıkar.</p>
+
+<div class="quick-ref">
+  <h3>Görünenin Ötesinde Bir Deniz · Hızlı Referans</h3>
+
+  <div class="section">
+    <span class="label">Önce · 5 dk</span><br>
+    Sorular sor, merak uyandır. Tableti dağıtma.
+  </div>
+
+  <div class="section">
+    <span class="label">Ekosistem · 5 dk</span><br>
+    Canlı → Yaşam Alanı → Besin Ağı → Uyum
+  </div>
+
+  <div class="section">
+    <span class="label">Keşif · 15–20 dk</span><br>
+    Gruplara tablet + 10 kart ver, dolaş, gözlemle.
+  </div>
+
+  <div class="section">
+    <span class="label">Quiz · 5 dk</span><br>
+    Sağ üst köşe → 1 sn basılı tut → "Mini quiz başlat"
+  </div>
+
+  <div class="section">
+    <span class="label">Kapanış · 5 dk</span><br>
+    "Bir canlı yok olursa ekosistem nasıl etkilenir?"
+  </div>
+
+  <hr>
+
+  <div class="section">
+    <span class="label">Sorun Giderme</span><br>
+    <span style="color: rgba(255,255,255,0.85);">Tracker:</span> Işık + 20–40 cm + kartı düz tut<br>
+    <span style="color: rgba(255,255,255,0.85);">Ses:</span> Sistem sesi açık mı kontrol<br>
+    <span style="color: rgba(255,255,255,0.85);">Quiz:</span> 1 sn uzun bas (kısa tıklama değil)<br>
+    <span style="color: rgba(255,255,255,0.85);">Projeksiyon:</span> Kablo çıkar-tak, 2 sn bekle
+  </div>
+</div>
+
+<hr style="margin: 64px 0 32px 0; border: none; border-top: 1px solid var(--line);">
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Görünenin Ötesinde Bir Deniz · Eğitmen Kılavuzu · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineer Onboarding — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:        #0e2a47;
+    --ocean:       #1e5f8e;
+    --surf:        #4ea7c9;
+    --foam:        #f0f7fb;
+    --sand:        #f7f3eb;
+    --coral:       #ff7a59;
+    --coral-soft:  #fde6df;
+    --warn:        #c0392b;
+    --warn-soft:   #fde5e5;
+    --good:        #2e8b57;
+    --good-soft:   #e2f4ea;
+    --ink:         #1b2733;
+    --muted:       #5a6b7a;
+    --line:        #e2e8ee;
+    --bg:          #ffffff;
+    --code-bg:     #f3f5f8;
+    --code-deep:   #1e2a38;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, pre, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  aside.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.92em;
+  }
+  aside.toc .toc-title {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a {
+    text-decoration: none;
+    color: var(--deep);
+    display: block;
+    padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  /* hero */
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 56px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    bottom: -80px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78em;
+    opacity: 0.85;
+    margin: 0 0 8px 0;
+  }
+  .hero h1 {
+    margin: 0 0 12px 0;
+    font-size: 2.4em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hero .sub { font-size: 1.05em; opacity: 0.92; max-width: 640px; margin: 0; }
+  .hero .meta { display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
+  .hero .meta div { font-size: 0.88em; }
+  .hero .meta strong {
+    display: block;
+    font-size: 0.72em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 2px;
+  }
+
+  /* typography */
+  h2 {
+    margin: 56px 0 16px 0;
+    font-size: 1.7em;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--coral);
+    display: inline-block;
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: var(--coral);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7em;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 { margin: 32px 0 12px 0; font-size: 1.2em; color: var(--ocean); }
+  h4 { margin: 18px 0 8px 0; font-size: 1em; color: var(--deep); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  p { margin: 0 0 14px 0; }
+  a { color: var(--ocean); }
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  blockquote {
+    margin: 0;
+    padding: 16px 20px;
+    background: var(--sand);
+    border-left: 4px solid var(--coral);
+    border-radius: 6px;
+    font-style: italic;
+    color: var(--deep);
+  }
+
+  /* tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px 0;
+    font-size: 0.94em;
+  }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--foam); color: var(--deep); font-weight: 600; font-size: 0.88em; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  td code { font-size: 0.9em; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--deep);
+  }
+
+  /* code blocks */
+  pre.code {
+    background: var(--code-deep);
+    color: #d6e2ee;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.88em;
+    line-height: 1.55;
+    margin: 14px 0 22px 0;
+  }
+  pre.code .kw { color: #c792ea; }
+  pre.code .str { color: #c3e88d; }
+  pre.code .com { color: #7585a3; font-style: italic; }
+
+  /* diagram preformatted */
+  pre.diagram {
+    background: var(--foam);
+    color: var(--deep);
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    margin: 14px 0 22px 0;
+    border-left: 4px solid var(--ocean);
+  }
+
+  /* faz timeline */
+  .faz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 20px 0 28px 0;
+  }
+  .faz-card {
+    background: var(--foam);
+    border-radius: 10px;
+    padding: 14px;
+    border-top: 3px solid var(--ocean);
+  }
+  .faz-card .id {
+    font-weight: 700;
+    color: var(--coral);
+    font-size: 0.85em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .faz-card .title {
+    font-weight: 600;
+    color: var(--deep);
+    font-size: 1em;
+    margin: 2px 0 6px 0;
+  }
+  .faz-card .desc {
+    font-size: 0.85em;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* callouts */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  .callout.warn  { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good  { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info  { background: var(--foam);      border-left-color: var(--ocean); }
+  .callout.sand  { background: var(--sand);      border-left-color: var(--coral); }
+  .callout h4 { margin: 0 0 8px 0; }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  /* checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 0 8px 32px;
+    position: relative;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 8px;
+    color: var(--ocean);
+    font-size: 1.2em;
+    line-height: 1.2;
+  }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+
+  /* print */
+  @media print {
+    body { font-size: 11pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    pre.code, pre.diagram { break-inside: avoid; page-break-inside: avoid; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc {
+      position: static; max-height: none; border-right: none;
+      border-bottom: 1px solid var(--line); margin-bottom: 24px;
+    }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Ürün özeti</a></li>
+    <li><a href="#day-one">2. Day-one checklist</a></li>
+    <li><a href="#fazlar">3. 8 faz tarihi</a></li>
+    <li><a href="#asmdef">4. asmdef yapısı</a></li>
+    <li><a href="#modul">5. Module haritası</a></li>
+    <li><a href="#fsm">6. Activity FSM</a></li>
+    <li><a href="#wiring">7. Sahne wiring</a></li>
+    <li><a href="#menuler">8. Editor menüleri</a></li>
+    <li><a href="#dev-tasks">9. Yaygın dev görevleri</a></li>
+    <li><a href="#run-build">10. Run / build / test</a></li>
+    <li><a href="#conventions">11. Conventions & gotcha</a></li>
+    <li><a href="#backlog">12. Backlog</a></li>
+    <li><a href="#nerede">13. Nerede ne var</a></li>
+    <li><a href="#ilk-gun">14. İlk gün önerisi</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Engineer Onboarding · Walkthrough</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">Projeye yeni katılan Unity dev için repo turu. Unity 6 / AR Foundation 6.4 / URP / Input System / XRI 3.4 zemininde, 8 fazla inşa edilmiş bir codebase'i hızlıca anlamak ve üretken olmak için.</p>
+  <div class="meta">
+    <div><strong>Unity</strong>6000.4.9f1</div>
+    <div><strong>AR Foundation</strong>6.4.3</div>
+    <div><strong>URP</strong>17.4.0</div>
+    <div><strong>XRI</strong>3.4.1</div>
+  </div>
+</header>
+
+<div class="callout sand">
+  <h4>★ İki belge, iki rol</h4>
+  <p style="margin: 0;"><code>CLAUDE.md</code> (root) <strong>kural kitabı</strong> — her seans yanında aç, asmdef / sahne wiring / conventions / MVP content set tablosu burada. Bu doküman <strong>walkthrough</strong> — bir kez oku, sonra reference olarak kullan.</p>
+</div>
+
+<!-- 1 -->
+<h2 id="ozet"><span class="num">1</span>Ürün özeti</h2>
+
+<p>Ürün adı <code>ARFishing</code> ama <strong>bu bir balıkçılık oyunu değildir</strong>. Gerçek konsept: <strong>AR destekli deniz ekosistemi eğitim uygulaması</strong> ("Görünenin Ötesinde Bir Deniz"). Hedef kitle 7–12 yaş, sınıf etkinliği, 5 öğrenci başına 1 tablet, ~35–45 dk.</p>
+
+<ul>
+  <li>Çocuklar fiziksel AR kartları tabletin kamerasına gösterir.</li>
+  <li>AR Foundation <code>ARTrackedImageManager</code> kartı tanır → ilgili <code>CreatureDefinition</code>'a map'ler.</li>
+  <li>3D model kartın üzerinde belirir + Türkçe seslendirme çalar + bilgi paneli açılır.</li>
+  <li>Etkinlik sonunda öğretmen quiz başlatır, gruplar cevap kartı tarayarak yarışır.</li>
+</ul>
+
+<p>Detaylı tasarım: <code>CLAUDE.md</code> → "What this project actually is" ve <code>Docs/TeacherGuide.html</code>.</p>
+
+<!-- 2 -->
+<h2 id="day-one"><span class="num">2</span>Day-one Checklist</h2>
+
+<table>
+<thead><tr><th>#</th><th>Adım</th><th>Notlar</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Unity Hub yükle</td><td>https://unity.com/download</td></tr>
+<tr><td>2</td><td>Unity <strong>6000.4.9f1</strong> yükle (tam sürüm)</td><td>Farklı patch silently re-import yapar</td></tr>
+<tr><td>3</td><td>Modules ekle: Android Build Support + iOS Build Support</td><td>iOS sadece macOS'ta build edilir</td></tr>
+<tr><td>4</td><td>Repo'yu klonla / proje dizinini aç</td><td><code>D:\Projects\Unity\ARFishing</code></td></tr>
+<tr><td>5</td><td>Unity Hub → "Add" → projeyi seç → "Open"</td><td>İlk import ~5–10 dk</td></tr>
+<tr><td>6</td><td>TMP Essentials dialog'u çıkarsa → "Import TMP Essentials"</td><td>Bir kerelik</td></tr>
+<tr><td>7</td><td><code>Assets/ARFishing/Scenes/Bootstrap.unity</code> aç</td><td>İlk açılışta sahne boş, normal</td></tr>
+<tr><td>8</td><td>Console temiz olmalı</td><td>Hata varsa Bölüm 11'e bak</td></tr>
+<tr><td>9</td><td><code>ARFishing → Create MVP Content (20 creatures + 8 tasks)</code></td><td>20 canlı + 8 görev asset'i</td></tr>
+<tr><td>10</td><td><code>ARFishing → Create Placeholder Models/Audio/Icons (skip existing)</code></td><td>Test için placeholder asset'ler</td></tr>
+<tr><td>11</td><td><code>ARFishing → Validate All Creature Definitions</code></td><td>0 hata bekleniyor</td></tr>
+<tr><td>12</td><td>Bootstrap'a tekrar dön, Play tuşuna bas</td><td>İlk seans için sahne wiring gerekir — Bölüm 7</td></tr>
+</tbody>
+</table>
+
+<!-- 3 -->
+<h2 id="fazlar"><span class="num">3</span>Proje şekli ve 8 faz tarihi</h2>
+
+<p>Codebase 8 fazla katmanlı şekilde inşa edildi. Her faz kendinden öncekinin üzerine bina:</p>
+
+<div class="faz-grid">
+  <div class="faz-card"><div class="id">F1</div><div class="title">İskelet</div><div class="desc">asmdef + folder + boş sahneler + ActivityController FSM + ServiceLocator</div></div>
+  <div class="faz-card"><div class="id">F2</div><div class="title">Veri</div><div class="desc">CreatureDefinition + CreatureDatabase + TaskDefinition SO'lar + validator</div></div>
+  <div class="faz-card"><div class="id">F3</div><div class="title">Marker + Viewer</div><div class="desc">AR Foundation 6.x wrap + FocusResolver + MarkerStateBridge + CreatureViewer + ContentBootstrapper</div></div>
+  <div class="faz-card"><div class="id">F4</div><div class="title">Narration + Info Panel</div><div class="desc">NarrationPlayer + InfoPanelController — tam Viewing state</div></div>
+  <div class="faz-card"><div class="id">F5</div><div class="title">Quiz + Summary</div><div class="desc">QuizController + Panel'ler + 8 placeholder görev — uçtan uca gameplay</div></div>
+  <div class="faz-card"><div class="id">F6</div><div class="title">Teacher Mode</div><div class="desc">Long-press toggle + TeacherPanel + SessionScannedTracker + Projection routing</div></div>
+  <div class="faz-card"><div class="id">F7</div><div class="title">İçerik dolumu</div><div class="desc">20 canlı + 8 görev + Mammal/Reptile/Photosynthesizer enum + TaskPresented refactor</div></div>
+  <div class="faz-card"><div class="id">F8</div><div class="title">Polish</div><div class="desc">PanelTween + 2-sn passive close + IdlePanel + placeholder icon menu + runtime display detect</div></div>
+</div>
+
+<p>Bu sıra önemli: F3 yapacaksan F2 anlamış olmalısın, F6 yapacaksan F3-F5 anlamış olmalısın. Her fazın detayı <code>CLAUDE.md</code>'de + git history'de.</p>
+
+<!-- 4 -->
+<h2 id="asmdef"><span class="num">4</span>asmdef yapısı</h2>
+
+<p>Sadece <strong>iki asmdef</strong> kullanıyoruz, hepsi <code>Assets/ARFishing/</code> altında:</p>
+
+<pre class="diagram">Assets/ARFishing/Scripts/
+  ARFishing.asmdef           # runtime — tüm gameplay kodu
+  Editor/
+    ARFishing.Editor.asmdef  # editor-only — validator + content menü'leri</pre>
+
+<h3>ARFishing.asmdef references</h3>
+<ul>
+  <li><code>Unity.XR.ARFoundation</code> + <code>Unity.XR.ARSubsystems</code> — AR tracking API</li>
+  <li><code>Unity.XR.CoreUtils</code> — XR utility types</li>
+  <li><code>Unity.XR.Interaction.Toolkit</code> — XRI runtime</li>
+  <li><code>Unity.InputSystem</code> — Input System</li>
+  <li><code>Unity.TextMeshPro</code> — TMP (henüz UI'da kullanılmıyor)</li>
+  <li><code>Unity.XR.Interaction.Toolkit.Samples.StarterAssets</code> — <strong>zorunlu</strong>, XR Origin prefab buna bağımlı</li>
+  <li><code>Unity.XR.Interaction.Toolkit.Samples.ARStarterAssets</code> — <strong>zorunlu</strong>, AR Rig prefab buna bağımlı</li>
+</ul>
+
+<p><code>UnityEngine.UI</code> auto-referenced (asmdef'te belirtmek gerekmiyor).</p>
+
+<div class="callout warn">
+<h4>⊘ Kural</h4>
+<ul style="margin: 0;">
+  <li><code>Assembly-CSharp</code>'a hiçbir şey yazma. Yeni gameplay kodu <code>ARFishing.asmdef</code> altında olur.</li>
+  <li><code>Assets/Samples/XR Interaction Toolkit/3.3.0/</code> altındaki sample asset'ler <strong>silinmez</strong> — <code>ARFishing.asmdef</code> onlara bağımlı.</li>
+</ul>
+</div>
+
+<!-- 5 -->
+<h2 id="modul"><span class="num">5</span>Module haritası</h2>
+
+<p><code>Assets/ARFishing/Scripts/</code> altındaki klasörler ve sorumlulukları:</p>
+
+<pre class="diagram">Core/        → ActivityState (enum FSM), ServiceLocator (type→instance registry),
+               ActivityController (FSM, StateChanged event, IsLegal guard)
+
+Creatures/   → CreatureCategory/Habitat/DietType/EcosystemRole (enums),
+               CreatureLabels (TR display labels via extension methods),
+               CreatureDefinition (SO), CreatureDatabase (SO + lookup)
+
+Marker/      → MarkerTracker (ARTrackedImageManager wrap, Spotted/Updated/Gone events),
+               FocusResolver (tek-odak heuristic, FocusChanged event),
+               MarkerStateBridge (FocusChanged → ActivityController state transition)
+
+Viewer/      → CreatureViewer (instantiates ModelPrefab per tracked image,
+               ShowModels flag for Quiz mode)
+
+Narration/   → NarrationPlayer (single AudioSource, plays on FocusChanged,
+               NarrationStarted/Finished events)
+
+UI/          → InfoPanelController (creature info, 2-sn passive close),
+               QuizPanelController, SummaryPanelController, IdlePanelController,
+               PanelTween (slide+fade utility)
+
+Quiz/        → MatchRule (enum), TaskDefinition (SO), TaskDatabase (SO),
+               QuizController (drives Quiz state, picks tasks, evaluates answers)
+
+Teacher/     → TeacherToggleButton (long-press gate), TeacherPanelController,
+               SessionScannedTracker (dedupe by CreatureId),
+               ProjectionCanvasRouter (display 1 routing),
+               ProjectionPanelController (class-facing content)
+
+Content/     → ContentBootstrapper (lives in Bootstrap.unity, loads DBs +
+               Activity scene + transitions FSM to Idle)
+
+Editor/      → ARFishing.Editor.asmdef, all editor menu scripts</pre>
+
+<!-- 6 -->
+<h2 id="fsm"><span class="num">6</span>Activity FSM</h2>
+
+<p><code>ActivityController</code> enum'lu basit bir state machine:</p>
+
+<pre class="diagram">                ┌────────────┐
+                │ Bootstrap  │ (ContentBootstrapper.Start sırasında)
+                └─────┬──────┘
+                      │ DB load done
+                      ▼
+                ┌────────────┐ ◄────────────┐
+        ┌────►  │   Idle     │ Restart      │
+        │       └─────┬──────┘ from anywhere│
+        │             │ Teacher → "Başla"   │
+        │             ▼                     │
+        │       ┌────────────┐              │
+   Summary─►Idle│  Scanning  │ ◄──────┐     │
+        │       └─────┬──────┘        │     │
+        │             │ card tracked  │     │
+        │             ▼               │     │
+        │       ┌────────────┐  card  │     │
+        │       │  Viewing   │ ────── ┘     │
+        │       └─────┬──────┘ removed      │
+        │             │ Teacher → "Quiz"    │
+        │             ▼                     │
+        │       ┌────────────┐              │
+        │       │   Quiz     │ ─────────────┘
+        │       └─────┬──────┘ Restart
+        │             │ 3/3 tasks
+        │             ▼
+        │       ┌────────────┐
+        └───────│  Summary   │
+                └────────────┘</pre>
+
+<p><code>ActivityController.IsLegal(from, to)</code> switch'inde tüm legal geçişler explicit. Restart escapes (<code>Scanning/Viewing/Quiz → Idle</code>) F6'da eklendi.</p>
+
+<h3>Kim hangi geçişi tetikler</h3>
+<table>
+<thead><tr><th>Geçiş</th><th>Tetikleyici</th></tr></thead>
+<tbody>
+<tr><td><code>Bootstrap → Idle</code></td><td><code>ContentBootstrapper</code> (DB load complete)</td></tr>
+<tr><td><code>Idle → Scanning</code></td><td><code>TeacherPanelController.OnStartActivity</code></td></tr>
+<tr><td><code>Scanning ↔ Viewing</code></td><td><code>MarkerStateBridge</code> (FocusChanged ile)</td></tr>
+<tr><td><code>Scanning/Viewing → Quiz</code></td><td><code>TeacherPanelController.OnStartQuiz</code></td></tr>
+<tr><td><code>Quiz → Summary</code></td><td><code>QuizController.AdvanceAfterDelay</code> (3/3 done)</td></tr>
+<tr><td><code>Summary → Idle</code></td><td><code>SummaryPanelController.OnRestartClicked</code></td></tr>
+<tr><td><code>*/Idle</code></td><td><code>TeacherPanelController.OnRestart</code> (F6 escape)</td></tr>
+</tbody>
+</table>
+
+<!-- 7 -->
+<h2 id="wiring"><span class="num">7</span>Sahne wiring (en zor kısım)</h2>
+
+<div class="callout info">
+<h4>★ Neden elle?</h4>
+<p style="margin: 0;">Sahne dosyaları (<code>.unity</code>) repo'da bilinçli olarak minimal — sadece settings block'ları. Script GUID'leri Unity-assigned, YAML'da elle component referansı yazmak fragile. Bu yüzden ilk seferinde sahne kurulumu Editor'da elle yapılır, sonra commit edilir.</p>
+</div>
+
+<p><code>CLAUDE.md</code>'de <strong>çok detaylı adım adım</strong> wiring procedure var ("Scene wiring" başlığı). Tekrar etmiyorum — sıkıştırılmış özet:</p>
+
+<h3>Bootstrap.unity</h3>
+<p>1 GameObject: <code>ContentBootstrapper</code></p>
+<ul>
+  <li>Script: <code>ContentBootstrapper</code></li>
+  <li><code>m_CreatureDatabase</code> ← <code>Assets/ARFishing/Content/CreatureDatabase.asset</code></li>
+  <li><code>m_TaskDatabase</code> ← <code>Assets/ARFishing/Content/TaskDatabase.asset</code></li>
+</ul>
+
+<h3>Activity.unity</h3>
+
+<p><strong>XR Origin (AR Rig)</strong> prefab'ını <code>Assets/Samples/XR Interaction Toolkit/3.3.0/AR Starter Assets/Prefabs/</code> altından sürükle. Root GameObject'e:</p>
+<ul>
+  <li><code>ARTrackedImageManager</code> component → <code>CardLibrary.asset</code> referansı</li>
+  <li><code>MarkerTracker</code> script → <code>m_Manager</code> + <code>m_Database</code> referansları</li>
+</ul>
+
+<p><strong>Services</strong> boş GameObject + child'lar:</p>
+<ul>
+  <li><code>ActivityController</code></li>
+  <li><code>FocusResolver</code> (+ MarkerTracker ref)</li>
+  <li><code>MarkerStateBridge</code> (+ FocusResolver + ActivityController refs)</li>
+  <li><code>CreatureViewer</code> (+ MarkerTracker ref)</li>
+  <li><code>NarrationPlayer</code> (+ AudioSource + FocusResolver ref)</li>
+  <li><code>QuizController</code> (+ 6 reference)</li>
+  <li><code>SessionScannedTracker</code> (+ Tracker + Controller refs)</li>
+</ul>
+
+<p><strong>Canvas (tablet, display 0)</strong> + child UI:</p>
+<ul>
+  <li><code>InfoPanel</code> + <code>InfoPanelController</code> (13 reference)</li>
+  <li><code>QuizPanel</code> + <code>QuizPanelController</code> (6 reference)</li>
+  <li><code>SummaryPanel</code> + <code>SummaryPanelController</code> (4 reference)</li>
+  <li><code>IdlePanel</code> + <code>IdlePanelController</code> (3 reference) — F8</li>
+  <li><code>TeacherToggleButton</code> (Image, raycastTarget=true) + script + TeacherPanel ref</li>
+  <li><code>TeacherPanel</code> + <code>TeacherPanelController</code> (5 reference)</li>
+</ul>
+
+<p>Her panel root'una opsiyonel <code>PanelTween</code> ekle (F8) → controller'ın <code>m_Tween</code> field'ına sürükle. Atlanmasa panel'ler instant snap modunda çalışır.</p>
+
+<p><strong>ProjectionCanvas (display 1, opsiyonel)</strong> + <code>ProjectionCanvasRouter</code> + <code>ProjectionPanelController</code> + 4 section + ScannedGridParent + ScannedChipPrefab.</p>
+
+<p><strong>XRReferenceImageLibrary</strong> — <code>Assets/ARFishing/Content/</code> altında <code>Create → XR → Reference Image Library</code> ile <code>CardLibrary.asset</code> oluştur. 20 entry ekle (CreatureDefinition.ReferenceImageName ile aynı isim — kebab-case), her birinde Specify Size = ON, width = 0.105 m.</p>
+
+<p>Tam adım adım için <code>CLAUDE.md</code> → "Scene wiring".</p>
+
+<!-- 8 -->
+<h2 id="menuler"><span class="num">8</span>Editor menü referansı</h2>
+
+<p>Tüm menüler <code>ARFishing</code> menübar başlığı altında:</p>
+
+<table>
+<thead><tr><th>Menü</th><th>Ne yapar</th><th>Ne zaman</th></tr></thead>
+<tbody>
+<tr><td><code>Create Example Content</code></td><td>2 canlı + database</td><td>Veri modeli iterate ederken</td></tr>
+<tr><td><code>Create MVP Content</code></td><td>20 canlı + 8 görev + databases</td><td>Asset'leri bootstrap'larken</td></tr>
+<tr><td><code>Create Placeholder Models (skip existing)</code></td><td>URP/Lit primitive prefab</td><td>Görsel asset test için</td></tr>
+<tr><td><code>Create Placeholder Audio (skip existing)</code></td><td>1.5s sine WAV</td><td>Ses asset test için</td></tr>
+<tr><td><code>Create Placeholder Icons (skip existing)</code></td><td>256×256 PNG</td><td>InfoPanel/Summary ikonu için</td></tr>
+<tr><td><code>Create Example Tasks</code></td><td>5-task standalone</td><td>Quiz iterate ederken (MVP superseded)</td></tr>
+<tr><td><code>Validate All Creature Definitions</code></td><td>kebab-case + uniqueness + dolu field + ≤25s cap</td><td>Asset değişikliği / build öncesi</td></tr>
+</tbody>
+</table>
+
+<div class="callout good">
+<h4>✓ Skip existing semantiği</h4>
+<p style="margin: 0;">3 placeholder menüsü mevcut asset'i atlar. Gerçek artist'ler 3D model/ses/ikon teslim ettiğinde placeholder'ları silmek gerekmez — re-run güvenle skip eder.</p>
+</div>
+
+<!-- 9 -->
+<h2 id="dev-tasks"><span class="num">9</span>Yaygın dev görevleri</h2>
+
+<h3>Yeni canlı ekleme (MVP set genişletme)</h3>
+<p><code>CreateMvpContentMenu.cs</code> aç → <code>creatures.Add(MakeCreature(...))</code> listesinin sonuna yeni satır ekle:</p>
+
+<pre class="code">creatures.Add(MakeCreature(<span class="str">"lobster"</span>, <span class="str">"Istakoz"</span>,
+    CreatureCategory.Invertebrate, Habitat.Seabed, DietType.Omnivore, EcosystemRole.Cleaner,
+    <span class="kw">new</span>[] { <span class="str">"avlanma"</span>, <span class="str">"habitat kaybı"</span> },
+    <span class="str">"Sert kabuğu ve büyük kıskaçlarıyla kendini savunur."</span>));</pre>
+
+<p>Sonra Unity'de:</p>
+<ol>
+  <li><code>ARFishing → Create MVP Content</code> → yeni <code>lobster.asset</code> üretilir + CreatureDatabase güncellenir</li>
+  <li><code>ARFishing → Create Placeholder Models/Audio/Icons</code> → placeholder asset'ler atanır</li>
+  <li><code>CardLibrary.asset</code>'a yeni entry: name = <code>lobster</code>, Specify Size + width = 0.105, placeholder texture</li>
+  <li><code>Validate All Creature Definitions</code> → temiz olmalı</li>
+</ol>
+
+<h3>Yeni quiz görevi ekleme</h3>
+<p>Aynı dosyada <code>tasks.Add(MakeTask(...))</code> listesine ekle:</p>
+
+<pre class="code">tasks.Add(MakeTask(<span class="str">"task-prey"</span>,
+    <span class="str">"Başka canlılara av olan bir canlı bul."</span>,
+    MatchRule.EcosystemRoleEquals, <span class="str">"Prey"</span>, <span class="kw">1</span>));</pre>
+
+<p><code>MatchValue</code> enum <strong>adı</strong> olmalı (<code>"Prey"</code>, not <code>"Av"</code>). Detay: <code>CLAUDE.md</code> → "Content authoring conventions".</p>
+
+<h3>Yeni panel ekleme (örnek: HintPanel)</h3>
+<ol>
+  <li><code>Scripts/UI/HintPanelController.cs</code> yaz, pattern:</li>
+</ol>
+
+<pre class="code"><span class="kw">public class</span> HintPanelController : MonoBehaviour
+{
+    [SerializeField] ActivityController m_Controller;
+    [SerializeField] GameObject m_PanelRoot;
+    [SerializeField] CanvasGroup m_CanvasGroup;
+    [SerializeField] PanelTween m_Tween;  <span class="com">// optional</span>
+
+    <span class="kw">void</span> Awake() {
+        <span class="kw">if</span> (m_Controller == <span class="kw">null</span>) ServiceLocator.TryGet(<span class="kw">out</span> m_Controller);
+        Hide();
+    }
+    <span class="kw">void</span> OnEnable()  { <span class="kw">if</span> (m_Controller != <span class="kw">null</span>) m_Controller.StateChanged += HandleStateChanged; }
+    <span class="kw">void</span> OnDisable() { <span class="kw">if</span> (m_Controller != <span class="kw">null</span>) m_Controller.StateChanged -= HandleStateChanged; }
+
+    <span class="kw">void</span> HandleStateChanged(ActivityState p, ActivityState n) { <span class="com">/* show/hide logic */</span> }
+    <span class="kw">void</span> SetVisible(<span class="kw">bool</span> v) { <span class="com">/* PanelTween or fallback */</span> }
+}</pre>
+
+<ol start="2">
+  <li>Activity sahnesinde Canvas altına HintPanel GameObject + UI children oluştur</li>
+  <li>HintPanelController ekle, reference'ları wire et</li>
+  <li>Opsiyonel: PanelTween ekle</li>
+</ol>
+
+<p>Pattern aynı: <code>[SerializeField]</code> reference, ServiceLocator fallback Awake'de, StateChanged subscribe.</p>
+
+<!-- 10 -->
+<h2 id="run-build"><span class="num">10</span>Run / build / test</h2>
+
+<h3>Editor (XR Simulation)</h3>
+<ol>
+  <li>Bootstrap.unity aç</li>
+  <li>Play</li>
+  <li>Bootstrap → Activity'ye geçer → Idle state</li>
+  <li>Test için <code>ActivityController</code> inspector → right-click → <code>Force: Idle → Scanning</code></li>
+  <li>XR Simulation environment'a kart texture'ı eklenmişse, model spawn olur</li>
+</ol>
+
+<h3>Android (ARCore)</h3>
+<ol>
+  <li>File → Build Profiles → Android'e geç</li>
+  <li>XR Plug-in Management → Android → AR Core Loader enabled</li>
+  <li>Build veya Build & Run</li>
+</ol>
+
+<h3>iOS (ARKit)</h3>
+<ol>
+  <li>macOS gereklidir</li>
+  <li>File → Build Profiles → iOS'a geç</li>
+  <li>XR Plug-in Management → iOS → AR Kit Loader enabled</li>
+  <li>Xcode project build</li>
+  <li>Xcode'dan archive + provisioning</li>
+</ol>
+
+<div class="callout warn">
+<h4>⊘ Test framework yok</h4>
+<p style="margin: 0;">Unity Test Framework asmdef'leri kurulmadı. Manuel testing yapıyoruz. Test eklemek istersen UPM'den Test Framework'u + yeni <code>ARFishing.Tests.asmdef</code> oluştur.</p>
+</div>
+
+<!-- 11 -->
+<h2 id="conventions"><span class="num">11</span>Conventions ve gotcha'lar</h2>
+
+<h3>Conventions</h3>
+<ul>
+  <li><strong>English code, Turkish content.</strong> Identifier'lar İngilizce. UI metni, log mesajı, narration TR.</li>
+  <li><strong>kebab-case CreatureId.</strong> <code>XRReferenceImageLibrary</code> entry name ile aynı olmalı.</li>
+  <li><strong><code>m_</code> prefix</strong> serialized field'larda. Unity convention.</li>
+  <li><strong><code>Unknown = 0</code></strong> her enum'da. Default değer "yet to fill" sinyali, validator hata olarak işaretler.</li>
+  <li><strong>ServiceLocator pattern.</strong> MonoBehaviour'lar Awake'de <code>Register(this)</code>, OnDestroy'da <code>Unregister(this)</code>. Diğerleri <code>TryGet&lt;T&gt;</code>. Inspector reference fallback olarak da var.</li>
+  <li><strong>Tüm UI panel controller'lar aynı pattern</strong>: opsiyonel <code>PanelTween m_Tween</code>, <code>SetVisible(bool)</code> tween varsa onu kullanır.</li>
+</ul>
+
+<div class="callout warn">
+<h4>⊘ Privacy stance (sert kural)</h4>
+<ul style="margin: 0;">
+  <li><strong>Hiçbir network çağrısı yok.</strong> Firebase, Sentry, GameAnalytics, vb. eklenmez.</li>
+  <li><strong>Hiçbir analytics.</strong> Unity Analytics modülü manifest'ten çıkarıldı.</li>
+  <li><strong>Android Internet permission yok.</strong></li>
+  <li>Yeni feature network gerektirse → user'a sor, otomatik ekleme.</li>
+</ul>
+</div>
+
+<h3>AR Foundation 6.x API</h3>
+
+<p>5.x API'leri <strong>gitti</strong>:</p>
+<ul>
+  <li><code>ARSessionOrigin</code> → yerine <code>XROrigin</code></li>
+  <li>Eski <code>trackedImagesChanged</code> event imzası → yerine <code>trackablesChanged</code> UnityEvent</li>
+  <li><code>ARTrackedImageManager.trackablesChanged.AddListener(...)</code> (UnityEvent, C# event değil)</li>
+  <li><code>ARTrackedImage.referenceImage.name</code> → kart name'i</li>
+  <li><code>ARTrackedImage.size.x</code> → kart genişliği (metre, image library'den gelir)</li>
+</ul>
+
+<!-- 12 -->
+<h2 id="backlog"><span class="num">12</span>Sonraki adımlar / backlog</h2>
+
+<p>F1-F8 ile MVP code-complete. Açık iş başlıkları:</p>
+
+<h3>Polish (F9 — başlanmamış)</h3>
+<ul>
+  <li>Idle splash illüstrasyonu</li>
+  <li>Score animations, transition SFX</li>
+  <li><code>PanelTween</code> initialize edge case'leri</li>
+  <li>Multi-task scoring tuning (<code>task-camouflage</code> çok dar)</li>
+</ul>
+
+<h3>İçerik üretim bekliyor</h3>
+<ul>
+  <li>20 canlının gerçek 3D modeli, TR sesi, basılı kartı, UI ikonu → <code>Docs/ArtistBrief.html</code></li>
+</ul>
+
+<h3>Pilot test logistics</h3>
+<ul>
+  <li>3 sınıf pilot seansı planı → <code>Docs/TeacherGuide.html</code></li>
+  <li>Eğitmen partner</li>
+  <li>Feedback toplama</li>
+</ul>
+
+<h3>Build & distribution</h3>
+<ul>
+  <li>Android signing keystore</li>
+  <li>iOS provisioning + TestFlight veya enterprise</li>
+  <li>Internet permission override (Android merged manifest)</li>
+</ul>
+
+<!-- 13 -->
+<h2 id="nerede"><span class="num">13</span>Nerede ne var</h2>
+
+<table>
+<thead><tr><th>Dosya</th><th>İçerik</th></tr></thead>
+<tbody>
+<tr><td><code>CLAUDE.md</code> (root)</td><td><strong>Kural kitabı.</strong> Her seans yanında aç.</td></tr>
+<tr><td><code>Docs/EngineerOnboarding.{md,html}</code></td><td><strong>Bu doküman.</strong> Bir kez oku, sonra reference.</td></tr>
+<tr><td><code>Docs/ArtistBrief.{md,html}</code></td><td>Vendor brief (3D + ses + kart + ikon spec'leri).</td></tr>
+<tr><td><code>Docs/TeacherGuide.{md,html}</code></td><td>Educator brief (sınıf etkinlik akışı).</td></tr>
+<tr><td><code>Assets/ARFishing/Scripts/</code></td><td>Tüm gameplay kodu.</td></tr>
+<tr><td><code>Assets/ARFishing/Content/</code></td><td>Asset'ler — creatures, tasks, models, materials, audio, icons, image library.</td></tr>
+<tr><td><code>Assets/ARFishing/Scenes/</code></td><td>Bootstrap.unity + Activity.unity.</td></tr>
+<tr><td><code>Assets/Samples/XR Interaction Toolkit/3.3.0/</code></td><td>XRI sample asset'leri — <strong>silinmez</strong>.</td></tr>
+<tr><td><code>Assets/MobileARTemplateAssets/Scripts/</code></td><td>Unity AR Mobile template scripts. <strong>Referans only.</strong></td></tr>
+<tr><td><code>Packages/manifest.json</code></td><td>Unity packages. Analytics çıkarılmış.</td></tr>
+<tr><td><code>ProjectSettings/</code></td><td>XR loaders, URP, build settings, Unity Connect (analytics disable).</td></tr>
+</tbody>
+</table>
+
+<!-- 14 -->
+<h2 id="ilk-gun"><span class="num">14</span>İlk gün üretim önerisi</h2>
+
+<p>İlk gününde küçük bir dokunuş yap ki codebase'i tanı:</p>
+
+<h3>Hafif görev örnekleri</h3>
+<ul>
+  <li><code>CreatureLabels.cs</code>'e bir TR label değiştir (örn. "Etçil" → "Etobur"), Play et, InfoPanel'in güncellendiğini gör.</li>
+  <li><code>CreateMvpContentMenu.cs</code>'de bir canlının trait metnine küçük bir kelime ekle, re-run et, yeni asset'te değişikliği gör.</li>
+  <li><code>ActivityController.cs</code>'e yeni bir <code>[ContextMenu]</code> ekle (örn. <code>Force: Quiz → Idle</code>).</li>
+  <li><code>QuizController.AnswerEvaluated</code> event'ine subscribe olan basit bir log component yaz, console'da quiz akışını izle.</li>
+</ul>
+
+<h3>Daha derin görev örnekleri (sonra)</h3>
+<ul>
+  <li>Yeni bir paneli wire et (HintPanel) — Bölüm 9'a göre.</li>
+  <li>Validation tool'a yeni bir kural ekle (örn. "InterestingTrait min 10 karakter").</li>
+  <li>Slide tween'a damping/bounce variation ekle.</li>
+</ul>
+
+<hr>
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Sorular için: <code>CLAUDE.md</code> her zaman ilk durak. Sonra git log'a bak — son 8 fazın hepsi commit history'sinde. Sonra bana sor 🐙
+</p>
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em; margin-top: 32px;">
+  Görünenin Ötesinde Bir Deniz · Engineer Onboarding · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>

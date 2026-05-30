@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gizlilik Politikası — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep: #0e2a47; --ocean: #1e5f8e; --surf: #4ea7c9;
+    --foam: #f0f7fb; --sand: #f7f3eb; --coral: #ff7a59;
+    --good: #2e8b57; --good-soft: #e2f4ea;
+    --ink: #1b2733; --muted: #5a6b7a; --line: #e2e8ee;
+    --bg: #ffffff; --code-bg: #f3f5f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.7;
+    color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; background: var(--code-bg); padding: 1px 6px; border-radius: 3px; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 32px 96px 32px; }
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white; padding: 48px 40px; border-radius: 14px;
+    margin-bottom: 40px; position: relative; overflow: hidden;
+  }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78em; opacity: 0.85; margin: 0 0 8px 0; }
+  .hero h1 { margin: 0 0 12px 0; font-size: 2em; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+  .hero .meta { margin-top: 16px; font-size: 0.88em; opacity: 0.85; }
+  h2 {
+    margin: 48px 0 12px 0; font-size: 1.45em; color: var(--deep);
+    padding-bottom: 6px; border-bottom: 2px solid var(--coral);
+    display: inline-block;
+  }
+  h3 { margin: 28px 0 10px 0; font-size: 1.1em; color: var(--ocean); }
+  p { margin: 0 0 14px 0; }
+  ul { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px 0; font-size: 0.94em; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--foam); color: var(--deep); font-weight: 600; font-size: 0.86em; text-transform: uppercase; letter-spacing: 0.04em; }
+  .callout {
+    margin: 18px 0; padding: 18px 22px;
+    border-radius: 10px; border-left: 4px solid var(--good);
+    background: var(--good-soft);
+  }
+  .callout h3 { margin: 0 0 6px 0; color: var(--good); }
+  .callout p { margin: 0; }
+  .highlight {
+    background: var(--sand); padding: 14px 18px;
+    border-radius: 8px; border-left: 4px solid var(--coral);
+    margin: 14px 0;
+  }
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+  footer {
+    margin-top: 56px; padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.88em; text-align: center;
+  }
+  @media print {
+    body { font-size: 11pt; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 700px) {
+    main { padding: 20px; }
+    .hero { padding: 32px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.6em; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Gizlilik Politikası</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="meta">Son güncelleme: 2026-05-29</p>
+</header>
+
+<div class="callout">
+  <h3>✓ Özet</h3>
+  <p>Bu uygulama <strong>hiçbir kişisel veri toplamaz, depolamaz veya paylaşmaz</strong>. İnternet bağlantısı gerektirmez.</p>
+</div>
+
+<h2>Toplanan veriler</h2>
+<p><strong>Hiçbiri.</strong> Uygulama:</p>
+<ul>
+  <li>Kullanıcı kimliği (ad, e-mail, ID) toplamaz</li>
+  <li>Konum bilgisi toplamaz</li>
+  <li>Demografik bilgi toplamaz</li>
+  <li>Davranış metriği toplamaz</li>
+  <li>Kullanım istatistiği toplamaz</li>
+  <li>Çökme raporu göndermez</li>
+  <li>Cihaz bilgisi (model, OS sürümü, IP) toplamaz</li>
+  <li>Herhangi bir tanımlayıcı (advertising ID, instance ID) toplamaz</li>
+</ul>
+
+<h2>Üçüncü taraf SDK'lar</h2>
+<p><strong>Yok.</strong> Uygulamada Firebase, Google Analytics, Facebook SDK, Adjust, AppsFlyer, Unity Analytics veya benzeri telemetri / analytics / advertising SDK'sı bulunmaz.</p>
+
+<h2>Network kullanımı</h2>
+<p><strong>Yok.</strong> Uygulama çalışırken hiçbir HTTP / HTTPS isteği yapmaz. Android için <code>INTERNET</code> permission <code>AndroidManifest.xml</code>'den kaldırılmıştır. Uygulama tamamen offline çalışır.</p>
+
+<h2>Yerel veri saklama</h2>
+<p>Cihazda yerel olarak saklanabilen tek veri: opsiyonel grup adı ve son etkinlik puanı (<code>PlayerPrefs</code> üzerinden). Bu veriler:</p>
+<ul>
+  <li>Cihazdan çıkmaz</li>
+  <li>Ağ üzerinden iletilmez</li>
+  <li>Başka bir uygulamayla paylaşılmaz</li>
+  <li>Uygulama kaldırıldığında silinir</li>
+</ul>
+
+<h2>Çocuk kullanıcılar</h2>
+<p>Uygulama <strong>7–12 yaş</strong> hedef kitleli bir eğitim aracıdır. Çocuklardan herhangi bir kişisel veri toplanmadığı için <strong>açık veli rızası gerekmez</strong>.</p>
+
+<h2>Mevzuat uyumu</h2>
+
+<table>
+<thead><tr><th>Mevzuat</th><th>Durum</th></tr></thead>
+<tbody>
+<tr><td><strong>KVKK</strong> (6698 sayılı kanun, Türkiye)</td><td>Veri toplama yok → VERBİS kayıt yükümlülüğü yok</td></tr>
+<tr><td><strong>GDPR</strong> (EU 2016/679)</td><td>Veri toplama yok → veri sahibi hakları konu olmaz</td></tr>
+<tr><td><strong>COPPA</strong> (US, 16 CFR Part 312)</td><td>Under-13 verisi toplama yok → onay gerekmez</td></tr>
+<tr><td><strong>Apple App Store</strong></td><td>"Data Not Collected" deklarasyonu</td></tr>
+<tr><td><strong>Google Play Data Safety</strong></td><td>"No data collected, no data shared"</td></tr>
+</tbody>
+</table>
+
+<h2>Veri talepleri</h2>
+<p>Hiçbir veri toplanmadığı için erişim, silme, düzeltme veya aktarım talebi konusu oluşmaz.</p>
+
+<h2>Politika değişiklikleri</h2>
+<p>Politika güncellenirse bu sayfanın "Son güncelleme" tarihi yenilenir. Materyal değişiklikler store listing'lerinde de güncellenir.</p>
+
+<h2>İletişim</h2>
+<div class="highlight">
+  <p style="margin: 0;">Bu politikaya dair sorular için: <strong>[iletişim e-postası — store submission öncesi doldurulacak]</strong></p>
+</div>
+
+<hr>
+
+<h2>Store Listing Cevap Şablonu</h2>
+
+<h3>Google Play Console — Data safety form</h3>
+<ul>
+  <li>Data collected? → <strong>No</strong></li>
+  <li>Data shared with third parties? → <strong>No</strong></li>
+  <li>Designed for Families program eligible? → <strong>Yes</strong></li>
+  <li>Children's content (Ages 5–12)? → <strong>Yes</strong></li>
+</ul>
+
+<h3>App Store Connect — App Privacy</h3>
+<ul>
+  <li>Data Used to Track You → <strong>None</strong></li>
+  <li>Data Linked to You → <strong>None</strong></li>
+  <li>Data Not Linked to You → <strong>None</strong></li>
+</ul>
+
+<p style="margin-top: 14px;">→ Tüm sorulara "Data Not Collected" cevabı.</p>
+
+<h3>Privacy Policy URL</h3>
+<p>Bu sayfanın hosted URL'sini (örn. <code>https://example.org/arfishing/privacy</code>) Apple + Google formlarında zorunlu URL alanına yapıştır. GitHub Pages, Netlify ya da basit bir static hosting yeterli.</p>
+
+<footer>
+  <p>Görünenin Ötesinde Bir Deniz · Gizlilik Politikası · v1</p>
+</footer>
+
+</main>
+
+</body>
+</html>

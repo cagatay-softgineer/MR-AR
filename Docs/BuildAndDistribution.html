@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build & Distribution — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:        #0e2a47;
+    --ocean:       #1e5f8e;
+    --surf:        #4ea7c9;
+    --foam:        #f0f7fb;
+    --sand:        #f7f3eb;
+    --coral:       #ff7a59;
+    --coral-soft:  #fde6df;
+    --warn:        #c0392b;
+    --warn-soft:   #fde5e5;
+    --good:        #2e8b57;
+    --good-soft:   #e2f4ea;
+    --ink:         #1b2733;
+    --muted:       #5a6b7a;
+    --line:        #e2e8ee;
+    --bg:          #ffffff;
+    --code-bg:     #f3f5f8;
+    --code-deep:   #1e2a38;
+    --term-bg:     #14202d;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, pre, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    max-height: 100vh; overflow-y: auto;
+    padding: 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.92em;
+  }
+  aside.toc .toc-title {
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 0.72em; color: var(--muted); margin-bottom: 16px;
+  }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 6px 0; }
+  aside.toc a {
+    text-decoration: none; color: var(--deep);
+    display: block; padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px 0; min-width: 0; }
+
+  /* hero */
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 56px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; right: -80px; bottom: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase; letter-spacing: 0.16em;
+    font-size: 0.78em; opacity: 0.85; margin: 0 0 8px 0;
+  }
+  .hero h1 {
+    margin: 0 0 12px 0;
+    font-size: 2.4em; line-height: 1.15;
+    font-weight: 700; letter-spacing: -0.02em;
+  }
+  .hero .sub { font-size: 1.05em; opacity: 0.92; max-width: 640px; margin: 0; }
+  .hero .meta { display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
+  .hero .meta div { font-size: 0.88em; }
+  .hero .meta strong {
+    display: block;
+    font-size: 0.72em; letter-spacing: 0.1em;
+    text-transform: uppercase; opacity: 0.75; margin-bottom: 2px;
+  }
+
+  /* typography */
+  h2 {
+    margin: 56px 0 16px 0;
+    font-size: 1.7em; color: var(--deep); letter-spacing: -0.01em;
+    padding-bottom: 8px; border-bottom: 2px solid var(--coral);
+    display: inline-block;
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px; height: 32px; line-height: 32px;
+    text-align: center; background: var(--coral); color: white;
+    border-radius: 50%; font-size: 0.7em;
+    margin-right: 12px; vertical-align: middle;
+  }
+  h3 { margin: 32px 0 12px 0; font-size: 1.2em; color: var(--ocean); }
+  h4 { margin: 18px 0 8px 0; font-size: 1em; color: var(--deep); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  p { margin: 0 0 14px 0; }
+  a { color: var(--ocean); }
+  ul, ol { padding-left: 22px; margin: 0 0 14px 0; }
+  li { margin: 4px 0; }
+
+  blockquote {
+    margin: 0; padding: 16px 20px;
+    background: var(--sand);
+    border-left: 4px solid var(--coral);
+    border-radius: 6px;
+    font-style: italic; color: var(--deep);
+  }
+
+  /* tables */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0 20px 0; font-size: 0.94em;
+  }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--foam); color: var(--deep); font-weight: 600; font-size: 0.88em; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  td code { font-size: 0.9em; }
+
+  code { background: var(--code-bg); padding: 1px 6px; border-radius: 3px; color: var(--deep); }
+
+  /* code blocks */
+  pre.code {
+    background: var(--code-deep);
+    color: #d6e2ee;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.88em;
+    line-height: 1.55;
+    margin: 14px 0 22px 0;
+  }
+  pre.code .kw  { color: #c792ea; }
+  pre.code .str { color: #c3e88d; }
+  pre.code .com { color: #7585a3; font-style: italic; }
+  pre.code .attr { color: #82aaff; }
+  pre.code .tag { color: #f07178; }
+
+  /* terminal */
+  pre.term {
+    background: var(--term-bg);
+    color: #c3e88d;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.88em;
+    line-height: 1.55;
+    margin: 14px 0 22px 0;
+    border-left: 4px solid var(--good);
+  }
+  pre.term::before {
+    content: "$ ";
+    color: var(--good);
+    font-weight: 700;
+  }
+
+  /* callouts */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  .callout.warn  { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good  { background: var(--good-soft); border-left-color: var(--good); }
+  .callout.info  { background: var(--foam);      border-left-color: var(--ocean); }
+  .callout.sand  { background: var(--sand);      border-left-color: var(--coral); }
+  .callout h4 { margin: 0 0 8px 0; }
+  .callout.warn h4 { color: var(--warn); }
+  .callout.good h4 { color: var(--good); }
+  .callout.info h4 { color: var(--ocean); }
+
+  /* checklist */
+  .checklist { list-style: none; padding: 0; margin: 12px 0 20px 0; }
+  .checklist li {
+    padding: 8px 0 8px 32px; position: relative;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checklist li::before {
+    content: "☐"; position: absolute; left: 8px;
+    color: var(--ocean); font-size: 1.2em; line-height: 1.2;
+  }
+
+  /* status legend */
+  .status {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .status.done    { background: var(--good-soft); color: var(--good); }
+  .status.missing { background: var(--warn-soft); color: var(--warn); }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+
+  /* print */
+  @media print {
+    body { font-size: 11pt; }
+    .layout { display: block; max-width: none; padding: 0; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { background: var(--deep) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    pre.code, pre.term { break-inside: avoid; page-break-inside: avoid; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { display: block; padding: 0 20px; }
+    aside.toc {
+      position: static; max-height: none; border-right: none;
+      border-bottom: 1px solid var(--line); margin-bottom: 24px;
+    }
+    .hero { padding: 36px 24px; border-radius: 12px; }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">İçindekiler</div>
+  <ol>
+    <li><a href="#kapsam">1. Bu doküman ne içerir</a></li>
+    <li><a href="#pre-build">2. Tek seferlik ayarlar</a></li>
+    <li><a href="#android">3. Android (ARCore)</a></li>
+    <li><a href="#ios">4. iOS (ARKit)</a></li>
+    <li><a href="#optimization">5. Build size optimization</a></li>
+    <li><a href="#performance">6. Performance hedefleri</a></li>
+    <li><a href="#privacy">7. Privacy compliance</a></li>
+    <li><a href="#cicd">8. CI/CD</a></li>
+    <li><a href="#sorun-giderme">9. Sorun giderme</a></li>
+    <li><a href="#checklist">10. İlk release checklist</a></li>
+    <li><a href="#sonraki">11. Sonraki adımlar</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="kicker">Build & Distribution · Production Pipeline</p>
+  <h1>Görünenin Ötesinde Bir Deniz</h1>
+  <p class="sub">Production build path'leri (Android + iOS), keystore/provisioning signing, store / MDM / TestFlight / enterprise dağıtım kanalları, privacy compliance (KVKK / GDPR / COPPA) ve sorun giderme.</p>
+  <div class="meta">
+    <div><strong>Android</strong>ARCore · API 24+</div>
+    <div><strong>iOS</strong>ARKit · 13.0+</div>
+    <div><strong>Backend</strong>IL2CPP</div>
+    <div><strong>Privacy</strong>Zero data collected</div>
+  </div>
+</header>
+
+<!-- 1 -->
+<h2 id="kapsam"><span class="num">1</span>Bu doküman ne içerir</h2>
+
+<p>Production build path'leri (Android + iOS), keystore/provisioning signing, store / MDM / enterprise dağıtım kanalları, privacy compliance ve sorun giderme.</p>
+
+<h3>Şu an ne var, ne yok</h3>
+<ul>
+  <li><span class="status done">VAR</span> Kod F1-F8 tamamlanmış, MVP code-complete</li>
+  <li><span class="status done">VAR</span> Placeholder asset'ler tüm 20 canlı için hazır</li>
+  <li><span class="status missing">YOK</span> Production identifier'lar (hâlâ template placeholder)</li>
+  <li><span class="status missing">YOK</span> Signing keystore</li>
+  <li><span class="status missing">YOK</span> Custom AndroidManifest</li>
+  <li><span class="status missing">YOK</span> Camera Usage Description</li>
+  <li><span class="status missing">YOK</span> CI/CD</li>
+</ul>
+
+<p>Bu dokümanın amacı bu eksikleri kapatmak ve cihaza ilk ulaşımı sağlamak.</p>
+
+<!-- 2 -->
+<h2 id="pre-build"><span class="num">2</span>Tek seferlik proje ayarları</h2>
+
+<h3>2.1 Product Identifier'ları güncelle</h3>
+
+<p><code>ProjectSettings/ProjectSettings.asset</code>'te <code>applicationIdentifier</code> hâlâ template placeholder:</p>
+
+<pre class="code"><span class="attr">applicationIdentifier</span>:
+  <span class="attr">Android</span>:    <span class="str">com.unity.template.ar_mobile</span>
+  <span class="attr">Standalone</span>: <span class="str">com.unity.template.ar-mobile</span>
+  <span class="attr">iPhone</span>:     <span class="str">com.unity.template.armobile</span></pre>
+
+<p>Unity Editor üzerinden değiştir:</p>
+<ul>
+  <li>File → Build Profiles → Player Settings</li>
+  <li>Android sekmesi → Other Settings → "Identification" → <strong>Package Name</strong> = <code>com.your-org.arfishing</code></li>
+  <li>iOS sekmesi → Other Settings → <strong>Bundle Identifier</strong> = <code>com.your-org.arfishing</code></li>
+</ul>
+
+<div class="callout warn">
+<h4>⊘ Production ID'yi seçtikten sonra bir daha değiştirme</h4>
+<p style="margin: 0;">Play Store / App Store package name'i primary key olarak kullanır; sonradan değişirse ayrı bir uygulama olarak görünür ve eski install'lar arasında upgrade path yoktur.</p>
+</div>
+
+<h3>2.2 Versioning</h3>
+
+<table>
+<thead><tr><th>Field</th><th>Anlamı</th><th>Bumplanma</th></tr></thead>
+<tbody>
+<tr><td>Bundle Version</td><td>Görünür sürüm</td><td>Major.Minor.Patch — release notes anlamlı</td></tr>
+<tr><td>Android Version Code</td><td>Internal int</td><td>Her build için <strong>+1</strong></td></tr>
+<tr><td>iOS CFBundleVersion</td><td>Internal</td><td>Her build için <strong>+1</strong></td></tr>
+</tbody>
+</table>
+
+<h3>2.3 App icon + splash screen</h3>
+<ul>
+  <li><strong>App icon</strong>: Player Settings → Icon → 1024×1024 ana ikon. Template default'u değiştir.</li>
+  <li><strong>Splash screen</strong>: Player Settings → Splash Image → "Show Unity Logo" = OFF (Pro license ile), brand logo ekle.</li>
+</ul>
+
+<h3>2.4 Color space + Scripting backend</h3>
+<ul>
+  <li><strong>Color Space</strong> = Linear (URP gereği)</li>
+  <li><strong>Scripting Backend</strong> = IL2CPP (Android + iOS için zorunlu — AR Foundation Mono'ya destek vermez)</li>
+</ul>
+
+<!-- 3 -->
+<h2 id="android"><span class="num">3</span>Android (ARCore)</h2>
+
+<h3>3.1 Player Settings</h3>
+
+<table>
+<thead><tr><th>Ayar</th><th>Değer</th></tr></thead>
+<tbody>
+<tr><td>Orientation</td><td>Portrait</td></tr>
+<tr><td>Minimum API Level</td><td>Android 7.0 (API 24) — ARCore minimum</td></tr>
+<tr><td>Target API Level</td><td>Android 14 (API 34) veya en güncel</td></tr>
+<tr><td>Scripting Backend</td><td>IL2CPP</td></tr>
+<tr><td>Target Architectures</td><td>ARM64 (Play Store 64-bit requirement)</td></tr>
+<tr><td>Internet Access</td><td><strong>Auto</strong> (Require <strong>yapma</strong> — privacy stance ihlali)</td></tr>
+<tr><td>Write Permission</td><td>Internal Only</td></tr>
+<tr><td>Install Location</td><td>Automatic</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 XR Plug-in Management</h3>
+<ul>
+  <li>Edit → Project Settings → XR Plug-in Management</li>
+  <li><strong>Android sekmesi</strong> → <strong>AR Core Loader = enabled</strong></li>
+  <li>Simulation Loader = enabled (editor için, build'de etkilenmez)</li>
+</ul>
+
+<h3>3.3 Keystore oluşturma + signing</h3>
+
+<p>Production build için signing keystore zorunlu.</p>
+
+<p><strong>Komut satırından</strong> (önerilen):</p>
+
+<pre class="term">keytool -genkeypair -v \
+  -keystore arfishing-release.keystore \
+  -alias arfishing \
+  -keyalg RSA -keysize 2048 -validity 10000</pre>
+
+<p>Sorulan değerleri doldur (CN, O, L, vb.). Şifreyi kaydet — <strong>kaybedersen Play Store'a yeni sürüm yükleyemezsin</strong>.</p>
+
+<p><strong>Unity'de signing'i bağla</strong>:</p>
+<ul>
+  <li>Player Settings → Publishing Settings</li>
+  <li>Use Custom Keystore = ON</li>
+  <li>Keystore Path = <code>&lt;path&gt;/arfishing-release.keystore</code></li>
+  <li>Keystore Password / Key Alias / Key Password</li>
+</ul>
+
+<div class="callout warn">
+<h4>⊘ Keystore yedekleme (kritik)</h4>
+<ul style="margin: 0;">
+  <li>Şifrelenmiş offline backup (örn. Bitwarden, 1Password)</li>
+  <li>Bu dosyayı <strong>git'e commit etme</strong> — <code>.gitignore</code>'a ekle</li>
+  <li>Kaybolursa o package name için Play Store'a yeni sürüm gönderemezsin (ayrı app olarak yeniden başlamak gerekir)</li>
+</ul>
+</div>
+
+<h3>3.4 Custom AndroidManifest.xml</h3>
+
+<p>Privacy stance'ı korumak için <code>INTERNET</code> permission'ı override etmemiz gerek (AR Foundation transitive dep'i olarak gelebilir).</p>
+
+<p><code>Assets/Plugins/Android/AndroidManifest.xml</code> oluştur:</p>
+
+<pre class="code"><span class="com">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;manifest</span> <span class="attr">xmlns:android</span>=<span class="str">"http://schemas.android.com/apk/res/android"</span>
+          <span class="attr">xmlns:tools</span>=<span class="str">"http://schemas.android.com/tools"</span><span class="tag">&gt;</span>
+
+  <span class="com">&lt;!-- Privacy: remove INTERNET permission if any dependency declared it --&gt;</span>
+  <span class="tag">&lt;uses-permission</span> <span class="attr">android:name</span>=<span class="str">"android.permission.INTERNET"</span>
+                   <span class="attr">tools:node</span>=<span class="str">"remove"</span> <span class="tag">/&gt;</span>
+
+  <span class="com">&lt;!-- ARCore feature requirement: device filter to AR-capable Android --&gt;</span>
+  <span class="tag">&lt;uses-feature</span> <span class="attr">android:name</span>=<span class="str">"android.hardware.camera.ar"</span>
+                <span class="attr">android:required</span>=<span class="str">"true"</span> <span class="tag">/&gt;</span>
+
+  <span class="tag">&lt;application&gt;</span>
+    <span class="com">&lt;!-- ARCore marker: "required" means app won't install on non-AR device --&gt;</span>
+    <span class="tag">&lt;meta-data</span> <span class="attr">android:name</span>=<span class="str">"com.google.ar.core"</span>
+               <span class="attr">android:value</span>=<span class="str">"required"</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/application&gt;</span>
+<span class="tag">&lt;/manifest&gt;</span></pre>
+
+<div class="callout info">
+<h4>★ ARCore required vs optional</h4>
+<ul style="margin: 0;">
+  <li><strong>required</strong>: Play Store sadece ARCore destekli cihazlara gösterir. Uygulama açılınca ARCore service otomatik install dialog'u tetikler. <strong>Bu projeye uygun</strong> (AR olmadan kullanışlı değil).</li>
+  <li><strong>optional</strong>: Tüm cihazlara install edilebilir, ama AR feature'lar çalışmaz. <strong>Uygun değil</strong>.</li>
+</ul>
+</div>
+
+<h3>3.5 Build</h3>
+<ul>
+  <li>File → Build Profiles → Android</li>
+  <li><strong>Build</strong> (APK, test için): <code>arfishing-1.0.0.apk</code></li>
+  <li><strong>Build with Active Plug-Ins</strong> (AAB, Play Store için): <code>arfishing-1.0.0.aab</code></li>
+  <li><strong>Build & Run</strong>: cihaz USB ile bağlıysa direkt deploy</li>
+</ul>
+
+<p>Build sonrası ilk test: cihaza yükle, açıldığında ARCore install prompt'u gelmeli (eğer yüklü değilse), camera permission diyalog'u gelmeli, ardından Bootstrap → Activity.</p>
+
+<h3>3.6 Android dağıtım kanalları</h3>
+
+<table>
+<thead><tr><th>Kanal</th><th>Hedef</th><th>Avantaj</th><th>Dezavantaj</th></tr></thead>
+<tbody>
+<tr><td><strong>Google Play Store</strong></td><td>Kamu, öğretmen indirebilir</td><td>Geniş erişim, otomatik güncelleme</td><td>İnceleme, ratings, çocuk içeriği formlar</td></tr>
+<tr><td><strong>Direct APK</strong></td><td>Okul IT</td><td>Tek tek kontrollü</td><td>Manuel her cihaz için</td></tr>
+<tr><td><strong>Android Enterprise (MDM)</strong></td><td>Okul/kurum filo</td><td>Merkezi yayın, otomatik install</td><td>MDM setup overhead (Intune, AirWatch)</td></tr>
+<tr><td><strong>Google Play managed</strong></td><td>Kurum içi private</td><td>Hibrit yaklaşım</td><td>Play Console Enterprise hesabı</td></tr>
+</tbody>
+</table>
+
+<p>Pilot test için: önce <strong>Direct APK</strong>, sonra production scale için <strong>Google Play</strong> veya <strong>MDM</strong>.</p>
+
+<!-- 4 -->
+<h2 id="ios"><span class="num">4</span>iOS (ARKit)</h2>
+
+<h3>4.1 Pre-requisites</h3>
+<ul>
+  <li>macOS makinası (Windows'ta iOS build edilemez)</li>
+  <li>Xcode 15+ (Unity 6 ile uyumlu)</li>
+  <li>Apple Developer hesabı ($99/yıl, education account önerilir)</li>
+</ul>
+
+<h3>4.2 Player Settings</h3>
+
+<table>
+<thead><tr><th>Ayar</th><th>Değer</th></tr></thead>
+<tbody>
+<tr><td>Orientation</td><td>Portrait</td></tr>
+<tr><td>Bundle Identifier</td><td><code>com.your-org.arfishing</code></td></tr>
+<tr><td>Camera Usage Description</td><td>"Bu uygulama AR kartları okumak için kamerayı kullanır."</td></tr>
+<tr><td>Minimum iOS</td><td>13.0 (ARKit 3+ destek için)</td></tr>
+<tr><td>Target Device Family</td><td>iPhone & iPad</td></tr>
+<tr><td>Scripting Backend</td><td>IL2CPP</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Camera Usage Description kritik</h4>
+<p style="margin: 0;">Eksikse uygulama App Store'da reject edilir <strong>ve</strong> cihazda camera erişimi reddedilir. Bu metin kullanıcıya gösterilir — net, anlaşılır, çocuk dostu yaz.</p>
+</div>
+
+<h3>4.3 XR Plug-in Management</h3>
+<ul>
+  <li>iOS sekmesi → <strong>AR Kit Loader = enabled</strong></li>
+</ul>
+
+<h3>4.4 Build Xcode project</h3>
+<ul>
+  <li>File → Build Profiles → iOS</li>
+  <li>Build → çıktı: <code>arfishing.xcodeproj</code> (klasör)</li>
+  <li>Xcode'da aç</li>
+</ul>
+
+<h3>4.5 Xcode signing & capabilities</h3>
+
+<p>Unity'nin Xcode proje generation'ı her seferinde overwrite edebilir. Signing'i Xcode tarafında yapacaksın:</p>
+
+<ol>
+  <li>Xcode → proje root → <strong>Signing & Capabilities</strong> sekmesi</li>
+  <li><strong>Team</strong>: Apple Developer hesabını seç</li>
+  <li><strong>Provisioning Profile</strong>: Automatic (development için) veya Manual (TestFlight/distribution için)</li>
+  <li><strong>Bundle Identifier</strong> = Unity'deki ile aynı olmalı</li>
+  <li>ARKit capability otomatik eklenmiş olmalı (Unity Build sırasında ekler)</li>
+</ol>
+
+<h3>4.6 Build & Run / Archive</h3>
+<ul>
+  <li><strong>Build & Run</strong> cihaza deploy (development)</li>
+  <li>Product → Archive → Organizer → Distribute App (TestFlight, App Store, Ad Hoc, Enterprise)</li>
+</ul>
+
+<h3>4.7 iOS dağıtım kanalları</h3>
+
+<table>
+<thead><tr><th>Kanal</th><th>Hedef</th><th>Avantaj</th><th>Dezavantaj</th></tr></thead>
+<tbody>
+<tr><td><strong>App Store</strong></td><td>Kamu</td><td>Geniş erişim</td><td>Stricter review (children's + AR)</td></tr>
+<tr><td><strong>TestFlight</strong></td><td>Beta test</td><td>Hızlı iteration, 90 gün test</td><td>90 gün limit, sadece test</td></tr>
+<tr><td><strong>Ad Hoc</strong></td><td>UDID listesi</td><td>Manual control</td><td>100 cihaz limit</td></tr>
+<tr><td><strong>Apple Enterprise</strong></td><td>Org-internal</td><td>Centralized, store dışı</td><td>$299/yıl, sadece kurum içi</td></tr>
+<tr><td><strong>Apple School Manager</strong></td><td>K-12 okul</td><td>Education-specific, Volume Purchase</td><td>Education hesabı gerekir</td></tr>
+</tbody>
+</table>
+
+<p>Pilot test için: <strong>TestFlight</strong> (90 günlük internal/external tester pool). Production'da: <strong>App Store</strong> veya okul partneri varsa <strong>Apple School Manager</strong>.</p>
+
+<!-- 5 -->
+<h2 id="optimization"><span class="num">5</span>Build size optimization</h2>
+
+<p>Tablet için ~100 MB ideal, ~200 MB üst limit.</p>
+
+<table>
+<thead><tr><th>Asset türü</th><th>Ayar</th></tr></thead>
+<tbody>
+<tr><td>Texture</td><td>ASTC (Android + iOS modern device için ideal)</td></tr>
+<tr><td>Texture max size</td><td>1024 (placeholder), production'da 2048 kabul</td></tr>
+<tr><td>Texture mipmap</td><td>ON (3D model texture'ları için)</td></tr>
+<tr><td>Audio</td><td>Vorbis OGG, Compressed in Memory, Force to Mono</td></tr>
+<tr><td>Audio quality</td><td>70 (placeholder), production'da 100</td></tr>
+<tr><td>Mesh compression</td><td>Medium</td></tr>
+<tr><td>Strip Unused Mesh Components</td><td>ON</td></tr>
+<tr><td>Managed Stripping Level</td><td>Medium</td></tr>
+<tr><td>Engine Code Stripping</td><td>ON</td></tr>
+</tbody>
+</table>
+
+<p>20 canlı için tahmin: 20 × 200 KB (3D + texture) + 20 × 80 KB (audio) + 20 × 30 KB (icon) ≈ <strong>6.2 MB content</strong>. Toplam APK ~40-60 MB beklenir.</p>
+
+<!-- 6 -->
+<h2 id="performance"><span class="num">6</span>Performance hedefleri</h2>
+
+<table>
+<thead><tr><th>Metrik</th><th>Hedef</th><th>Min kabul</th></tr></thead>
+<tbody>
+<tr><td>FPS</td><td>60 (yüksek-uç)</td><td>30 (orta-uç)</td></tr>
+<tr><td>Cold start (Bootstrap → Activity)</td><td>&lt;3 sn</td><td>&lt;5 sn</td></tr>
+<tr><td>RAM peak</td><td>&lt;400 MB</td><td>&lt;600 MB</td></tr>
+<tr><td>Battery drain</td><td>&lt;%10 per 45 dk seans</td><td>&lt;%15</td></tr>
+<tr><td>APK size</td><td>&lt;80 MB</td><td>&lt;150 MB</td></tr>
+<tr><td>AAB size</td><td>&lt;60 MB</td><td>&lt;120 MB</td></tr>
+</tbody>
+</table>
+
+<h3>Test cihazları (önerilen MVP test fleet)</h3>
+<ul>
+  <li><strong>Android orta-uç</strong>: Samsung Galaxy Tab A8, Xiaomi Pad 5</li>
+  <li><strong>Android üst-uç</strong>: Samsung Galaxy Tab S8, Google Pixel Tablet</li>
+  <li><strong>iOS orta-uç</strong>: iPad 9th gen</li>
+  <li><strong>iOS üst-uç</strong>: iPad Air (M1+) veya iPad Pro</li>
+</ul>
+
+<p>ARCore destekli cihaz listesi: <a href="https://developers.google.com/ar/devices">developers.google.com/ar/devices</a><br>
+ARKit destekli cihaz listesi: iPhone 6s+ veya iPad 5th gen+</p>
+
+<!-- 7 -->
+<h2 id="privacy"><span class="num">7</span>Privacy compliance (KVKK / GDPR / COPPA)</h2>
+
+<div class="callout good">
+<h4>✓ "Zero data collected" stance regülasyon riskini ortadan kaldırır</h4>
+<p style="margin: 0;">Yine de store listing'de açıkça beyan edilmesi gerekir.</p>
+</div>
+
+<h3>Google Play Console</h3>
+<ul>
+  <li><strong>Data safety form</strong>:
+    <ul>
+      <li>Data collected? <strong>No</strong></li>
+      <li>Data shared? <strong>No</strong></li>
+      <li>Children's content? <strong>Yes</strong> (7-12 yaş)</li>
+      <li>Designed for Families program eligible? <strong>Yes</strong></li>
+    </ul>
+  </li>
+  <li><strong>Privacy policy URL</strong>: zorunlu — minimal bir privacy policy host et (GitHub Pages yeterli):
+    <blockquote style="margin: 8px 0;">"Bu uygulama hiçbir kişisel veri toplamaz, depolamaz veya paylaşmaz. İnternet bağlantısı gerektirmez."</blockquote>
+  </li>
+</ul>
+
+<h3>App Store Connect</h3>
+<ul>
+  <li><strong>App Privacy section</strong> → "Data Not Collected" seç</li>
+  <li><strong>App's Privacy Policy URL</strong> (privacy policy zorunlu)</li>
+  <li><strong>Age Rating</strong>: 4+ (no objectionable content)</li>
+  <li><strong>Made for Kids</strong> programı için ek anket</li>
+</ul>
+
+<h3>KVKK (Türkiye, 18 yaş altı)</h3>
+<ul>
+  <li>6698 sayılı kanun: 18 yaş altı veri toplama açık veli rızası gerektirir</li>
+  <li><strong>Toplamadığımız için bu yükümlülük yok</strong>, ama proje broşüründe / okul protokolünde açıkça yaz: "uygulama herhangi bir kişisel veri toplamamaktadır"</li>
+  <li>Veri kaynaklı denetim için <strong>VERBİS kayıt yok</strong></li>
+</ul>
+
+<!-- 8 -->
+<h2 id="cicd"><span class="num">8</span>CI/CD (henüz kurulmadı)</h2>
+
+<p>Şu an manual build yapıyoruz. İlerleyen aşamada CI önerileri:</p>
+
+<table>
+<thead><tr><th>Opsiyon</th><th>Pros</th><th>Cons</th></tr></thead>
+<tbody>
+<tr><td><strong>Unity Cloud Build</strong></td><td>Built-in, Unity hesap-bağlantılı, signing destekli</td><td>Free tier sınırlı, vendor lock</td></tr>
+<tr><td><strong>GitHub Actions</strong> + Unity-Activate</td><td>OSS, cross-platform, GitHub ile entegre</td><td>Self-hosted runner gerekir (macOS iOS için)</td></tr>
+<tr><td><strong>Jenkins</strong> + Unity CLI</td><td>Tam kontrol, self-hosted</td><td>Setup overhead, maintenance</td></tr>
+<tr><td><strong>GitLab CI</strong></td><td>GitHub Actions benzeri ama GitLab'de</td><td>GitLab repo gerekir</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+<h4>⊘ Privacy stance kuralı CI'da bile geçerli</h4>
+<p style="margin: 0;">CI ekleniyorsa <strong>Unity Cloud Diagnostics, Unity Analytics, Unity Performance Reporting</strong> entegrasyonlarını <strong>kapatmak zorunlu</strong>. CI build env vars'ta <code>UNITY_ENABLE_ANALYTICS=0</code> gibi flag'ler.</p>
+</div>
+
+<p>CI ile başlamayı erteleyebilirsin — manuel build 1-2 release için yeterli.</p>
+
+<!-- 9 -->
+<h2 id="sorun-giderme"><span class="num">9</span>Sorun giderme</h2>
+
+<h3>Android</h3>
+
+<table>
+<thead><tr><th>Sorun</th><th>Çözüm</th></tr></thead>
+<tbody>
+<tr><td>"ARCore not available on this device"</td><td>Cihazın ARCore desteğini kontrol et (developers.google.com/ar/devices)</td></tr>
+<tr><td>"Build failed: Could not find android.support..."</td><td>Player Settings → Use Jetpack = ON</td></tr>
+<tr><td>"Keystore was tampered with"</td><td>Keystore şifresi yanlış. Backup'tan al.</td></tr>
+<tr><td>"Failed to install APK on device"</td><td>USB Debug aktif değil veya ADB driver eksik</td></tr>
+<tr><td>APK aniden büyüdü</td><td>Unused asset'leri kontrol et, <code>Resources/</code> klasörünü tara</td></tr>
+</tbody>
+</table>
+
+<h3>iOS</h3>
+
+<table>
+<thead><tr><th>Sorun</th><th>Çözüm</th></tr></thead>
+<tbody>
+<tr><td>"App not signed for distribution"</td><td>Xcode → Signing & Capabilities → Team seçili mi, provisioning expired mi</td></tr>
+<tr><td>"Camera Usage Description missing"</td><td>Player Settings → iOS → Camera Usage Description doldur, rebuild Xcode proje</td></tr>
+<tr><td>TestFlight'a yüklendikten sonra "Invalid Binary"</td><td>IL2CPP backend seçili mi, ARKit capability Xcode'da aktif mi, Bitcode = NO</td></tr>
+<tr><td>ARKit cihazda crash</td><td>iOS 13 minimum mu, ARKit framework Build Phases'de var mı</td></tr>
+</tbody>
+</table>
+
+<!-- 10 -->
+<h2 id="checklist"><span class="num">10</span>İlk release checklist</h2>
+
+<p>Production release önce şunlar:</p>
+
+<ul class="checklist">
+  <li><code>applicationIdentifier</code> template placeholder değil</li>
+  <li><code>bundleVersion</code> ve <code>versionCode</code> set</li>
+  <li>App icon ve splash brand'leri yansıtıyor</li>
+  <li>Android: Custom AndroidManifest.xml var, Internet permission removed</li>
+  <li>Android: ARCore meta-data "required"</li>
+  <li>Android: Keystore yedeklenmiş (offline)</li>
+  <li>iOS: Camera Usage Description doldurulmuş</li>
+  <li>iOS: Provisioning profile geçerli</li>
+  <li><code>ARFishing → Validate All Creature Definitions</code> 0 hata</li>
+  <li>20 canlının tümü gerçek asset'lerle dolu</li>
+  <li>Privacy policy URL host edildi</li>
+  <li>Test cihazlarında uçtan uca akış doğrulandı</li>
+  <li>Performance metrikleri hedeflere uygun</li>
+  <li>Release notes hazır</li>
+  <li>Store listing screenshots + açıklama metinleri hazır</li>
+</ul>
+
+<!-- 11 -->
+<h2 id="sonraki"><span class="num">11</span>Sonraki adımlar</h2>
+
+<ol>
+  <li><strong>İlk TestFlight / internal track release</strong>: pilot test için 5-10 cihazlık dağıtım</li>
+  <li><strong>3 sınıf pilot testi</strong>: <code>Docs/TeacherGuide.html</code> rubrik kullanılarak</li>
+  <li><strong>Pilot geri bildirimi ile iterasyon</strong>: belki F9 polish, belki content revize</li>
+  <li><strong>Public release</strong>: Play Store + App Store + okul partner network'ü</li>
+</ol>
+
+<p>İterasyon süresi: pilot → public release tipik 4-8 hafta. Children's category review Apple App Store'da uzun sürebilir (2-3 hafta).</p>
+
+<hr>
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em;">
+  Görünenin Ötesinde Bir Deniz · Build & Distribution · v1
+</p>
+
+</main>
+
+</div>
+
+</body>
+</html>
