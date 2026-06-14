@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kullanıcı Senaryoları — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:       #0e2a47;
+    --ocean:      #1e5f8e;
+    --surf:       #4ea7c9;
+    --foam:       #f0f7fb;
+    --coral:      #ff7a59;
+    --coral-soft: #fde6df;
+    --warn:       #c0392b;
+    --warn-soft:  #fde5e5;
+    --good:       #2e8b57;
+    --good-soft:  #e2f4ea;
+    --amber:      #c9802e;
+    --amber-soft: #fdf3e2;
+    --purple:     #7c3aed;
+    --purple-soft:#f3effe;
+    --ink:        #1b2733;
+    --muted:      #5a6b7a;
+    --line:       #e2e8ee;
+    --bg:         #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid; grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px; max-width: 1160px; margin: 0 auto; padding: 0 32px;
+  }
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    max-height: 100vh; overflow-y: auto;
+    padding: 32px 0; border-right: 1px solid var(--line); font-size: 0.91em;
+  }
+  aside.toc .toc-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72em; color: var(--muted); margin-bottom: 14px; padding-left: 12px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 5px 0; }
+  aside.toc a { text-decoration: none; color: var(--deep); display: block; padding: 4px 8px 4px 12px; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; transition: all 0.15s; }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white; padding: 52px 48px; border-radius: 16px;
+    margin-bottom: 48px; position: relative; overflow: hidden;
+  }
+  .hero::after { content: ""; position: absolute; right: -80px; bottom: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%); border-radius: 50%; }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.76em; opacity: 0.8; margin: 0 0 8px; }
+  .hero h1 { margin: 0 0 10px; font-size: 2em; font-weight: 700; }
+  .hero .sub { margin: 0; opacity: 0.85; font-size: 1em; max-width: 560px; }
+  .hero .meta { margin-top: 20px; font-size: 0.83em; opacity: 0.7; }
+
+  h2 { font-size: 1.25em; font-weight: 700; color: var(--deep); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1em; font-weight: 700; margin: 24px 0 10px; color: var(--ocean); }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 20px; }
+  li { margin: 6px 0; }
+
+  /* persona cards */
+  .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 24px 0 36px; }
+  .persona-card {
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px 22px 18px; position: relative;
+  }
+  .persona-card .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em; margin-bottom: 12px;
+  }
+  .persona-card .name { font-size: 1em; font-weight: 700; margin: 0 0 2px; }
+  .persona-card .role { font-size: 0.8em; color: var(--muted); margin: 0 0 12px; }
+  .persona-card .attrs { font-size: 0.88em; }
+  .persona-card .attrs li { margin: 4px 0; }
+
+  .p-ogrenci { border-top: 3px solid var(--surf); }
+  .p-ogrenci .avatar { background: #e3f4fd; }
+  .p-ogretmen { border-top: 3px solid var(--coral); }
+  .p-ogretmen .avatar { background: var(--coral-soft); }
+
+  /* scenario cards */
+  .scenario {
+    border: 1px solid var(--line); border-radius: 14px;
+    margin: 28px 0 40px; overflow: hidden;
+  }
+  .scenario .sc-head {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 24px; color: white;
+  }
+  .scenario .sc-head .sc-id {
+    font-weight: 900; font-size: 1.1em;
+    background: rgba(255,255,255,0.2);
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .scenario .sc-head .sc-title { font-size: 1em; font-weight: 700; margin: 0; }
+  .scenario .sc-head .sc-sub { font-size: 0.83em; opacity: 0.85; margin: 2px 0 0; }
+  .scenario .sc-body { padding: 24px; }
+
+  .sc-head-1 { background: linear-gradient(135deg, #1e5f8e, #4ea7c9); }
+  .sc-head-2 { background: linear-gradient(135deg, #2e8b57, #4aad78); }
+  .sc-head-3 { background: linear-gradient(135deg, #c9802e, #e8a24a); }
+  .sc-head-4 { background: linear-gradient(135deg, #7c3aed, #a55dfa); }
+  .sc-head-5 { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+
+  /* step list */
+  .steps { list-style: none; padding: 0; margin: 14px 0; }
+  .steps li {
+    display: flex; gap: 14px; align-items: flex-start;
+    margin: 10px 0;
+  }
+  .steps li .step-n {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--ocean); color: white;
+    font-size: 0.78em; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li .step-body { flex: 1; }
+  .steps li .step-body strong { display: block; font-size: 0.93em; }
+  .steps li .step-body span { font-size: 0.86em; color: var(--muted); }
+
+  /* meta row */
+  .sc-meta {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    background: var(--foam); border-top: 1px solid var(--line);
+    padding: 14px 24px; font-size: 0.83em;
+  }
+  .sc-meta-item strong { color: var(--deep); }
+
+  /* alt path */
+  .alt-path {
+    background: var(--warn-soft); border: 1px solid #f5c4c4;
+    border-radius: 8px; padding: 12px 16px;
+    margin: 16px 0; font-size: 0.9em;
+  }
+  .alt-path strong { color: var(--warn); }
+
+  /* use case table */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 28px; font-size: 0.9em; }
+  th { background: var(--deep); color: white; padding: 9px 12px; text-align: left; font-weight: 600; font-size: 0.86em; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--foam); }
+  td:first-child { font-family: ui-monospace, monospace; font-size: 0.82em; white-space: nowrap; color: var(--ocean); font-weight: 700; }
+
+  .callout { border-left: 4px solid var(--coral); background: var(--coral-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; font-size: 0.95em; }
+  .callout strong { color: var(--coral); }
+
+  @media print {
+    .layout { display: block; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { border-radius: 8px; padding: 32px; }
+    .scenario { page-break-inside: avoid; }
+    .persona-grid { grid-template-columns: 1fr 1fr; }
+    h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+    .persona-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="toc">
+  <div class="toc-label">İçindekiler</div>
+  <ol>
+    <li><a href="#giris">1. Giriş</a></li>
+    <li><a href="#personalar">2. Persona Profilleri</a></li>
+    <li><a href="#kullanim">3. Kullanım Durumu Özeti</a></li>
+    <li><a href="#s1">S1 — Öğretmen Hazırlığı</a></li>
+    <li><a href="#s2">S2 — Keşif Aktivitesi</a></li>
+    <li><a href="#s3">S3 — Mini Quiz</a></li>
+    <li><a href="#s4">S4 — Projeksiyon Kullanımı</a></li>
+    <li><a href="#s5">S5 — Erişilebilirlik</a></li>
+    <li><a href="#alt-yollar">6. Alternatif Akışlar</a></li>
+    <li><a href="#basari">7. Başarı Kriterleri</a></li>
+  </ol>
+</aside>
+<main>
+  <div class="hero">
+    <div class="kicker">Kullanıcı Deneyimi Analizi</div>
+    <h1>Kullanıcı Senaryoları</h1>
+    <p class="sub">Görünenin Ötesinde Bir Deniz — Paydaş Profilleri, Kullanım Durumları ve Etkileşim Akışları</p>
+    <p class="meta">Hazırlanma Tarihi: Haziran 2026 &nbsp;|&nbsp; Kapsam: MVP — 20 Canlı, 8 Görev, Sınıf Ortamı</p>
+  </div>
+
+  <h2 id="giris">1. Giriş</h2>
+  <p>Bu belge, <em>Görünenin Ötesinde Bir Deniz</em> uygulamasının gerçek kullanım bağlamındaki senaryolarını, kullanıcı persona profillerini ve beklenen etkileşim akışlarını tanımlar. Senaryolar; tasarım kararlarını gerekçelendirmek, test vakalarını oluşturmak ve pilot gözlem protokolüne zemin hazırlamak amacıyla yazılmıştır.</p>
+  <p>Her senaryo; başarı koşulları, beklenen sistem davranışı ve olası alternatif akışlar (hata ya da kullanıcı sapmalarına yanıt) içerir.</p>
+
+  <h2 id="personalar">2. Persona Profilleri</h2>
+  <div class="persona-grid">
+    <div class="persona-card p-ogrenci">
+      <div class="avatar">🧒</div>
+      <p class="name">Elif, 9 yaş</p>
+      <p class="role">Birincil Kullanıcı — Öğrenci</p>
+      <ul class="attrs">
+        <li>3. sınıf, Ankara ilkokulu</li>
+        <li>Hafif dijital deneyim (aile tableti)</li>
+        <li>Hayvanları seviyor; okyanus canlılarını merak ediyor</li>
+        <li>Okuma hızı orta düzey; uzun metin dikkat dağıtır</li>
+        <li>Grubuyla rekabetçi ve işbirlikçi</li>
+        <li><strong>Hedefi:</strong> Canlıları keşfetmek, quiz'i kazanmak</li>
+      </ul>
+    </div>
+    <div class="persona-card p-ogretmen">
+      <div class="avatar">👩‍🏫</div>
+      <p class="name">Selin Öğretmen, 34 yaş</p>
+      <p class="role">İkincil Kullanıcı — Öğretmen / Facilitatör</p>
+      <ul class="attrs">
+        <li>Fen Bilimleri öğretmeni, 8 yıl deneyim</li>
+        <li>Orta düzey dijital okuryazarlık</li>
+        <li>Hazırlık süresi için 20 dakikası var</li>
+        <li>Sınıf yönetimine odaklanmak istiyor, teknolojiyle değil</li>
+        <li>Öğrenci verilerinin paylaşılması konusunda hassas</li>
+        <li><strong>Hedefi:</strong> Etkinliği sorunsuz başlatmak, sınıfı yönetmek</li>
+      </ul>
+    </div>
+    <div class="persona-card p-ogrenci" style="border-top-color: var(--purple);">
+      <div class="avatar" style="background: var(--purple-soft);">👦</div>
+      <p class="name">Kaan, 11 yaş</p>
+      <p class="role">Birincil Kullanıcı — Öğrenci (güçlü kullanıcı)</p>
+      <ul class="attrs">
+        <li>5. sınıf, grubun "teknoloji uzmanı"</li>
+        <li>Oyun deneyimi yüksek, hızlı kavrayış</li>
+        <li>Sınırları keşfetme eğiliminde</li>
+        <li>Akvaryuma gitmiş; bazı canlıları zaten tanıyor</li>
+        <li><strong>Hedefi:</strong> Tüm kartları taramak, yüksek puan almak</li>
+      </ul>
+    </div>
+    <div class="persona-card p-ogrenci" style="border-top-color: var(--good);">
+      <div class="avatar" style="background: var(--good-soft);">🧒</div>
+      <p class="name">Zeynep, 8 yaş</p>
+      <p class="role">Birincil Kullanıcı — Öğrenci (kırılgan kullanıcı)</p>
+      <ul class="attrs">
+        <li>2. sınıf, kaynaştırma eğitimi öğrencisi</li>
+        <li>Hafif işitme güçlüğü; altyazıya ihtiyaç duyuyor</li>
+        <li>Dikkat süresi kısa; hızlı animasyonlar rahatsız ediyor</li>
+        <li>Gruba katılmak istiyor ama süreçten kopmaktan korkuyor</li>
+        <li><strong>Hedefi:</strong> Arkadaşlarıyla birlikte anlaşılır bir deneyim yaşamak</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="kullanim">3. Kullanım Durumu Özeti</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Kod</th>
+        <th>Kullanım Durumu</th>
+        <th>Birincil Aktör</th>
+        <th>Önkoşul</th>
+        <th>Sonkoşul</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>UC-01</td>
+        <td>Etkinliği başlat</td>
+        <td>Öğretmen</td>
+        <td>Uygulama yüklü, tablet şarjlı, kartlar dağıtıldı</td>
+        <td>FSM Scanning durumuna geçti</td>
+      </tr>
+      <tr>
+        <td>UC-02</td>
+        <td>Kart tara — canlıyı keşfet</td>
+        <td>Öğrenci</td>
+        <td>FSM Scanning durumunda, kart kameranın görüş alanında</td>
+        <td>3D model görünür, bilgi paneli açık, narasyonu çalıyor</td>
+      </tr>
+      <tr>
+        <td>UC-03</td>
+        <td>Mini quiz başlat ve tamamla</td>
+        <td>Öğretmen + Öğrenci</td>
+        <td>FSM Scanning/Viewing, TaskDatabase atanmış</td>
+        <td>FSM Summary'de, puan gösterildi</td>
+      </tr>
+      <tr>
+        <td>UC-04</td>
+        <td>Projeksiyona içerik yönlendir</td>
+        <td>Öğretmen</td>
+        <td>Harici ekran bağlı, FSM herhangi bir durumda</td>
+        <td>İkinci ekranda duruma uygun içerik gösterildi</td>
+      </tr>
+      <tr>
+        <td>UC-05</td>
+        <td>Etkinliği yeniden başlat</td>
+        <td>Öğretmen</td>
+        <td>FSM herhangi bir non-Idle durumda</td>
+        <td>FSM Idle'a döndü, oturum verisi sıfırlandı</td>
+      </tr>
+      <tr>
+        <td>UC-06</td>
+        <td>Sesi tekrar dinle</td>
+        <td>Öğrenci</td>
+        <td>FSM Scanning/Viewing, bilgi paneli açık</td>
+        <td>Narasyonu yeniden başladı</td>
+      </tr>
+      <tr>
+        <td>UC-07</td>
+        <td>Erişilebilirlik modunu etkinleştir</td>
+        <td>Öğretmen (önceden)</td>
+        <td>AccessibilitySettings asset atanmış</td>
+        <td>Altyazı ve/veya azaltılmış hareket aktif</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="s1">S1 — Öğretmen Kurulum ve Etkinlik Başlatma</h2>
+  <div class="scenario">
+    <div class="sc-head sc-head-1">
+      <div class="sc-id">1</div>
+      <div>
+        <p class="sc-title">Öğretmen Kurulum ve Etkinlik Başlatma</p>
+        <p class="sc-sub">Aktör: Selin Öğretmen &nbsp;|&nbsp; Süre: ~5 dakika (ön hazırlık) &nbsp;|&nbsp; Ön Koşul: Uygulama yüklü, tablet tam şarjlı</p>
+      </div>
+    </div>
+    <div class="sc-body">
+      <p><strong>Bağlam:</strong> Selin Öğretmen ders başlamadan 5 dakika önce dersi hazırlamaktadır. 5 öğrenci grubu masada oturuyor. Selin tableti alıp uygulamayı başlatır.</p>
+
+      <ul class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Uygulama açılışı</strong>
+            <span>Bootstrap sahnesi yüklenir. ContentBootstrapper veritabanları kaydeder ve Activity sahnesine geçer. Ekranda Idle paneli görünür: "Görünenin Ötesinde Bir Deniz / öğretmenin etkinliği başlatmasını bekle".</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>Kartları dağıt</strong>
+            <span>Öğretmen, 20 karttan rastgele 5–7'sini gruba dağıtır. Her çocuk 1–2 kart alır. Kartların ön yüzü canlı adını ve AR izleme desenini içerir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Öğretmen panelini aç</strong>
+            <span>Selin, ekranın köşesindeki küçük şeffaf butona 1 saniyeden uzun basar. TeacherPanel açılır. Yalnızca "Etkinliği başlat" butonu görünür (Idle durumu).</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>"Etkinliği başlat"a bas</strong>
+            <span>FSM Idle → Scanning geçişi yapar. TeacherPanel otomatik kapanır. Kamera görünümü aktif olur, çocuklar kartlarını taramaya hazır.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">5</span>
+          <div class="step-body">
+            <strong>Projeksiyon bağlantısı (isteğe bağlı)</strong>
+            <span>HDMI veya kablosuz ekran bağlıysa ProjectionCanvas otomatik ikinci ekrana yönlenir. Sınıf projeksiyonunda "Scanning" bekleme ekranı görünür.</span>
+          </div>
+        </li>
+      </ul>
+
+      <p><strong>Başarı Koşulu:</strong> Kamera görünümü aktif, FSM Scanning durumunda, çocuklar kart tarayabilir durumda.</p>
+    </div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><strong>Bağlı Gereksinimler:</strong> FREQ-033, FREQ-050, FREQ-051, FREQ-060</div>
+      <div class="sc-meta-item"><strong>Test Vakası:</strong> TT-01 (Cihaz Test Protokolü §3)</div>
+    </div>
+  </div>
+
+  <h2 id="s2">S2 — Öğrenci Kart Tarama ve Canlı Keşfi</h2>
+  <div class="scenario">
+    <div class="sc-head sc-head-2">
+      <div class="sc-id">2</div>
+      <div>
+        <p class="sc-title">Kart Tarama ve Canlı Keşfi</p>
+        <p class="sc-sub">Aktör: Elif (öğrenci) &nbsp;|&nbsp; Süre: ~3–5 dakika / canlı &nbsp;|&nbsp; Ön Koşul: FSM Scanning, canlı kartı elde</p>
+      </div>
+    </div>
+    <div class="sc-body">
+      <p><strong>Bağlam:</strong> Etkinlik başladı. Elif elindeki "Ahtapot" kartını tablete göstermek üzere. Tablet masada kararlı bir açıyla tutuluyor.</p>
+
+      <ul class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Kartı kameraya tut</strong>
+            <span>ARTrackedImageManager kartı algılar. MarkerTracker, "octopus" referans görüntüsünü çözümler ve <code>Spotted</code> eventini tetikler.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>3D model belirir</strong>
+            <span>CreatureViewer, ahtapot modelini kartın merkezine spawn eder. Model, ARTrackedImage boyutuna ölçeklenir (~10 cm). Kısa bir tarama SFX çalar.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Bilgi paneli açılır</strong>
+            <span>InfoPanelController, odak canlısı için Türkçe etiketli tüm bilgileri (İsim: Ahtapot, Kategori: Omurgasız, Habitat: Mercan Resifi…) doldurur. Panel ekrana kayar.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>Narasyonu dinle</strong>
+            <span>NarrationPlayer, ahtapota ait Türkçe ses narasyonunu otomatik başlatır. Elif ve arkadaşları dinler. Narasyonu bittiğinde NarrationFinished eventi tetiklenir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">5</span>
+          <div class="step-body">
+            <strong>Keşfetmeye devam et</strong>
+            <span>Elif kartı masaya bırakır. FocusResolver, odağı masada başka bir takip edilen karta devreder (varsa). Bilgi paneli 2 saniyelik bekleyerek yeni kart için güncellenir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">6</span>
+          <div class="step-body">
+            <strong>Sesi tekrar dinle</strong>
+            <span>Bir grup üyesi "Sesi tekrar dinle" düğmesine basar. Narasyonu baştan başlar. FSM durumu değişmez.</span>
+          </div>
+        </li>
+      </ul>
+
+      <p><strong>Başarı Koşulu:</strong> Canlı tanındı, model görünür, bilgi paneli doğru bilgiyle açık, narasyonu çalıyor.</p>
+
+      <div class="alt-path">
+        <strong>Alternatif Akış 2A — Kötü Aydınlatma:</strong> Takip kalitesi düşerse (<code>TrackingState.Limited</code>) model gizlenir. Elif tableti hafifçe eğiltiğinde ya da aydınlatma iyileştiğinde model yeniden belirir. Bilgi paneli açık kalır.
+      </div>
+      <div class="alt-path">
+        <strong>Alternatif Akış 2B — Aynı Anda İki Kart:</strong> Kaan elindeki "Köpekbalığı" kartını da aynı anda masaya koyar. Her iki kart için model spawn edilir; ancak yalnızca son taranan kart odağa geçer. InfoPanel, odak değişimini yansıtır.
+      </div>
+    </div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><strong>Bağlı Gereksinimler:</strong> FREQ-001 – FREQ-005, FREQ-020 – FREQ-022, FREQ-030 – FREQ-032</div>
+      <div class="sc-meta-item"><strong>Test Vakası:</strong> TT-02, TT-03 (Cihaz Test Protokolü §4)</div>
+    </div>
+  </div>
+
+  <h2 id="s3">S3 — Mini Quiz Aktivitesi</h2>
+  <div class="scenario">
+    <div class="sc-head sc-head-3">
+      <div class="sc-id">3</div>
+      <div>
+        <p class="sc-title">Mini Quiz — Grup Cevap Aktivitesi</p>
+        <p class="sc-sub">Aktör: Selin Öğretmen + Öğrenci Grubu &nbsp;|&nbsp; Süre: ~10–15 dakika &nbsp;|&nbsp; Ön Koşul: FSM Scanning veya Viewing, TaskDatabase atanmış</p>
+      </div>
+    </div>
+    <div class="sc-body">
+      <p><strong>Bağlam:</strong> Grup canlıları keşfetmeyi tamamladı. Öğretmen quiz'i başlatmaya karar veriyor.</p>
+
+      <ul class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Öğretmen quiz'i başlatır</strong>
+            <span>Selin öğretmen panelini açar → "Mini quiz başlat" → FSM Quiz durumuna geçer. CreatureViewer modelleri gizler (<code>ShowModels = false</code>). QuizController, TaskDatabase'den 3 rastgele görev seçer.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>İlk görev ekranda görünür</strong>
+            <span>QuizPanelController soruyu gösterir: "Mercan resifinde yaşayan canlıyı bul. (1/3)". Grup tartışmaya başlar; hangi kartın cevap olduğunu düşünüyorlar.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Grup bir kart seçer ve tarar</strong>
+            <span>Elif "Clownfish" (Palyaço Balığı) kartını kameraya gösterir. MarkerTracker Spotted eventini tetikler. QuizController, <code>task.Matches(clownfish)</code> → <code>HabitatEquals("Reef")</code> → <strong>Doğru!</strong></span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>Geri bildirim ve sonraki görev</strong>
+            <span>QuizPanel "Doğru!" mesajını 2 saniye gösterir (FeedbackText bounce animasyonu). Doğru cevap SFX çalar. Otomatik 2. göreve geçilir. Puan güncellenir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">5</span>
+          <div class="step-body">
+            <strong>Yanlış cevap senaryosu</strong>
+            <span>Kaan "Anglerfish" (Fener Balığı) kartını gösterir — Derin Deniz, Mercan Resifi değil. "Tam değil." mesajı gösterilir. Yanlış cevap SFX çalar. Grup tekrar dener.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">6</span>
+          <div class="step-body">
+            <strong>Tüm görevler tamamlanır → Özet</strong>
+            <span>3. görev doğrulanır. FSM → Summary. SummaryPanel açılır: "Toplam puan: 4". Puan 0'dan 4'e doğru sayım animasyonu. Taranan canlı ızgarası gösterilir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">7</span>
+          <div class="step-body">
+            <strong>Yeniden başlat (opsiyonel)</strong>
+            <span>Öğretmen "Yeniden başlat" → FSM Idle. Yeni grup için kartlar yeniden dağıtılır.</span>
+          </div>
+        </li>
+      </ul>
+
+      <p><strong>Başarı Koşulu:</strong> Grup 3 görevi tamamladı, özet ekranı puan gösterdi, modeller yeniden görünür hale geldi.</p>
+    </div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><strong>Bağlı Gereksinimler:</strong> FREQ-040 – FREQ-044, FREQ-050 – FREQ-051</div>
+      <div class="sc-meta-item"><strong>Test Vakası:</strong> TT-05 (Cihaz Test Protokolü §4.5)</div>
+    </div>
+  </div>
+
+  <h2 id="s4">S4 — Sınıf Projeksiyonu ile Etkinlik</h2>
+  <div class="scenario">
+    <div class="sc-head sc-head-4">
+      <div class="sc-id">4</div>
+      <div>
+        <p class="sc-title">Sınıf Projeksiyonu ile Birleşik Kullanım</p>
+        <p class="sc-sub">Aktör: Selin Öğretmen &nbsp;|&nbsp; Süre: Tüm etkinlik boyunca &nbsp;|&nbsp; Ön Koşul: Harici ekran / projeksiyon bağlı</p>
+      </div>
+    </div>
+    <div class="sc-body">
+      <p><strong>Bağlam:</strong> Sınıfta projektör veya büyük ekran mevcut. Öğretmen HDMI kablosuyla tableti bağlıyor. Tüm sınıf (birden fazla grup) aynı anda etkinliği izleyebilecek.</p>
+
+      <ul class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Harici ekran otomatik algılanır</strong>
+            <span>ProjectionCanvasRouter, <code>Display.displays.Length &gt; 1</code> koşulunu 2 saniyede bir kontrol eder. Bağlantı tespit edilince Display.displays[1].Activate() çağrılır, ProjectionCanvas 2. ekrana yönlenir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>Scanning/Viewing durumu: Büyük canlı önizlemesi</strong>
+            <span>Bir grup "Yunus" kartını taradığında projeksiyonda büyük yunus ikonu, ismi ve kategorisi görünür. Sınıftaki tüm çocuklar görebilir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Quiz durumu: Ortak soru ekranı</strong>
+            <span>Quiz başladığında projeksiyonda QuizController'ın mevcut görevi büyük fontla görünür. Tüm sınıf soruyu okuyabilir; cevap yalnızca tablet grubundan gelir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>Summary durumu: Puan ve taranan canlı ızgarası</strong>
+            <span>Etkinlik bittiğinde projeksiyonda toplam puan ve oturum boyunca taranan tüm canlıların chip görünümü gösterilir. Öğretmen sınıfla konuşma başlatabilir.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">5</span>
+          <div class="step-body">
+            <strong>Ekran çıkarıldığında</strong>
+            <span>HDMI kablosu çekilirse ProjectionCanvasRouter 2 saniye içinde tespit eder, canvas gizlenir. Tablet tarafı etkilenmez.</span>
+          </div>
+        </li>
+      </ul>
+
+      <p><strong>Başarı Koşulu:</strong> Projeksiyon ekranı duruma uygun içerik gösteriyor; tablet kullanımı etkilenmemiş.</p>
+    </div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><strong>Bağlı Gereksinimler:</strong> FREQ-060 – FREQ-062</div>
+      <div class="sc-meta-item"><strong>Test Vakası:</strong> TT-07 (Cihaz Test Protokolü §7)</div>
+    </div>
+  </div>
+
+  <h2 id="s5">S5 — Erişilebilirlik: İşitme Güçlüğü ve Azaltılmış Hareket</h2>
+  <div class="scenario">
+    <div class="sc-head sc-head-5">
+      <div class="sc-id">5</div>
+      <div>
+        <p class="sc-title">Erişilebilirlik Modu — Kaynaştırma Öğrencisi</p>
+        <p class="sc-sub">Aktör: Zeynep (işitme güçlüğü) + Selin Öğretmen &nbsp;|&nbsp; Ön Koşul: AccessibilitySettings NarrationCaptions = true</p>
+      </div>
+    </div>
+    <div class="sc-body">
+      <p><strong>Bağlam:</strong> Zeynep hafif işitme güçlüğü yaşıyor; ses narasyonunu yeterince duyamıyor. Selin Öğretmen, etkinlik öncesinde ContentBootstrapper'daki AccessibilitySettings asset'inde <code>NarrationCaptions = true</code> ve <code>ReducedMotion = true</code> işaretlemiştir.</p>
+
+      <ul class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Uygulama erişilebilirlik ayarlarını uygular</strong>
+            <span>ContentBootstrapper, AccessibilityState'i günceller. <code>ReducedMotion = true</code> olduğu için IdleBackgroundAnimator kabarcık spawn etmez; panel animasyonları anlık geçişe döner.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>Zeynep kart tarar — narasyonu başlar</strong>
+            <span>NarrationPlayer sesi çalar. <code>NarrationCaptions = true</code> olduğu için CaptionOverlayController aktifleşir; ekranın alt kısmında canlının "InterestingTrait" alanı altyazı olarak görünür.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Altyazı ile eşzamanlı takip</strong>
+            <span>Zeynep sesi duymasa da altyazıyı okuyarak içeriği takip eder. Narasyonu bittiğinde altyazı kapanır.</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>Azaltılmış hareket panel geçişleri</strong>
+            <span>Panel açılıp kapanışları anlık; kayma animasyonu yok. Bu, hareket hassasiyeti olan öğrenciler için daha rahat bir deneyim sağlar.</span>
+          </div>
+        </li>
+      </ul>
+
+      <p><strong>Başarı Koşulu:</strong> Zeynep, ses duymadan da altyazı aracılığıyla canlı bilgilerini okuyabildi. Grup deneyiminden kopmadı.</p>
+    </div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><strong>Bağlı Gereksinimler:</strong> FREQ-035, NREQ-007</div>
+      <div class="sc-meta-item"><strong>Test Vakası:</strong> TT-08 (erişilebilirlik testi)</div>
+    </div>
+  </div>
+
+  <h2 id="alt-yollar">6. Kritik Alternatif Akışlar</h2>
+  <table>
+    <thead><tr><th>Kod</th><th>Tetikleyici Durum</th><th>Beklenen Sistem Davranışı</th><th>Kabul Kriteri</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>AA-01</td>
+        <td>Kart kameradan çıkıyor ama başka kart yok</td>
+        <td>FocusResolver odağı null yapar. InfoPanel 2 s bekler, yeni kart gelmezse kapanır. Narasyonu keser.</td>
+        <td>Panel 2 saniyeden önce kapanmamalı; yeni kart gelirse kapanma iptal olmalı</td>
+      </tr>
+      <tr>
+        <td>AA-02</td>
+        <td>Quiz'de yanlış kart tarandı</td>
+        <td>"Tam değil." geri bildirimi gösterilir, SFX çalar. Aynı görev tekrar gösterilir.</td>
+        <td>Yanlış cevapta görev ilerlemez; sonsuz deneme hakkı tanınır</td>
+      </tr>
+      <tr>
+        <td>AA-03</td>
+        <td>Öğretmen paneli kısa dokunuşla açılmaya çalışılıyor</td>
+        <td>Hiçbir şey olmaz. Panel açılmaz.</td>
+        <td>1 saniyeden kısa basma hiçbir işlem tetiklememelidir</td>
+      </tr>
+      <tr>
+        <td>AA-04</td>
+        <td>Projeksiyon ekranı oturum ortasında bağlandı</td>
+        <td>ProjectionCanvasRouter 2 saniye içinde algılar ve ProjectionCanvas'ı ekrana yönlendirir.</td>
+        <td>Yeniden başlatma gerekmemeli; tablet tarafı etkilenmemeli</td>
+      </tr>
+      <tr>
+        <td>AA-05</td>
+        <td>Narasyonu çalarken kart değişti</td>
+        <td>Önceki narasyonu kesilir; yeni odak canlısının narasyonu başlar. NarrationFinished tetiklenmez.</td>
+        <td>Önceki ses kesilmeli; yeni ses başlamalı; ses çakışması olmamalı</td>
+      </tr>
+      <tr>
+        <td>AA-06</td>
+        <td>Kötü aydınlatma — TrackingState.Limited</td>
+        <td>3D model gizlenir. InfoPanel açık kalır (bilgi okunmaya devam edebilir). Takip geri döndüğünde model yeniden belirir.</td>
+        <td>Geçici takip kaybı bilgi panelini kapatmamalı</td>
+      </tr>
+      <tr>
+        <td>AA-07</td>
+        <td>TaskDatabase atanmamış, quiz başlatmaya çalışılıyor</td>
+        <td>QuizController konsola uyarı yazar, doğrudan Summary durumuna geçer (0 puanla).</td>
+        <td>Uygulama kilitlenmemeli; graceful degrade davranışı göstermeli</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="basari">7. Başarı Kriterleri (Pilot Test İçin)</h2>
+  <p>Kullanıcı senaryolarının pilot testte başarılı sayılabilmesi için aşağıdaki gözlemlenebilir kriterler karşılanmalıdır:</p>
+  <ul>
+    <li><strong>S1 (Kurulum):</strong> Öğretmen, kılavuz okumadan 5 dakika içinde uygulamayı başlatıp etkinliği Scanning moduna getirebildi.</li>
+    <li><strong>S2 (Keşif):</strong> 7 yaşındaki öğrenci, yönerge almadan 3 dakika içinde ilk kartı tarayıp bilgi panelini açabildi.</li>
+    <li><strong>S2 (Keşif):</strong> Grup, 20 dakika boyunca kartları sırayla taradı; hiçbir kart taramasında uygulama kilitlenmedi.</li>
+    <li><strong>S3 (Quiz):</strong> Grup, 3 soruyu tamamladı; yanlış cevaplarda sistem beklenen geri bildirimi verdi ve devam etti.</li>
+    <li><strong>S3 (Quiz):</strong> Quiz tamamlandıktan sonra özet ekranı 5 saniye içinde göründü.</li>
+    <li><strong>S4 (Projeksiyon):</strong> Harici ekran bağlandığında projeksiyonda duruma uygun içerik gösterildi; yeniden başlatma gerekmedi.</li>
+    <li><strong>S5 (Erişilebilirlik):</strong> NarrationCaptions aktifken altyazı, ses çalarken ekranda görünür oldu.</li>
+  </ul>
+</main>
+</div>
+</body>
+</html>

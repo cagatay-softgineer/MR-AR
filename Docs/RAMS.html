@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAMS Analizi — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:       #0e2a47;
+    --ocean:      #1e5f8e;
+    --surf:       #4ea7c9;
+    --foam:       #f0f7fb;
+    --sand:       #f7f3eb;
+    --coral:      #ff7a59;
+    --coral-soft: #fde6df;
+    --warn:       #c0392b;
+    --warn-soft:  #fde5e5;
+    --good:       #2e8b57;
+    --good-soft:  #e2f4ea;
+    --amber:      #c9802e;
+    --amber-soft: #fdf3e2;
+    --ink:        #1b2733;
+    --muted:      #5a6b7a;
+    --line:       #e2e8ee;
+    --bg:         #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    max-height: 100vh; overflow-y: auto;
+    padding: 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.91em;
+  }
+  aside.toc .toc-label {
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 0.72em; color: var(--muted);
+    margin-bottom: 14px; padding-left: 12px;
+  }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 5px 0; }
+  aside.toc a {
+    text-decoration: none; color: var(--deep);
+    display: block; padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0; transition: all 0.15s;
+  }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white; padding: 52px 48px; border-radius: 16px;
+    margin-bottom: 48px; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ""; position: absolute; right: -80px; bottom: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.76em; opacity: 0.8; margin: 0 0 8px; }
+  .hero h1 { margin: 0 0 10px; font-size: 2em; font-weight: 700; }
+  .hero .sub { margin: 0; opacity: 0.85; font-size: 1em; max-width: 560px; }
+  .hero .meta { margin-top: 20px; font-size: 0.83em; opacity: 0.7; }
+
+  h2 { font-size: 1.25em; font-weight: 700; color: var(--deep); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1em; font-weight: 700; margin: 24px 0 10px; color: var(--ocean); }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin: 5px 0; }
+
+  /* RAMS category cards */
+  .rams-card {
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    margin: 24px 0 32px;
+    overflow: hidden;
+  }
+  .rams-card .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    color: white;
+  }
+  .rams-card .card-head .letter {
+    font-size: 2em;
+    font-weight: 900;
+    opacity: 0.9;
+    line-height: 1;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .rams-card .card-head .title { font-size: 1.05em; font-weight: 700; margin: 0; }
+  .rams-card .card-head .subtitle { font-size: 0.83em; opacity: 0.85; margin: 2px 0 0; }
+  .rams-card .card-body { padding: 24px; }
+  .rams-card .score-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .score-chip {
+    border-radius: 8px; padding: 10px 16px; font-size: 0.88em; font-weight: 600;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 100px; text-align: center;
+  }
+  .score-chip .val { font-size: 1.6em; font-weight: 900; line-height: 1; }
+  .score-chip .lbl { font-size: 0.75em; font-weight: 500; opacity: 0.8; }
+
+  .head-r { background: linear-gradient(135deg, #1e5f8e, #4ea7c9); }
+  .chip-r  { background: #e3f4fd; color: #1e5f8e; }
+  .head-a  { background: linear-gradient(135deg, #2e8b57, #4aad78); }
+  .chip-a  { background: var(--good-soft); color: #1a6b3c; }
+  .head-m  { background: linear-gradient(135deg, #c9802e, #e8a24a); }
+  .chip-m  { background: var(--amber-soft); color: #7a4e00; }
+  .head-s  { background: linear-gradient(135deg, #7c3aed, #a55dfa); }
+  .chip-s  { background: #f3effe; color: #5b21b6; }
+
+  /* risk matrix */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 0.92em; }
+  th { background: var(--deep); color: white; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 0.87em; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--foam); }
+
+  .risk-high  { background: #fde5e5; color: #8b1a1a; font-weight: 700; text-align: center; border-radius: 6px; padding: 3px 8px; display: inline-block; }
+  .risk-med   { background: #fdf0d8; color: #7a4e00; font-weight: 700; text-align: center; border-radius: 6px; padding: 3px 8px; display: inline-block; }
+  .risk-low   { background: var(--good-soft); color: #1a6b3c; font-weight: 700; text-align: center; border-radius: 6px; padding: 3px 8px; display: inline-block; }
+
+  .callout {
+    border-left: 4px solid var(--coral);
+    background: var(--coral-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px; margin: 20px 0; font-size: 0.95em;
+  }
+  .callout strong { color: var(--coral); }
+
+  .note {
+    border-left: 4px solid var(--surf);
+    background: var(--foam);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px; margin: 16px 0; font-size: 0.9em;
+  }
+
+  @media print {
+    .layout { display: block; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { border-radius: 8px; padding: 32px; }
+    .rams-card { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="toc">
+  <div class="toc-label">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Özet</a></li>
+    <li><a href="#kapsam">2. Kapsam ve Yöntem</a></li>
+    <li><a href="#r">3. Güvenilirlik (R)</a></li>
+    <li><a href="#a">4. Kullanılabilirlik (A)</a></li>
+    <li><a href="#m">5. Bakım Yapılabilirlik (M)</a></li>
+    <li><a href="#s">6. Güvenlik (S)</a></li>
+    <li><a href="#matrix">7. Risk Matrisi</a></li>
+    <li><a href="#oneriler">8. Öneriler</a></li>
+  </ol>
+</aside>
+<main>
+  <div class="hero">
+    <div class="kicker">Sistem Mühendisliği Analizi</div>
+    <h1>RAMS Analizi</h1>
+    <p class="sub">Güvenilirlik · Kullanılabilirlik · Bakım Yapılabilirlik · Güvenlik<br>Görünenin Ötesinde Bir Deniz — AR Eğitim Uygulaması</p>
+    <p class="meta">Hazırlanma Tarihi: Haziran 2026 &nbsp;|&nbsp; Kapsam: Yazılım + Donanım (Tablet + Kart) &nbsp;|&nbsp; Ortam: Sınıf (≤45 dk oturum)</p>
+  </div>
+
+  <h2 id="ozet">1. Özet</h2>
+  <p>Bu belge, <em>Görünenin Ötesinde Bir Deniz</em> uygulamasının RAMS (Reliability – Güvenilirlik; Availability – Kullanılabilirlik; Maintainability – Bakım Yapılabilirlik; Safety – Güvenlik) analizini sunar. Sistem; Unity 6 tabanlı AR mobil uygulama, ARCore/ARKit destekli tablet, fiziksel A6 kart seti ve isteğe bağlı projeksiyon ekranından oluşmaktadır. Analiz, 7–12 yaş çocuk kullanıcılarla 35–45 dakikalık sınıf oturumları bağlamında gerçekleştirilmiştir.</p>
+
+  <div class="callout">
+    <strong>Genel Değerlendirme:</strong> Sistemin güçlü yönleri çevrimdışı mimarisi ve tamamen yerel içerik deposudur. En yüksek risk alanı, sınıf aydınlatma koşullarına bağlı AR takip güvenilirliği ve üretim varlıklarının henüz tamamlanmamış olmasıdır.
+  </div>
+
+  <h2 id="kapsam">2. Kapsam ve Yöntem</h2>
+  <p>Analiz kapsamındaki sistem bileşenleri:</p>
+  <ul>
+    <li><strong>Uygulama yazılımı</strong>: Unity 6000.4.9f1, AR Foundation 6.x, URP 17.4.0</li>
+    <li><strong>AR altyapısı</strong>: ARCore (Android) / ARKit (iOS), XR Interaction Toolkit 3.4.1</li>
+    <li><strong>İçerik</strong>: 20 canlı ScriptableObject + 3D model + ses narasyonu</li>
+    <li><strong>Donanım</strong>: ARCore/ARKit destekli tablet, isteğe bağlı harici ekran</li>
+    <li><strong>Fiziksel kart</strong>: A6, 350 gsm mat lamine, 20 kart</li>
+  </ul>
+  <p>Puanlama sistemi: Her RAMS kategorisi için 1–5 ölçeğinde mevcut durum (F1–F10 tamamlandı, üretim varlıkları henüz teslim edilmedi) değerlendirilmiştir. Hedef puan pilot test sonrası ulaşılması beklenen değerdir.</p>
+
+  <!-- RELIABILITY -->
+  <h2 id="r">3. Güvenilirlik (Reliability)</h2>
+  <div class="rams-card">
+    <div class="card-head head-r">
+      <div class="letter">R</div>
+      <div>
+        <p class="title">Güvenilirlik — Reliability</p>
+        <p class="subtitle">Sistemin belirlenen koşullarda arızasız çalışma kapasitesi</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="score-row">
+        <div class="score-chip chip-r"><span class="val">3.5</span><span class="lbl">Mevcut</span></div>
+        <div class="score-chip chip-r"><span class="val">4.5</span><span class="lbl">Hedef</span></div>
+        <div class="score-chip chip-r"><span class="val">Orta</span><span class="lbl">Risk Seviyesi</span></div>
+      </div>
+
+      <h3>3.1 Yazılım Güvenilirliği</h3>
+      <p>Uygulama, tüm içeriği derleme zamanında paket içine gömmektedir; çalışma zamanında ağ çağrısı yoktur. Bu tasarım, dış bağımlılık kaynaklı arızaları sıfıra indirir. FSM (Finite State Machine) yapısı yasa dışı geçişleri <code>IsLegal</code> kontrolüyle reddeder; bu da geçersiz durumdan kaynaklanan hata olasılığını azaltır.</p>
+      <ul>
+        <li>Çalışma zamanı ağ bağımlılığı: <strong>Sıfır</strong></li>
+        <li>İçerik bütünlüğü: Validator menüsü tüm 20 canlı asset'i doğrular</li>
+        <li>Test kapsamı: Unity Test Framework asmdef'i yok; manuel test bağımlılığı var</li>
+        <li>Kilitlenme mekanizması: ServiceLocator null-güvenli; eksik referans → konsol uyarısı + graceful skip</li>
+      </ul>
+
+      <h3>3.2 AR Takip Güvenilirliği</h3>
+      <p>ARCore ve ARKit, olgun platformlardır; ancak takip kalitesi doğrudan sınıf ortamı koşullarına bağlıdır:</p>
+      <ul>
+        <li><strong>Iyi aydınlatma (&gt;200 lux)</strong>: Yüksek güvenilirlik, takip kaybı nadir</li>
+        <li><strong>Düşük aydınlatma veya geri ışık</strong>: Takip kesintileri artar; <code>TrackingState.Limited</code> → model gizlenir</li>
+        <li><strong>Yansımalı yüzey (parlak masa)</strong>: Mat laminasyon kartlarda yansıma minimuma indirilmiş, ancak masa yüzeyi takibi etkileyebilir</li>
+        <li><strong>Kart örtüşmesi</strong>: Birden fazla kart aynı anda masaya konulduğunda takip güvenilirliği doğrulanmayı bekliyor</li>
+      </ul>
+
+      <h3>3.3 Donanım Güvenilirliği</h3>
+      <p>Fiziksel kartlar 350 gsm mat lamine olup normal sınıf kullanımına (el kontağı, masa sürtünmesi) dayanıklıdır. Uygulama, kart referans görüntüsü köşelerinin hafif bükülmesinde takip performans düşüşünü henüz test etmemiştir.</p>
+
+      <div class="note">Açık Risk: Otomatik test yoktur. Güvenilirlik puanı manuel Q&amp;A testine bağımlıdır. Cihaz Test Protokolü uygulanmadan önce mevcut puan spekülatiftir.</div>
+    </div>
+  </div>
+
+  <!-- AVAILABILITY -->
+  <h2 id="a">4. Kullanılabilirlik (Availability)</h2>
+  <div class="rams-card">
+    <div class="card-head head-a">
+      <div class="letter">A</div>
+      <div>
+        <p class="title">Kullanılabilirlik — Availability</p>
+        <p class="subtitle">Sistemin ihtiyaç duyulduğu anda kullanıma hazır olma oranı</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="score-row">
+        <div class="score-chip chip-a"><span class="val">4.5</span><span class="lbl">Mevcut</span></div>
+        <div class="score-chip chip-a"><span class="val">5.0</span><span class="lbl">Hedef</span></div>
+        <div class="score-chip chip-a"><span class="val">Düşük</span><span class="lbl">Risk Seviyesi</span></div>
+      </div>
+
+      <h3>4.1 Ağ Bağımsızlığı</h3>
+      <p>Sistem tasarımı gereği sunucu veya bulut bağımlılığı yoktur. Kullanılabilirlik %100 olarak tasarlanmıştır; tek bağımlılık cihaz pilinin etkinlik süresini karşılamasıdır (35–45 dakika). Orta segment tabletlerde 3 saat+ pil ömrü, bu süreyi rahatlıkla karşılar.</p>
+
+      <h3>4.2 Uygulama Başlatma Süresi</h3>
+      <p>Bootstrap sahnesi ContentBootstrapper'ı çalıştırır ve Activity sahnesini yükler. Yükleme süresi, Unity derleme süresine değil, çalışma zamanı sahne yüklemesine bağlıdır. Hedef: soğuk başlatmadan etkinliğe hazır duruma &lt;5 saniye. Bu metrik gerçek cihaz testinde doğrulanmayı beklemektedir.</p>
+
+      <h3>4.3 Güncelleme Bağımlılığı</h3>
+      <p>Uygulama güncelleme olmadan aylar boyunca çalışabilir; içerik sabittir ve uzak değişkene bağlı değildir. ARCore/ARKit sistem güncellemeleri işletim sistemi ile otomatik gelir; bu güncelleme kontrol dışı bir değişkendir, ancak olgunlaşmış platformlar için risk düşüktür.</p>
+
+      <h3>4.4 Çoklu Kullanım Oturumu</h3>
+      <p>Yeniden başlat → Idle döngüsü, arka arkaya birden fazla sınıf grubu için oturum yönetimini destekler. <code>SessionScannedTracker</code>, Idle girişinde tarama geçmişini sıfırlar; hafıza sızıntısı riski minimize edilmiştir.</p>
+    </div>
+  </div>
+
+  <!-- MAINTAINABILITY -->
+  <h2 id="m">5. Bakım Yapılabilirlik (Maintainability)</h2>
+  <div class="rams-card">
+    <div class="card-head head-m">
+      <div class="letter">M</div>
+      <div>
+        <p class="title">Bakım Yapılabilirlik — Maintainability</p>
+        <p class="subtitle">Sistemin güncellenmesi, düzeltilmesi ve genişletilmesi kolaylığı</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="score-row">
+        <div class="score-chip chip-m"><span class="val">4.0</span><span class="lbl">Mevcut</span></div>
+        <div class="score-chip chip-m"><span class="val">4.5</span><span class="lbl">Hedef</span></div>
+        <div class="score-chip chip-m"><span class="val">Düşük</span><span class="lbl">Risk Seviyesi</span></div>
+      </div>
+
+      <h3>5.1 İçerik Güncelleme</h3>
+      <p>Yeni bir canlı eklemek için: <code>CreatureDefinition</code> asset oluştur → <code>CreatureDatabase</code>'e sürükle → Validator'ı çalıştır → model/ses/ikon ekle. Kod değişikliği gerekmez. Bu düşük teknik bariyer, biyoloji uzmanlarının içerik güncelleme sürecine katılımını kolaylaştırır.</p>
+
+      <h3>5.2 Modüler Mimari</h3>
+      <p>Asmdef yapısı (<code>ARFishing.asmdef</code> + <code>ARFishing.Editor.asmdef</code>) derleme sınırlarını net çizer. 8 modül (Core, Creatures, Marker, Viewer, Narration, UI, Quiz, Teacher) bağımsız olarak güncellenebilir. <code>ServiceLocator</code> bağımlılıkları doğrudan referans yerine tip üzerinden çözer.</p>
+
+      <h3>5.3 Yerelleştirme Bakımı</h3>
+      <p>Türkçe → İngilizce/Arapça içerik geçişi için <code>LocalizationTable</code> ScriptableObject'ini doldur; yeni kod gerekmez. Mevcut UI panelleri hâlâ TR string hardcode kullanıyor (F10 kısmi geçiş); tam i18n geçişi bir sonraki aşamada planlanmaktadır.</p>
+
+      <h3>5.4 Versiyon Yönetimi</h3>
+      <p>Unity 6000.4.9f1 LTS sürümüdür; uzun vadeli destek garantisi vardır. Paket bağımlılıkları <code>Packages/manifest.json</code>'da sabitlenmiştir. GitHub Actions CI/CD pipeline'ı, kaynak değişikliklerinde otomatik Android APK/AAB üretir.</p>
+
+      <h3>5.5 Teknik Borç</h3>
+      <ul>
+        <li>Otomatik test yoktur — manuel test bağımlılığı bakım riskidir</li>
+        <li>Bazı UI bileşenleri inspector referansları gerektiriyor; sahnelerde yanlış wiring olası bakım sorunudur</li>
+        <li>Validator, prefab/clip alanlarını kontrol eder ancak sahne wiring'ini doğrulamaz</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SAFETY -->
+  <h2 id="s">6. Güvenlik (Safety)</h2>
+  <div class="rams-card">
+    <div class="card-head head-s">
+      <div class="letter">S</div>
+      <div>
+        <p class="title">Güvenlik — Safety</p>
+        <p class="subtitle">Kullanıcıya, veriye ve sisteme zarar vermeme kapasitesi</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="score-row">
+        <div class="score-chip chip-s"><span class="val">5.0</span><span class="lbl">Veri Güvenliği</span></div>
+        <div class="score-chip chip-s"><span class="val">4.5</span><span class="lbl">Dijital Güv.</span></div>
+        <div class="score-chip chip-s"><span class="val">4.0</span><span class="lbl">Fiziksel Güv.</span></div>
+      </div>
+
+      <h3>6.1 Veri Gizliliği (KVKK / GDPR / COPPA)</h3>
+      <p><strong>Sıfır veri toplama</strong> politikası tasarım gereği uygulanmıştır:</p>
+      <ul>
+        <li>Analytics, telemetri, kilitlenme raporlama: devre dışı</li>
+        <li>Üçüncü taraf SDK (Firebase, Sentry, vb.): yok</li>
+        <li>Çalışma zamanı HTTP çağrısı: yok (<code>INTERNET</code> izni Android Manifest'ten kaldırılmış)</li>
+        <li>PlayerPrefs kullanımı: izin verilen, cihaz yerel; okul ağına iletilmiyor</li>
+        <li>Kamera akışı: yalnızca ARCore/ARKit yerel belleğinde işlenir, kaydedilmez</li>
+      </ul>
+
+      <h3>6.2 İçerik Güvenliği</h3>
+      <p>Tüm içerik yaş grubuna uygun (7–12) olarak hazırlanmıştır. Canlı bilgileri (habitat, diyet, tehditler) bilim temelli, şiddet içermeyen, çocuğa yönelik pedagojik dildedr. İçerik değişikliği yalnızca yeni uygulama sürümüyle mümkündür; çalışma zamanında uzak içerik güncellemesi yoktur.</p>
+
+      <h3>6.3 Fiziksel Güvenlik</h3>
+      <ul>
+        <li>Kartlar yuvarlak köşeli (kesik kenar riski yok)</li>
+        <li>350 gsm mat lamine — kır geçirmez, ıslanmaya karşı dayanıklı</li>
+        <li>Tablet tutulumu: çocuk boyutuna göre tasarlanmış; kısa AR oturumları kas yorgunluğunu minimize eder</li>
+        <li>Ekran parlaklığı: URP Performant profili desteklenen cihazlarda aşırı ısınmayı azaltır</li>
+      </ul>
+
+      <h3>6.4 Öğretmen Kontrolü</h3>
+      <p>Öğretmen paneli uzun basma (&gt;1 s) ile açılır; bu, çocukların yanlışlıkla kritik eylemlere erişmesini engeller. Quiz başlatma ve yeniden başlatma yalnızca öğretmen yetkisindedir; çocuklar etkinlik akışını kontrolden çıkaramaz.</p>
+    </div>
+  </div>
+
+  <h2 id="matrix">7. Risk Matrisi</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>RAMS Kategorisi</th>
+        <th>Olasılık</th>
+        <th>Etki</th>
+        <th>Düzey</th>
+        <th>Önlem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Düşük aydınlatmada AR takip kaybı</td>
+        <td>R — Güvenilirlik</td>
+        <td>Yüksek</td>
+        <td>Orta</td>
+        <td><span class="risk-med">Orta</span></td>
+        <td>Sınıf aydınlatma rehberi; FocusResolver 2 s ertelemesi flicker'ı azaltır</td>
+      </tr>
+      <tr>
+        <td>Pilot 5 canlı varlığı teslim gecikmesi</td>
+        <td>R — Güvenilirlik</td>
+        <td>Orta</td>
+        <td>Yüksek</td>
+        <td><span class="risk-high">Yüksek</span></td>
+        <td>Sanat üretim takvimi netleştir; yer tutucu ile kısmi pilot yap</td>
+      </tr>
+      <tr>
+        <td>Desteklenmeyen Android tablet</td>
+        <td>A — Kullanılabilirlik</td>
+        <td>Orta</td>
+        <td>Yüksek</td>
+        <td><span class="risk-high">Yüksek</span></td>
+        <td>Desteklenen cihaz listesi yayınla; pilot öncesi BT envanteri doğrula</td>
+      </tr>
+      <tr>
+        <td>Pil tükenmesi (&lt;45 dk oturum)</td>
+        <td>A — Kullanılabilirlik</td>
+        <td>Düşük</td>
+        <td>Orta</td>
+        <td><span class="risk-low">Düşük</span></td>
+        <td>Cihaz Test Protokolü pil testini kapsar; tam şarjla başlat</td>
+      </tr>
+      <tr>
+        <td>Sahne wiring hatası (inspector referansı boş)</td>
+        <td>M — Bakım</td>
+        <td>Orta</td>
+        <td>Orta</td>
+        <td><span class="risk-med">Orta</span></td>
+        <td>CLAUDE.md sahne wiring kılavuzu; validator sahne kontrolü planlanmalı</td>
+      </tr>
+      <tr>
+        <td>Kart fiziksel yıpranması (köşe bükülmesi)</td>
+        <td>R — Güvenilirlik</td>
+        <td>Orta</td>
+        <td>Düşük</td>
+        <td><span class="risk-low">Düşük</span></td>
+        <td>Mat laminasyon; yedek kart seti; belirli eşikte kart yenileme</td>
+      </tr>
+      <tr>
+        <td>Unity yeni sürüme yanlış geçiş</td>
+        <td>M — Bakım</td>
+        <td>Düşük</td>
+        <td>Yüksek</td>
+        <td><span class="risk-med">Orta</span></td>
+        <td>6000.4.9f1 sürümü sabit tutulmuştur; sürüm atlaması bilinçli karar gerektirir</td>
+      </tr>
+      <tr>
+        <td>Çocuk kişisel verisi toplanması</td>
+        <td>S — Güvenlik</td>
+        <td>Çok Düşük</td>
+        <td>Kritik</td>
+        <td><span class="risk-low">Düşük</span></td>
+        <td>Sıfır veri toplama mimarisi; INTERNET izni kaldırılmış; ağ izleme cihaz testinde doğrulanacak</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="oneriler">8. Öneriler</h2>
+  <ul>
+    <li><strong>R — Kısa vadeli:</strong> Cihaz Test Protokolü'nü en az 3 farklı tablet modeli ve 2 farklı aydınlatma koşulunda uygulayın. AR takip başarım verilerini kaydedin.</li>
+    <li><strong>A — Kısa vadeli:</strong> Desteklenen cihaz listesini yayınlayın. Pilot okul BT departmanıyla envanter doğrulama toplantısı yapın.</li>
+    <li><strong>M — Orta vadeli:</strong> Temel modüller için en az play-mode test paketi ekleyin (FSM geçişleri, MarkerTracker çözümlemesi, QuizController puan hesabı). Bu, bakım riskini belirgin şekilde düşürür.</li>
+    <li><strong>S — Sürekli:</strong> Her yeni bağımlılık eklemesinde gizlilik etkisini değerlendirin. Ağ izleme aracıyla (örn. Android Profiler network tab) sıfır çıkış HTTP isteği doğrulayın.</li>
+    <li><strong>Tümü — Pilot sonrası:</strong> Pilot geri bildirimlerini bu RAMS belgesine yansıtın; özellikle aydınlatma şikayetleri güvenilirlik puanını, kurulum zorlukları bakım puanını güncelleyecektir.</li>
+  </ul>
+</main>
+</div>
+</body>
+</html>

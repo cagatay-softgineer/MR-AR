@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWOT Analizi — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:       #0e2a47;
+    --ocean:      #1e5f8e;
+    --surf:       #4ea7c9;
+    --foam:       #f0f7fb;
+    --sand:       #f7f3eb;
+    --coral:      #ff7a59;
+    --coral-soft: #fde6df;
+    --warn:       #c0392b;
+    --warn-soft:  #fde5e5;
+    --good:       #2e8b57;
+    --good-soft:  #e2f4ea;
+    --amber:      #c9802e;
+    --amber-soft: #fdf3e2;
+    --purple:     #7c3aed;
+    --purple-soft:#f3effe;
+    --ink:        #1b2733;
+    --muted:      #5a6b7a;
+    --line:       #e2e8ee;
+    --bg:         #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  aside.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 32px 0;
+    border-right: 1px solid var(--line);
+    font-size: 0.91em;
+  }
+  aside.toc .toc-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-left: 12px;
+  }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 5px 0; }
+  aside.toc a {
+    text-decoration: none;
+    color: var(--deep);
+    display: block;
+    padding: 4px 8px 4px 12px;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    transition: all 0.15s;
+  }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white;
+    padding: 52px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -80px; bottom: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.76em;
+    opacity: 0.8;
+    margin: 0 0 8px;
+  }
+  .hero h1 { margin: 0 0 10px; font-size: 2em; font-weight: 700; }
+  .hero .sub { margin: 0; opacity: 0.85; font-size: 1em; max-width: 560px; }
+  .hero .meta { margin-top: 20px; font-size: 0.83em; opacity: 0.7; }
+
+  h2 {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--deep);
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 1em; font-weight: 700; margin: 24px 0 10px; color: var(--ocean); }
+
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin: 5px 0; }
+
+  /* SWOT grid */
+  .swot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 24px 0 36px;
+  }
+  .swot-cell {
+    border-radius: 12px;
+    padding: 24px 24px 20px;
+    position: relative;
+  }
+  .swot-cell .badge {
+    display: inline-block;
+    font-size: 0.72em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .swot-cell h3 { margin: 0 0 14px; font-size: 1.05em; }
+  .swot-cell ul { margin: 0; padding-left: 18px; }
+  .swot-cell li { margin: 6px 0; font-size: 0.95em; }
+
+  .cell-s { background: var(--good-soft); border: 1px solid #b8e0c8; }
+  .cell-s .badge { background: var(--good); color: white; }
+  .cell-s h3 { color: var(--good); }
+
+  .cell-w { background: var(--warn-soft); border: 1px solid #f5c4c4; }
+  .cell-w .badge { background: var(--warn); color: white; }
+  .cell-w h3 { color: var(--warn); }
+
+  .cell-o { background: var(--foam); border: 1px solid #c8e2f0; }
+  .cell-o .badge { background: var(--ocean); color: white; }
+  .cell-o h3 { color: var(--ocean); }
+
+  .cell-t { background: var(--amber-soft); border: 1px solid #f0d9b0; }
+  .cell-t .badge { background: var(--amber); color: white; }
+  .cell-t h3 { color: var(--amber); }
+
+  /* strategy table */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 0.93em; }
+  th {
+    background: var(--deep);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.88em;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--foam); }
+
+  .pill {
+    display: inline-block;
+    font-size: 0.76em;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pill-high { background: #d1f0e0; color: #1a6b3c; }
+  .pill-med  { background: #fdf0d8; color: #8a5b00; }
+  .pill-low  { background: #e8edf2; color: #4a5568; }
+
+  .callout {
+    border-left: 4px solid var(--coral);
+    background: var(--coral-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 0.95em;
+  }
+  .callout strong { color: var(--coral); }
+
+  @media print {
+    .layout { display: block; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { border-radius: 8px; padding: 32px; }
+    .swot-grid { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+    .swot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="toc">
+  <div class="toc-label">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Özet</a></li>
+    <li><a href="#swot">2. SWOT Matrisi</a></li>
+    <li><a href="#guclu">3. Güçlü Yönler</a></li>
+    <li><a href="#zayif">4. Zayıf Yönler</a></li>
+    <li><a href="#firsatlar">5. Fırsatlar</a></li>
+    <li><a href="#tehditler">6. Tehditler</a></li>
+    <li><a href="#strateji">7. Stratejik Çıkarımlar</a></li>
+    <li><a href="#oncelikler">8. Eylem Öncelikleri</a></li>
+  </ol>
+</aside>
+<main>
+  <div class="hero">
+    <div class="kicker">Stratejik Analiz</div>
+    <h1>SWOT Analizi</h1>
+    <p class="sub">Görünenin Ötesinde Bir Deniz — AR Tabanlı Deniz Ekosistemi Eğitim Uygulaması</p>
+    <p class="meta">Hazırlayan: Proje Ekibi &nbsp;|&nbsp; Hazırlanma Tarihi: Haziran 2026 &nbsp;|&nbsp; Hedef Kitle: 7–12 yaş, Sınıf Ortamı</p>
+  </div>
+
+  <h2 id="ozet">1. Özet</h2>
+  <p>Bu belge, <em>Görünenin Ötesinde Bir Deniz</em> uygulamasının stratejik konumunu değerlendirmek amacıyla hazırlanmış SWOT (Güçlü Yönler, Zayıf Yönler, Fırsatlar, Tehditler) analizidir. Uygulama; artırılmış gerçeklik (AR) teknolojisini fiziksel kart mekanizmasıyla birleştirerek 7–12 yaş grubundaki çocuklara deniz ekosistemini sınıf ortamında deneyimleme imkânı sunar. Analiz, ürünün mevcut geliştirme durumu (F1–F10 tamamlandı), hedef pazar ve rekabet ortamı dikkate alınarak yapılmıştır.</p>
+
+  <div class="callout">
+    <strong>Temel Bulgu:</strong> Uygulamanın en güçlü stratejik avantajı, tamamen çevrimdışı çalışabilmesi ve sıfır veri toplama politikasıdır. Bu iki özellik, KVKK/GDPR/COPPA uyumluluğu gerektiren okul ortamlarında rakip ürünlere karşı belirleyici bir fark yaratmaktadır.
+  </div>
+
+  <h2 id="swot">2. SWOT Matrisi</h2>
+  <div class="swot-grid">
+    <div class="swot-cell cell-s">
+      <span class="badge">S — Güçlü</span>
+      <h3>Güçlü Yönler</h3>
+      <ul>
+        <li>Tamamen çevrimdışı çalışma</li>
+        <li>Sıfır veri toplama / gizlilik uyumu</li>
+        <li>Fiziksel kart + AR etkileşimi</li>
+        <li>Türkçe içerik, yerel müfredata uyum</li>
+        <li>Öğretmen kontrol modu</li>
+        <li>20 canlı içerik seti tamamlandı</li>
+        <li>Erişilebilirlik desteği (F10)</li>
+      </ul>
+    </div>
+    <div class="swot-cell cell-w">
+      <span class="badge">W — Zayıf</span>
+      <h3>Zayıf Yönler</h3>
+      <ul>
+        <li>ARCore/ARKit destekli tablet gereksinimi</li>
+        <li>Üretim varlıkları henüz tamamlanmadı (3D, ses)</li>
+        <li>Fiziksel kart basım maliyeti</li>
+        <li>İlk kurulum karmaşıklığı (öğretmen için)</li>
+        <li>Sınıf aydınlatmasına AR hassasiyeti</li>
+        <li>Çoklu tablet senkronizasyonu yok (MVP kapsamı dışı)</li>
+      </ul>
+    </div>
+    <div class="swot-cell cell-o">
+      <span class="badge">O — Fırsat</span>
+      <h3>Fırsatlar</h3>
+      <ul>
+        <li>Büyüyen Türkiye EdTech pazarı</li>
+        <li>MEB çevre eğitimi müfredat desteği</li>
+        <li>Akvaryum / müze ortaklıkları</li>
+        <li>Arapça ve İngilizce içerik altyapısı hazır</li>
+        <li>Tablet donanımının ucuzlaması</li>
+        <li>Çevre duyarlılığı toplumsal gündemde</li>
+      </ul>
+    </div>
+    <div class="swot-cell cell-t">
+      <span class="badge">T — Tehdit</span>
+      <h3>Tehditler</h3>
+      <ul>
+        <li>Sınıflarda tablet erişim eşitsizliği</li>
+        <li>Rakip eğitim uygulamaları (Quizlet, Kahoot!)</li>
+        <li>Kötü aydınlatmada AR takip başarısızlığı</li>
+        <li>Öğretmen dijital yetkinlik farklılıkları</li>
+        <li>Android cihaz parçalanması (ARCore sürümleri)</li>
+        <li>Kart baskı ve laminasyon temin süreci</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="guclu">3. Güçlü Yönler — Detay</h2>
+
+  <h3>3.1 Tamamen Çevrimdışı Çalışma</h3>
+  <p>Tüm 3D modeller, ses dosyaları ve canlı metadata doğrudan uygulama paketi içine gömülmüştür. Sınıflarda Wi-Fi ya da mobil bağlantı zorunluluğu yoktur. Bu, özellikle ağ altyapısı zayıf veya internet erişiminin kısıtlandığı okul ortamlarında uygulamayı güvenilir ve sürtünmesiz kılar.</p>
+
+  <h3>3.2 Sıfır Veri Toplama ve Gizlilik Uyumu</h3>
+  <p>Uygulama, 7–12 yaş çocukları hedef aldığından en yüksek gizlilik standardını uygular. Analytics, telemetri, kilitlenme raporlama veya üçüncü taraf SDK yoktur. KVKK, GDPR ve COPPA uyumlu bir veri mimarisi, okul idarelerinin satın alma kararlarında kritik bir avantajdır.</p>
+
+  <h3>3.3 Fiziksel Kart + AR Etkileşimi</h3>
+  <p>A6 boyutundaki lamine kartlar hem somut bir öğrenme nesnesi (etiket, sınıflandırma) hem de AR tetikleyici görevi görür. Ekrana dokunmak yerine kartı tutmak, küçük yaş grubu için motor becerilere uygun ve dikkat çekici bir deneyim sağlar. Beş kişilik grupların farklı kart alt kümeleri alması, işbirliğini teşvik eden pedagojik bir tasarım kararıdır.</p>
+
+  <h3>3.4 Öğretmen Kontrol Modu</h3>
+  <p>Uzun basma (≥1 s) ile açılan öğretmen paneli, çocukların yanlışlıkla erişmesini engeller. Etkinliği başlatma, mini quiz başlatma ve yeniden başlatma işlemleri öğretmen kontrolünde tutulur. İsteğe bağlı HDMI/USB-C projeksiyon desteği, sınıfın tamamının aynı anda görebileceği paylaşımlı bir görüntü sağlar.</p>
+
+  <h3>3.5 Erişilebilirlik Altyapısı</h3>
+  <p>F10 ile eklenen erişilebilirlik çerçevesi, azaltılmış hareket modu (animasyonları devre dışı bırakır), anlatım altyazıları (işitme güçlüğü için) ve UI ölçek çarpanı içerir. Bu özellikler, kaynaştırma eğitimi ortamlarında uygulanabilirliği artırır.</p>
+
+  <h2 id="zayif">4. Zayıf Yönler — Detay</h2>
+
+  <h3>4.1 Donanım Gereksinimi</h3>
+  <p>ARCore (Android) veya ARKit (iOS) desteği, 2017 sonrası orta-üst segment tabletleri gerektirir. Okullardaki eski veya düşük maliyetli tabletler bu şartı karşılamayabilir. Minimum cihaz listesinin oluşturulması ve okul BT departmanlarıyla önceden iletişime geçilmesi gereklidir.</p>
+
+  <h3>4.2 Üretim Varlıkları</h3>
+  <p>20 canlı için üretim kalitesinde 3D modeller, Türkçe ses narasyonları, A6 kart tasarımları ve UI ikonları henüz teslim edilmemiştir. Mevcut yer tutucu varlıklar (prosedürel geometri, sinüs tonları) işlevsel ancak yayına hazır değildir. Sanat üretimi kritik yol üzerindedir.</p>
+
+  <h3>4.3 İlk Kurulum Karmaşıklığı</h3>
+  <p>Öğretmenin etkinlik öncesinde tableti hazırlaması, XR Simülasyon ortamını anlamaması gerekmez; ancak ilk uygulama kurulumu, kart dağıtımı ve projeksiyon bağlantısı yönetilmesi gereken adımlar içerir. Hızlı Referans Kartı ve video kılavuz bu yükü azaltabilir.</p>
+
+  <h2 id="firsatlar">5. Fırsatlar — Detay</h2>
+
+  <h3>5.1 MEB Müfredat Entegrasyonu</h3>
+  <p>Türkiye İlköğretim Fen Bilimleri müfredatı 4. sınıftan itibaren canlılar ve ekosistem konularını kapsar. Uygulamanın içeriği bu müfredat kazanımlarıyla hizalanarak resmi ders materyali statüsü kazanabilir; bu da okul alımları için bütçe kanalı açar.</p>
+
+  <h3>5.2 Kurumsal Ortaklıklar</h3>
+  <p>Akvaryumlar, deniz bilimleri merkezleri ve çevre STK'ları hem içerik doğrulama (biyoloji uzmanı incelemesi) hem de dağıtım kanalı olarak değerlendirilebilir. Workshoplar bu mekânlarda düzenlenebilir.</p>
+
+  <h3>5.3 Uluslararasılaşma</h3>
+  <p>Yerelleştirme altyapısı (Locale enum, LocalizationTable, Localizer static) İngilizce ve Arapça genişlemeye hazır olarak geliştirilmiştir. Orta Doğu ve Körfez ülkelerindeki Türkçe okul programları veya Arapça pazarı için ek içerik üretimi mümkündür.</p>
+
+  <h2 id="tehditler">6. Tehditler — Detay</h2>
+
+  <h3>6.1 Tablet Erişim Eşitsizliği</h3>
+  <p>Türkiye'de okullardaki tablet dağılımı bölgeden bölgeye farklılık göstermektedir. Uygulamanın beş kişilik grup başına bir tablet tasarımı bu sorunu kısmen hafifletir; ancak tablet sayısı ve kalitesi okuldan okula değişir. Pilot test için hedef okulların BT envanterinin önceden doğrulanması önerilir.</p>
+
+  <h3>6.2 Android Parçalanması</h3>
+  <p>ARCore desteği üreticiye ve Android sürümüne göre farklılık gösterir. Bazı düşük maliyetli tablet markası ARCore uyumlu değildir. Desteklenen cihaz listesinin yayınlanması ve kurulum öncesi ARCore uyumluluk kontrolü gereklidir.</p>
+
+  <h3>6.3 Kart Lojistiği</h3>
+  <p>Fiziksel kartların 350 gsm mat lamine baskısı, temin süresi ve birim maliyet, okul satın alma süreçlerini yavaşlatabilir. Dijital alternatif (ekrana basılmış kart görseli) AR takibinde optik kayıplara yol açabilir; bu nedenle basılı kart zorunlu tutulmalıdır.</p>
+
+  <h2 id="strateji">7. Stratejik Çıkarımlar</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Strateji Tipi</th>
+        <th>Açıklama</th>
+        <th>Öncelik</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SO — Güç + Fırsat</strong></td>
+        <td>Çevrimdışı çalışma ve gizlilik avantajını MEB ortaklık görüşmelerinde ön plana çıkar; müfredat uyum belgesi hazırla.</td>
+        <td><span class="pill pill-high">Yüksek</span></td>
+      </tr>
+      <tr>
+        <td><strong>SO — Güç + Fırsat</strong></td>
+        <td>Akvaryum workshopları için pilot program paketi hazırla: 5 tablet + 20 kart seti + öğretmen kılavuzu.</td>
+        <td><span class="pill pill-high">Yüksek</span></td>
+      </tr>
+      <tr>
+        <td><strong>WO — Zayıflık + Fırsat</strong></td>
+        <td>Üretim varlıklarını önce 5 canlı ile tamamla; pilot testi bu alt kümeyle yap, geri bildirime göre kalan 15'i üret.</td>
+        <td><span class="pill pill-high">Yüksek</span></td>
+      </tr>
+      <tr>
+        <td><strong>WO — Zayıflık + Fırsat</strong></td>
+        <td>Desteklenen cihaz listesini yayınla; okul BT departmanları için 5 dakikalık kurulum videosu hazırla.</td>
+        <td><span class="pill pill-med">Orta</span></td>
+      </tr>
+      <tr>
+        <td><strong>ST — Güç + Tehdit</strong></td>
+        <td>Android parçalanması için Cihaz Test Protokolü'nü en az 3 farklı tablet modeli üzerinde uygula; sonuçları desteklenen cihaz listesine ekle.</td>
+        <td><span class="pill pill-high">Yüksek</span></td>
+      </tr>
+      <tr>
+        <td><strong>WT — Zayıflık + Tehdit</strong></td>
+        <td>Kart basım sürecini en geç 8 hafta öncesinde başlat; yedek kart seti (yıpranmaya karşı) bütçeye ekle.</td>
+        <td><span class="pill pill-med">Orta</span></td>
+      </tr>
+      <tr>
+        <td><strong>WT — Zayıflık + Tehdit</strong></td>
+        <td>Öğretmen dijital yetkinlik farklılıklarına karşı yüz yüze eğitim oturumu (30 dk) ve tear-off hızlı referans kartı planla.</td>
+        <td><span class="pill pill-med">Orta</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="oncelikler">8. Eylem Öncelikleri</h2>
+  <p>SWOT analizinden çıkan kritik yol adımları, teslim tarihi sırasıyla:</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Eylem</th><th>Sorumlu</th><th>Öncelik</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Pilot 5 canlı için üretim 3D model + ses teslimi</td><td>Sanat Ekibi</td><td><span class="pill pill-high">Kritik</span></td></tr>
+      <tr><td>2</td><td>Desteklenen Android tablet listesini yayınla (ARCore uyumlu, ≥2018)</td><td>Geliştirme</td><td><span class="pill pill-high">Yüksek</span></td></tr>
+      <tr><td>3</td><td>Pilot okul BT envanteri doğrulaması</td><td>Proje Yönetimi</td><td><span class="pill pill-high">Yüksek</span></td></tr>
+      <tr><td>4</td><td>A6 kart tasarımları → baskı teklifi al</td><td>Sanat + PM</td><td><span class="pill pill-high">Yüksek</span></td></tr>
+      <tr><td>5</td><td>Cihaz Test Protokolü'nü 3 tablet modeli ile tamamla</td><td>QA</td><td><span class="pill pill-med">Orta</span></td></tr>
+      <tr><td>6</td><td>MEB müfredat uyum tablosu hazırla</td><td>Pedagoji Danışmanı</td><td><span class="pill pill-med">Orta</span></td></tr>
+      <tr><td>7</td><td>Öğretmen kurulum videosu (TR, 5 dk)</td><td>İletişim</td><td><span class="pill pill-low">Düşük</span></td></tr>
+    </tbody>
+  </table>
+</main>
+</div>
+</body>
+</html>

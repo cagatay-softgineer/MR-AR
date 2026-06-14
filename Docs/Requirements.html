@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gereksinimler Belgesi — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:       #0e2a47;
+    --ocean:      #1e5f8e;
+    --surf:       #4ea7c9;
+    --foam:       #f0f7fb;
+    --coral:      #ff7a59;
+    --coral-soft: #fde6df;
+    --warn:       #c0392b;
+    --warn-soft:  #fde5e5;
+    --good:       #2e8b57;
+    --good-soft:  #e2f4ea;
+    --amber:      #c9802e;
+    --amber-soft: #fdf3e2;
+    --ink:        #1b2733;
+    --muted:      #5a6b7a;
+    --line:       #e2e8ee;
+    --bg:         #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid; grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px; max-width: 1160px; margin: 0 auto; padding: 0 32px;
+  }
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    max-height: 100vh; overflow-y: auto;
+    padding: 32px 0; border-right: 1px solid var(--line); font-size: 0.91em;
+  }
+  aside.toc .toc-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72em; color: var(--muted); margin-bottom: 14px; padding-left: 12px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 5px 0; }
+  aside.toc li.sub { padding-left: 12px; }
+  aside.toc a { text-decoration: none; color: var(--deep); display: block; padding: 4px 8px 4px 12px; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; transition: all 0.15s; }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white; padding: 52px 48px; border-radius: 16px;
+    margin-bottom: 48px; position: relative; overflow: hidden;
+  }
+  .hero::after { content: ""; position: absolute; right: -80px; bottom: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%); border-radius: 50%; }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.76em; opacity: 0.8; margin: 0 0 8px; }
+  .hero h1 { margin: 0 0 10px; font-size: 2em; font-weight: 700; }
+  .hero .sub { margin: 0; opacity: 0.85; font-size: 1em; max-width: 560px; }
+  .hero .meta { margin-top: 20px; font-size: 0.83em; opacity: 0.7; }
+
+  h2 { font-size: 1.25em; font-weight: 700; color: var(--deep); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1em; font-weight: 700; margin: 28px 0 10px; color: var(--ocean); }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin: 5px 0; }
+
+  /* req table */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 28px; font-size: 0.88em; }
+  th { background: var(--deep); color: white; padding: 9px 12px; text-align: left; font-weight: 600; font-size: 0.85em; white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--foam); }
+  td:first-child { font-family: ui-monospace, monospace; font-size: 0.82em; white-space: nowrap; color: var(--ocean); font-weight: 700; }
+
+  .pill { display: inline-block; font-size: 0.75em; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .p-crit  { background: #fde5e5; color: #8b1a1a; }
+  .p-high  { background: var(--coral-soft); color: #9b3b22; }
+  .p-med   { background: var(--amber-soft); color: #7a4e00; }
+  .p-low   { background: #e8edf2; color: #4a5568; }
+
+  .s-done    { background: var(--good-soft); color: #1a6b3c; }
+  .s-partial { background: var(--amber-soft); color: #7a4e00; }
+  .s-planned { background: var(--foam); color: var(--ocean); }
+
+  .callout { border-left: 4px solid var(--coral); background: var(--coral-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; font-size: 0.95em; }
+  .callout strong { color: var(--coral); }
+  .note { border-left: 4px solid var(--surf); background: var(--foam); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 16px 0; font-size: 0.9em; }
+
+  .section-intro { background: var(--foam); border-radius: 10px; padding: 14px 18px; margin: 0 0 20px; font-size: 0.93em; border: 1px solid var(--line); }
+
+  @media print {
+    .layout { display: block; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { border-radius: 8px; padding: 32px; }
+    table { page-break-inside: avoid; font-size: 0.8em; }
+    h2, h3 { page-break-after: avoid; }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="toc">
+  <div class="toc-label">İçindekiler</div>
+  <ol>
+    <li><a href="#giris">1. Giriş</a></li>
+    <li><a href="#kapsam">2. Kapsam</a></li>
+    <li><a href="#paydas">3. Paydaşlar</a></li>
+    <li><a href="#kullanici">4. Kullanıcı Gereksinimleri</a></li>
+    <li><a href="#fonksiyonel">5. Fonksiyonel Gereksinimler</a></li>
+    <li class="sub"><a href="#f-ar">5.1 AR Takip</a></li>
+    <li class="sub"><a href="#f-db">5.2 İçerik Veritabanı</a></li>
+    <li class="sub"><a href="#f-narasyon">5.3 Ses Narasyonu</a></li>
+    <li class="sub"><a href="#f-ui">5.4 Kullanıcı Arayüzü</a></li>
+    <li class="sub"><a href="#f-quiz">5.5 Mini Quiz</a></li>
+    <li class="sub"><a href="#f-ogretmen">5.6 Öğretmen Modu</a></li>
+    <li class="sub"><a href="#f-projeksiyon">5.7 Projeksiyon</a></li>
+    <li><a href="#fonksiyonel-olmayan">6. Fonksiyonel Olmayan</a></li>
+    <li><a href="#kisitlar">7. Kısıtlamalar</a></li>
+    <li><a href="#izlenebilirlik">8. Gereksinim İzlenebilirliği</a></li>
+  </ol>
+</aside>
+<main>
+  <div class="hero">
+    <div class="kicker">Yazılım Gereksinimleri Belgesi</div>
+    <h1>Gereksinimler Belgesi</h1>
+    <p class="sub">Görünenin Ötesinde Bir Deniz — AR Tabanlı Deniz Ekosistemi Eğitim Uygulaması</p>
+    <p class="meta">Sürüm: 1.0 &nbsp;|&nbsp; Hazırlanma Tarihi: Haziran 2026 &nbsp;|&nbsp; Geliştirme Durumu: F1–F10 Tamamlandı</p>
+  </div>
+
+  <h2 id="giris">1. Giriş</h2>
+  <p>Bu belge, <em>Görünenin Ötesinde Bir Deniz</em> uygulamasının fonksiyonel ve fonksiyonel olmayan gereksinimlerini, kısıtlamalarını ve gereksinim izlenebilirlik matrisini kapsar. Belge, geliştirme ekibi, pedagoji danışmanları, sanat ekibi ve okul yönetimleri için referans niteliğindedir.</p>
+  <p>Uygulama; artırılmış gerçeklik (AR) teknolojisini, fiziksel A6 kart seti ile birleştirerek 7–12 yaş çocuklara deniz ekosistemini interaktif biçimde öğreten bir sınıf etkinliği aracıdır. Çalışma süresi 35–45 dakika, grup boyutu 5 öğrenci / tablet olarak tasarlanmıştır.</p>
+
+  <div class="callout">
+    <strong>Kritik Kısıt:</strong> Uygulama tüm işlevlerini ağ bağlantısı olmadan yerine getirmelidir. Hiçbir kullanıcı verisi toplanmaz veya iletilmez. Bu iki kısıt tasarım gereğidir ve değişmez.
+  </div>
+
+  <h2 id="kapsam">2. Kapsam</h2>
+  <table>
+    <thead><tr><th>Konu</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td>Ürün Adı</td><td>Görünenin Ötesinde Bir Deniz / Denizin Gizli Yaşamı</td></tr>
+      <tr><td>Platform</td><td>Android (ARCore) · iOS (ARKit)</td></tr>
+      <tr><td>Geliştirme Ortamı</td><td>Unity 6000.4.9f1 · AR Foundation 6.x · URP 17.4.0</td></tr>
+      <tr><td>Hedef Kullanıcı</td><td>7–12 yaş öğrenci (birincil) · İlkokul öğretmeni (ikincil)</td></tr>
+      <tr><td>Kullanım Ortamı</td><td>Sınıf / workshop, kapalı alan, tablet başına 5 öğrenci</td></tr>
+      <tr><td>Oturum Süresi</td><td>35–45 dakika</td></tr>
+      <tr><td>İçerik Dili</td><td>Türkçe (öncelikli) · İngilizce ve Arapça altyapı hazır</td></tr>
+      <tr><td>İçerik Kapsamı</td><td>20 deniz canlısı · 8 quiz görevi</td></tr>
+      <tr><td>MVP Dışı</td><td>Çok tablet senkronizasyonu · çevrimiçi hesap · gerçek zamanlı arka uç</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="paydas">3. Paydaşlar ve Rolleri</h2>
+  <table>
+    <thead><tr><th>Paydaş</th><th>Rol</th><th>Birincil İlgisi</th></tr></thead>
+    <tbody>
+      <tr><td>Öğrenci (7–12 yaş)</td><td>Birincil kullanıcı</td><td>Eğlenceli, anlaşılır, güvenli deneyim</td></tr>
+      <tr><td>Öğretmen</td><td>Operatör / facilitatör</td><td>Kolay kurulum, güvenilir çalışma, sınıf kontrolü</td></tr>
+      <tr><td>Okul Yönetimi</td><td>Karar verici / satın alıcı</td><td>Müfredat uyumu, gizlilik, maliyet</td></tr>
+      <tr><td>Proje Ekibi</td><td>Geliştirici</td><td>Bakım kolaylığı, modüler mimari</td></tr>
+      <tr><td>Sanat Ekibi / Tedarikçi</td><td>İçerik üreticisi</td><td>Açık varlık format gereksinimleri</td></tr>
+      <tr><td>Pedagoji Danışmanı</td><td>İçerik doğrulayıcı</td><td>Biyolojik doğruluk, yaş uygunluğu</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="kullanici">4. Kullanıcı Gereksinimleri</h2>
+  <p class="section-intro">Kullanıcı gereksinimleri, sistem ne yapmalıdır sorusuna paydaş perspektifinden yanıt verir; teknik çözümü değil ihtiyacı tanımlar.</p>
+  <table>
+    <thead><tr><th>Kod</th><th>Kullanıcı Gereksinimi</th><th>Paydaş</th><th>Öncelik</th></tr></thead>
+    <tbody>
+      <tr><td>UR-01</td><td>Tablet kamerasını kartın üzerine tuttuğumda 3D canlı modeli görmek istiyorum</td><td>Öğrenci</td><td><span class="pill p-crit">Kritik</span></td></tr>
+      <tr><td>UR-02</td><td>Canlı hakkında bilgi almak istiyorum (isim, habitat, diyet, tehditler)</td><td>Öğrenci</td><td><span class="pill p-crit">Kritik</span></td></tr>
+      <tr><td>UR-03</td><td>Ses anlatımını dinlemek ve tekrar dinleyebilmek istiyorum</td><td>Öğrenci</td><td><span class="pill p-high">Yüksek</span></td></tr>
+      <tr><td>UR-04</td><td>Grubumla birlikte ekosistem hakkında quiz çözmek istiyorum</td><td>Öğrenci</td><td><span class="pill p-high">Yüksek</span></td></tr>
+      <tr><td>UR-05</td><td>Etkinliği başlatmak, quiz başlatmak ve yeniden başlatmak istiyorum</td><td>Öğretmen</td><td><span class="pill p-crit">Kritik</span></td></tr>
+      <tr><td>UR-06</td><td>Sınıftaki tüm çocukların görebileceği bir projeksiyona içerik aktarmak istiyorum</td><td>Öğretmen</td><td><span class="pill p-med">Orta</span></td></tr>
+      <tr><td>UR-07</td><td>Uygulamanın internet bağlantısı gerektirmemesini istiyorum</td><td>Öğretmen, Okul Yönetimi</td><td><span class="pill p-crit">Kritik</span></td></tr>
+      <tr><td>UR-08</td><td>Çocukların kişisel verilerinin toplanmadığından emin olmak istiyorum</td><td>Okul Yönetimi</td><td><span class="pill p-crit">Kritik</span></td></tr>
+      <tr><td>UR-09</td><td>Uygulama güncellemeden aylarca kararlı çalışabilmelidir</td><td>Okul Yönetimi</td><td><span class="pill p-high">Yüksek</span></td></tr>
+      <tr><td>UR-10</td><td>Yeni canlı içeriği kod değişikliği gerektirmeden ekleyebilmeliyim</td><td>Proje Ekibi</td><td><span class="pill p-high">Yüksek</span></td></tr>
+      <tr><td>UR-11</td><td>İşitme güçlüğü olan öğrenciler için altyazı desteği olmalıdır</td><td>Öğretmen</td><td><span class="pill p-med">Orta</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="fonksiyonel">5. Fonksiyonel Gereksinimler</h2>
+
+  <h3 id="f-ar">5.1 AR Marker Takip Sistemi</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-001</td>
+        <td>Sistem, kameraya gösterilen A6 fiziksel kartı AR Foundation <code>ARTrackedImageManager</code> aracılığıyla tanımalı ve karşılık gelen canlı kaydını çözümlemelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-002</td>
+        <td>Sistem, aynı anda en az 4 farklı kartı eş zamanlı olarak takip edebilmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-003</td>
+        <td>Bir kart kameradan çıktığında (<code>Gone</code>) ona bağlı 3D model gizlenmeli ve gerekirse odak başka bir takip edilen karta devredilmelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-004</td>
+        <td><code>TrackingState.Limited</code> durumunda (kötü aydınlatma veya obstrüksiyon) 3D model gizlenmeli; tam takip geri döndüğünde otomatik yeniden görünmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-005</td>
+        <td>Birden fazla kart aynı anda takip ediliyorsa yalnızca bir canlı "odak" olarak seçilmeli; odak canlısı bilgi paneli ve narasyonu tetiklemelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-db">5.2 İçerik Veritabanı</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-010</td>
+        <td>Sistem, en az 20 adet <code>CreatureDefinition</code> varlığını (<em>DisplayName, Category, Habitat, DietType, EcosystemRole, InterestingTrait, Threats</em> alanlarıyla) <code>CreatureDatabase</code> ScriptableObject aracılığıyla yönetmelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-011</td>
+        <td>Her <code>CreatureDefinition</code>'a atanan <code>CreatureId</code> benzersiz, kebab-case ASCII formatında ve <code>XRReferenceImageLibrary</code> girişi adıyla birebir eşleşmelidir. Doğrulamak için <code>ARFishing → Validate All Creature Definitions</code> menüsü çalıştırılmalıdır.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-012</td>
+        <td>Yeni canlı eklemek için Unity Editor dışında araç gerekmemelidir; sanat ekibi kodu değiştirmeden asset ekleyebilmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-013</td>
+        <td>Tüm içerik uygulama paketi içinde derleme zamanında gömülü olmalı; çalışma zamanında uzak içerik indirilmemelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-narasyon">5.3 Ses Narasyonu</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-020</td>
+        <td>Bir canlı odaklandığında o canlıya ait Türkçe ses narasyonu otomatik başlamalıdır.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-021</td>
+        <td>Odak değiştiğinde önceki narasyonu keserek yeni narasyona geçilmelidir. Doğal bitişte <code>NarrationFinished</code> eventi tetiklenmeli; kesinti durumunda tetiklenmemelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-022</td>
+        <td>Kullanıcı "Sesi tekrar dinle" düğmesine bastığında narasyonu yeniden başlatabilmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-023</td>
+        <td>Her narasyonun süresi ≤ 25 saniye olmalıdır; validator bu kuralı kontrol etmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-024</td>
+        <td>Kart tarama, doğru cevap ve yanlış cevap için kısa SFX geri bildirim sesleri çalınmalıdır.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-ui">5.4 Kullanıcı Arayüzü — Bilgi Paneli ve Durum Yönetimi</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-030</td>
+        <td>Odak canlısı değiştiğinde bilgi paneli (<em>DisplayName, Category, Habitat, DietType, EcosystemRole, InterestingTrait, Threats</em>) otomatik güncellenmelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-031</td>
+        <td>Bilgi paneli yalnızca <code>Scanning</code> veya <code>Viewing</code> durumlarında görünür olmalıdır. Odak kaybolduğunda panel 2 saniyelik gecikmeyle kapanmalı, bu sürede yeni bir kart taranırsa otomatik iptal edilmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-032</td>
+        <td>Kullanıcı "Kapat" düğmesine basıldığında FSM <code>Viewing → Scanning</code> geçişi yapılmalı ve panel gizlenmelidir. Kart hâlâ takip altındaysa fiziksel olarak kaldırılıp geri konulduğunda panel yeniden açılmalıdır.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-033</td>
+        <td>Uygulama FSM durumu: <code>Bootstrap → Idle → Scanning → Viewing → Quiz → Summary</code>. Yasa dışı geçişler reddedilmelidir. Yeniden başlatma Idle'a döndürmelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-034</td>
+        <td>Idle durumunda tablet ekranında çocuklara yönelik bekleme metni gösterilmelidir ("öğretmenin etkinliği başlatmasını bekle").</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-035</td>
+        <td>Narasyonlar aktifken <code>NarrationCaptions</code> erişilebilirlik ayarı etkinse canlının ilginç özelliği ekranda altyazı olarak gösterilmelidir.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-quiz">5.5 Mini Quiz Sistemi</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-040</td>
+        <td>Quiz, <code>TaskDatabase</code>'den rastgele 3 görev seçerek başlamalıdır. Görev çeşitleri: HabitatEquals, DietEquals, CategoryEquals, EcosystemRoleEquals, TraitContains.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-041</td>
+        <td>Quiz sırasında <code>CreatureViewer.ShowModels = false</code> olmalıdır; böylece 3D model cevabı önceden ele vermemelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-042</td>
+        <td>Öğrenci kart taradığında sistem görevle eşleşip eşleşmediğini değerlendirmeli, "Doğru!" veya "Tam değil." geri bildirimi vermeli ve bir sonraki göreve geçmelidir.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-043</td>
+        <td>Tüm görevler tamamlandıktan sonra toplam puan ve taranan canlı listesini içeren özet ekranı gösterilmelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-044</td>
+        <td>Özet ekranındaki "Yeniden başlat" düğmesi FSM'yi Idle'a döndürmeli ve tüm oturum verilerini sıfırlamalıdır.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-ogretmen">5.6 Öğretmen Kontrol Modu</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-050</td>
+        <td>Öğretmen paneli yalnızca ≥1 saniye süren uzun basma ile açılmalıdır; kısa dokunuş hiçbir işlem tetiklememeli.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-051</td>
+        <td>Öğretmen paneli yalnızca o an geçerli duruma uygun butonları göstermelidir (Idle → "Etkinliği başlat"; Scanning/Viewing → "Mini quiz başlat", "Yeniden başlat"; diğer → "Yeniden başlat").</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-052</td>
+        <td>Oturum boyunca taranan benzersiz canlılar <code>SessionScannedTracker</code> tarafından kaydedilmeli; Idle girişinde sıfırlanmalıdır.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-projeksiyon">5.7 Projeksiyon Desteği</h3>
+  <table>
+    <thead><tr><th>Kod</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>FREQ-060</td>
+        <td>Harici ekran algılandığında (<code>Display.displays.Length &gt; 1</code>) projeksiyon Canvas'ı otomatik olarak ikinci ekrana yönlendirilmelidir. Harici ekran yoksa canvas gizlenmelidir.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-061</td>
+        <td>Projeksiyon ekranı; Scanning/Viewing durumunda odak canlısının büyük görseli ve adı, Quiz durumunda mevcut soru ve ilerleme, Summary durumunda puan ve taranan canlı ızgara görünümü göstermelidir.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>FREQ-062</td>
+        <td>Ekran bağlantısı/çıkarması oturum yeniden başlatması gerektirmeden 2 saniye içinde algılanmalıdır.</td>
+        <td><span class="pill p-low">Düşük</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="fonksiyonel-olmayan">6. Fonksiyonel Olmayan Gereksinimler</h2>
+  <table>
+    <thead><tr><th>Kod</th><th>Kategori</th><th>Gereksinim</th><th>Öncelik</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>NREQ-001</td>
+        <td>Gizlilik</td>
+        <td>Hiçbir kullanıcı verisi toplanmamalı veya dışarıya iletilmemelidir. Çalışma zamanında HTTP çağrısı yapılmamalıdır. KVKK/GDPR/COPPA uyumlu olmalıdır.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-002</td>
+        <td>Çevrimdışı Çalışma</td>
+        <td>Tüm içerik uygulama paketinde gömülü olmalıdır. Ağ bağlantısı kesildiğinde hiçbir işlev bozulmamalıdır.</td>
+        <td><span class="pill p-crit">Kritik</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-003</td>
+        <td>Performans</td>
+        <td>Hedef cihaz: 2018+ ARCore destekli orta-üst Android tablet. Kare hızı AR aktifken ≥ 30 fps olmalıdır. Soğuk başlatma → etkinliğe hazır ≤ 5 saniye.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-planned">Test Bekliyor</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-004</td>
+        <td>Dayanıklılık</td>
+        <td>Uygulama, 45 dakikalık kesintisiz kullanım boyunca kilitlenmemeli ve kare hızı 25 fps'nin altına düşmemelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-planned">Test Bekliyor</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-005</td>
+        <td>Kullanılabilirlik</td>
+        <td>7 yaşındaki bir çocuk, sözlü yönerge olmadan 3 dakika içinde kart tarararak bilgi panelini açabilmelidir (kullanıcı testi hedefi).</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-planned">Test Bekliyor</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-006</td>
+        <td>Yerelleştirme</td>
+        <td>Türkçe birincil dildir. İngilizce ve Arapça içerik altyapısı kod düzeyinde mevcut olmalıdır; UI çevirisi sonraki aşamada tamamlanacaktır.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-partial">Kısmi</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-007</td>
+        <td>Erişilebilirlik</td>
+        <td>Azaltılmış hareket modu (animasyon devre dışı), narasyonlar için altyazı desteği ve UI ölçek çarpanı sağlanmalıdır.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-008</td>
+        <td>Bakım</td>
+        <td>Yeni canlı eklemek veya mevcut canlı verilerini güncellemek Unity Editor dışında araç gerektirmemelidir.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-009</td>
+        <td>Güvenlik</td>
+        <td>Öğretmen paneline erişim yalnızca ≥1 s uzun basmayla mümkün olmalıdır. Çocuklar etkinlik akışını kesmek için herhangi bir tuş kombinasyonu kullanamamalıdır.</td>
+        <td><span class="pill p-high">Yüksek</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+      <tr>
+        <td>NREQ-010</td>
+        <td>Ölçeklenebilirlik</td>
+        <td>Canlı içerik seti 20'den 40'a çıkartılabilmelidir; bu değişiklik için temel kod yeniden yazılmamalıdır.</td>
+        <td><span class="pill p-med">Orta</span></td>
+        <td><span class="pill s-done">Tamamlandı</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="kisitlar">7. Kısıtlamalar</h2>
+  <table>
+    <thead><tr><th>Kısıt</th><th>Açıklama</th><th>Değiştirilebilir mi?</th></tr></thead>
+    <tbody>
+      <tr><td>Sıfır veri toplama</td><td>Ürün politikası ve KVKK/GDPR/COPPA gereği mutlak kısıttır</td><td>Hayır — değişmez</td></tr>
+      <tr><td>Çevrimdışı çalışma</td><td>Okul ağ altyapısı güvensizliği; tasarım gereğidir</td><td>Hayır — değişmez</td></tr>
+      <tr><td>Unity 6000.4.9f1</td><td>Farklı patch sürümünde sessiz paket sürüm kayması riski var</td><td>Bilinçli kararla güncellenebilir</td></tr>
+      <tr><td>A6 kart boyutu (105 mm)</td><td><code>XRReferenceImageLibrary</code>'de fiziksel genişlik değeri kilitli; kart boyutu değişirse bu değer güncellenmeli</td><td>Kart yeniden tasarımıyla</td></tr>
+      <tr><td>Türkçe birincil içerik</td><td>Pilot test TR okullarında yapılacak; başka dil arayüzü MVP kapsamında değil</td><td>Lokalizasyon aşamasında</td></tr>
+      <tr><td>Çok tablet senkronizasyonu yok</td><td>MVP kapsamı dışı; ağ bağımlılığı yaratacağından bilinçli olarak dışlandı</td><td>İleride ayrı özellik olarak</td></tr>
+      <tr><td>Addressables yok</td><td>İçerik doğrudan SO referanslarıyla pakette; çalışma zamanı indirme yok</td><td>İçerik büyümesinde gözden geçirilebilir</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="izlenebilirlik">8. Gereksinim İzlenebilirlik Matrisi (özet)</h2>
+  <table>
+    <thead><tr><th>Kullanıcı Gereksinimi</th><th>Fonksiyonel Gereksinimler</th><th>Fonksiyonel Olmayan</th></tr></thead>
+    <tbody>
+      <tr><td>UR-01 (3D model görme)</td><td>FREQ-001, FREQ-004, FREQ-005</td><td>NREQ-003, NREQ-005</td></tr>
+      <tr><td>UR-02 (bilgi alma)</td><td>FREQ-030, FREQ-031, FREQ-032</td><td>NREQ-005</td></tr>
+      <tr><td>UR-03 (ses narasyonu)</td><td>FREQ-020, FREQ-021, FREQ-022, FREQ-023</td><td>NREQ-007</td></tr>
+      <tr><td>UR-04 (quiz)</td><td>FREQ-040, FREQ-041, FREQ-042, FREQ-043, FREQ-044</td><td>NREQ-005</td></tr>
+      <tr><td>UR-05 (öğretmen kontrolü)</td><td>FREQ-050, FREQ-051, FREQ-052</td><td>NREQ-009</td></tr>
+      <tr><td>UR-06 (projeksiyon)</td><td>FREQ-060, FREQ-061, FREQ-062</td><td>NREQ-003</td></tr>
+      <tr><td>UR-07 (çevrimdışı)</td><td>FREQ-013</td><td>NREQ-002</td></tr>
+      <tr><td>UR-08 (veri gizliliği)</td><td>—</td><td>NREQ-001</td></tr>
+      <tr><td>UR-09 (kararlı çalışma)</td><td>—</td><td>NREQ-003, NREQ-004</td></tr>
+      <tr><td>UR-10 (içerik güncelleme)</td><td>FREQ-012</td><td>NREQ-008, NREQ-010</td></tr>
+      <tr><td>UR-11 (altyazı)</td><td>FREQ-035</td><td>NREQ-007</td></tr>
+    </tbody>
+  </table>
+</main>
+</div>
+</body>
+</html>

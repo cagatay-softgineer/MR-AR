@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THS Raporu — Teknoloji Hazırlık Seviyesi — Görünenin Ötesinde Bir Deniz</title>
+<style>
+  :root {
+    --deep:       #0e2a47;
+    --ocean:      #1e5f8e;
+    --surf:       #4ea7c9;
+    --foam:       #f0f7fb;
+    --coral:      #ff7a59;
+    --coral-soft: #fde6df;
+    --warn:       #c0392b;
+    --warn-soft:  #fde5e5;
+    --good:       #2e8b57;
+    --good-soft:  #e2f4ea;
+    --amber:      #c9802e;
+    --amber-soft: #fdf3e2;
+    --ink:        #1b2733;
+    --muted:      #5a6b7a;
+    --line:       #e2e8ee;
+    --bg:         #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px; max-width: 1160px;
+    margin: 0 auto; padding: 0 32px;
+  }
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    max-height: 100vh; overflow-y: auto;
+    padding: 32px 0; border-right: 1px solid var(--line);
+    font-size: 0.91em;
+  }
+  aside.toc .toc-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72em; color: var(--muted); margin-bottom: 14px; padding-left: 12px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; }
+  aside.toc li { margin: 5px 0; }
+  aside.toc a { text-decoration: none; color: var(--deep); display: block; padding: 4px 8px 4px 12px; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; transition: all 0.15s; }
+  aside.toc a:hover { border-left-color: var(--coral); background: var(--foam); }
+
+  main { padding: 32px 0 96px; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--ocean) 65%, var(--surf) 100%);
+    color: white; padding: 52px 48px; border-radius: 16px;
+    margin-bottom: 48px; position: relative; overflow: hidden;
+  }
+  .hero::after { content: ""; position: absolute; right: -80px; bottom: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%); border-radius: 50%; }
+  .hero .kicker { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.76em; opacity: 0.8; margin: 0 0 8px; }
+  .hero h1 { margin: 0 0 10px; font-size: 2em; font-weight: 700; }
+  .hero .sub { margin: 0; opacity: 0.85; font-size: 1em; max-width: 560px; }
+  .hero .meta { margin-top: 20px; font-size: 0.83em; opacity: 0.7; }
+
+  h2 { font-size: 1.25em; font-weight: 700; color: var(--deep); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1em; font-weight: 700; margin: 24px 0 10px; color: var(--ocean); }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin: 5px 0; }
+
+  /* TRL level bar */
+  .trl-scale {
+    display: flex; gap: 4px; margin: 24px 0 32px;
+    align-items: flex-end;
+  }
+  .trl-step {
+    flex: 1; border-radius: 6px 6px 0 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding: 8px 4px 10px;
+    position: relative; cursor: default;
+    transition: opacity 0.15s;
+  }
+  .trl-step .num { font-size: 1.1em; font-weight: 900; color: white; }
+  .trl-step .abbr { font-size: 0.65em; font-weight: 700; color: rgba(255,255,255,0.85); text-align: center; line-height: 1.2; margin-top: 4px; }
+  .trl-reached { opacity: 1; }
+  .trl-unreached { opacity: 0.22; filter: grayscale(60%); }
+  .trl-current { outline: 3px solid var(--coral); outline-offset: 2px; }
+
+  .trl-1 { background: #4a90d9; height: 60px; }
+  .trl-2 { background: #3d80cc; height: 70px; }
+  .trl-3 { background: #3070be; height: 80px; }
+  .trl-4 { background: #2a63b0; height: 90px; }
+  .trl-5 { background: #2457a2; height: 100px; }
+  .trl-6 { background: #1e4b94; height: 112px; }
+  .trl-7 { background: #183f86; height: 124px; }
+  .trl-8 { background: #123378; height: 136px; }
+  .trl-9 { background: #0e2a47; height: 148px; }
+
+  /* subsystem table */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 0.92em; }
+  th { background: var(--deep); color: white; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 0.87em; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr:nth-child(even) td { background: var(--foam); }
+
+  .trl-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 700; font-size: 0.88em;
+    padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .trl-low    { background: var(--amber-soft); color: #7a4e00; }
+  .trl-mid    { background: #e3f4fd; color: #1e5f8e; }
+  .trl-good   { background: var(--good-soft); color: #1a6b3c; }
+  .trl-target { background: #e8edf2; color: #4a5568; font-weight: 400; }
+
+  /* action plan */
+  .action-item {
+    border: 1px solid var(--line);
+    border-radius: 10px; margin: 14px 0; padding: 16px 20px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .action-item .level {
+    background: var(--deep); color: white;
+    font-weight: 900; font-size: 1.1em;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .action-item .body { flex: 1; }
+  .action-item .body strong { display: block; font-size: 0.95em; margin-bottom: 4px; }
+  .action-item .body p { margin: 0; font-size: 0.88em; color: var(--muted); }
+
+  .callout { border-left: 4px solid var(--coral); background: var(--coral-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; font-size: 0.95em; }
+  .callout strong { color: var(--coral); }
+  .note { border-left: 4px solid var(--surf); background: var(--foam); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 16px 0; font-size: 0.9em; }
+
+  @media print {
+    .layout { display: block; }
+    aside.toc { display: none; }
+    main { padding: 0; }
+    .hero { border-radius: 8px; padding: 32px; }
+    table { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+    .trl-scale { page-break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+    .trl-scale { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="toc">
+  <div class="toc-label">İçindekiler</div>
+  <ol>
+    <li><a href="#ozet">1. Özet</a></li>
+    <li><a href="#ths-nedir">2. THS Nedir?</a></li>
+    <li><a href="#olcek">3. THS Ölçeği</a></li>
+    <li><a href="#mevcut">4. Mevcut Durum</a></li>
+    <li><a href="#alt-sistemler">5. Alt Sistem Bazında THS</a></li>
+    <li><a href="#kanit">6. Kanıt Tablosu</a></li>
+    <li><a href="#hedef">7. Hedef THS ve Boşluk Analizi</a></li>
+    <li><a href="#eylem">8. THS Yükseltme Planı</a></li>
+    <li><a href="#sonuc">9. Sonuç</a></li>
+  </ol>
+</aside>
+<main>
+  <div class="hero">
+    <div class="kicker">Teknoloji Olgunluğu Değerlendirmesi</div>
+    <h1>THS Raporu</h1>
+    <p class="sub">Teknoloji Hazırlık Seviyesi Değerlendirmesi<br>Görünenin Ötesinde Bir Deniz — AR Eğitim Uygulaması</p>
+    <p class="meta">Değerlendirme Tarihi: Haziran 2026 &nbsp;|&nbsp; Geliştirme Aşaması: F1–F10 Tamamlandı &nbsp;|&nbsp; Değerlendiren: Proje Ekibi</p>
+  </div>
+
+  <h2 id="ozet">1. Özet</h2>
+  <p>Bu rapor, <em>Görünenin Ötesinde Bir Deniz</em> AR eğitim uygulamasının Teknoloji Hazırlık Seviyesi'ni (THS / TRL — Technology Readiness Level) alt sistem bazında değerlendirir. Sistem genelinde THS 6 düzeyine ulaşılmış olup; kritik alt sistemlerin (AR takip + içerik akışı) ilgili ortamda (gerçek tablet + sınıf aydınlatması) demonstrasyonu tamamlanmamıştır. Üretim varlıklarının tamamlanması ve cihaz testi sonrasında THS 7–8 aralığına ulaşılması beklenmektedir.</p>
+
+  <div class="callout">
+    <strong>Genel THS Seviyesi: 6 — İlgili Ortamda Demonstrasyon Yapılmış Prototip.</strong><br>
+    Sistem Unity Editor + XR Simülasyon ortamında çalışmakta olup gerçek tablet üzerinde sınırlı test yapılmıştır. Pilot teste hazırlık için THS 7'ye ulaşılması hedeflenmektedir.
+  </div>
+
+  <h2 id="ths-nedir">2. THS Nedir?</h2>
+  <p>Teknoloji Hazırlık Seviyesi (THS), bir teknoloji veya sistemin geliştirme ve olgunlaşma sürecini 1'den 9'a kadar standart bir ölçekte tanımlayan bir değerlendirme çerçevesidir. NASA tarafından tanımlanmış, AB Horizon programı ve TÜBİTAK dahil pek çok fon kuruluşu tarafından benimsenmiştir.</p>
+  <p>THS değerlendirmesi; projenin hangi aşamada olduğunu paydaşlara şeffaf biçimde iletir, kritik boşlukları tespit eder ve pilot test / ticarileştirme yol haritasını yönlendirir.</p>
+
+  <h2 id="olcek">3. THS Ölçeği</h2>
+
+  <div class="trl-scale">
+    <div class="trl-step trl-1 trl-reached"><span class="num">1</span><span class="abbr">Temel<br>Prensipler</span></div>
+    <div class="trl-step trl-2 trl-reached"><span class="num">2</span><span class="abbr">Teknoloji<br>Konsepti</span></div>
+    <div class="trl-step trl-3 trl-reached"><span class="num">3</span><span class="abbr">Analitik<br>Kanıt</span></div>
+    <div class="trl-step trl-4 trl-reached"><span class="num">4</span><span class="abbr">Lab<br>Doğrulama</span></div>
+    <div class="trl-step trl-5 trl-reached"><span class="num">5</span><span class="abbr">İlgili Ort.<br>Doğrulama</span></div>
+    <div class="trl-step trl-6 trl-reached trl-current"><span class="num">6</span><span class="abbr">İlgili Ort.<br>Demo</span></div>
+    <div class="trl-step trl-7 trl-unreached"><span class="num">7</span><span class="abbr">Op. Ort.<br>Prototip</span></div>
+    <div class="trl-step trl-8 trl-unreached"><span class="num">8</span><span class="abbr">Sistem<br>Onaylı</span></div>
+    <div class="trl-step trl-9 trl-unreached"><span class="num">9</span><span class="abbr">Kanıtlanmış<br>Sistem</span></div>
+  </div>
+
+  <table>
+    <thead><tr><th>THS</th><th>Tanım</th><th>Eğitim Teknolojisi Bağlamı</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Temel prensipler gözlemlendi ve raporlandı</td><td>AR ile çocuk eğitimi üzerine akademik literatür tarandı</td></tr>
+      <tr><td><strong>2</strong></td><td>Teknoloji konsepti ve/veya uygulaması formüle edildi</td><td>Kart tabanlı AR ekosistem eğitimi konsepti tanımlandı</td></tr>
+      <tr><td><strong>3</strong></td><td>Kritik fonksiyonun analitik ve deneysel kanıtı</td><td>AR Foundation API ile kart takibi ve 3D model spawning PoC</td></tr>
+      <tr><td><strong>4</strong></td><td>Laboratuvar ortamında bileşen/alt sistem doğrulaması</td><td>Unity Editor + XR Simülasyon'da tam akış (F1–F6) çalışır halde</td></tr>
+      <tr><td><strong>5</strong></td><td>İlgili ortamda bileşen/alt sistem doğrulaması</td><td>Unity Editor simülasyon + belirli gerçek tablet üzerinde sınırlı test</td></tr>
+      <tr><td><strong>6</strong></td><td>İlgili ortamda sistem/alt sistem model demonstrasyonu</td><td>Gerçek tablet + yer tutucu varlıklar; tam sınıf testi yok <em>(mevcut durum)</em></td></tr>
+      <tr><td><strong>7</strong></td><td>Operasyonel ortamda sistem prototipi demonstrasyonu</td><td>Gerçek okulda 1 öğretmen + 5 öğrenciyle pilot test; üretim varlıkları</td></tr>
+      <tr><td><strong>8</strong></td><td>Sistem tamamlandı ve uygunluğu doğrulandı</td><td>Cihaz Testi Protokolü tamamlandı; app mağaza sürümü hazır</td></tr>
+      <tr><td><strong>9</strong></td><td>Gerçek başarılı operasyonlarda kanıtlanmış sistem</td><td>Birden fazla okulda düzenli kullanım; eğitim etkinliği ölçüldü</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="mevcut">4. Mevcut Durum Genel Görünümü</h2>
+  <p>F1–F10 geliştirme aşamalarının tamamlanmasıyla birlikte sistemin tüm fonksiyonel bileşenleri (AR takip, canlı veritabanı, ses narasyonu, bilgi paneli, mini quiz, öğretmen modu, projeksiyon desteği, erişilebilirlik) Unity Editor + XR Simülasyon ortamında çalışır hale gelmiştir. Gerçek cihaz testi sınırlı düzeyde gerçekleştirilmiştir.</p>
+  <ul>
+    <li><strong>Yazılım olgunluğu</strong>: Yüksek — tüm modüller kod düzeyinde tamamlandı</li>
+    <li><strong>İçerik olgunluğu</strong>: Orta — 20 canlı metadata eksiksiz, varlıklar (3D, ses) yer tutucu düzeyinde</li>
+    <li><strong>Donanım entegrasyonu</strong>: Orta — gerçek cihaz testi sınırlı</li>
+    <li><strong>Kullanıcı testi</strong>: Yapılmadı — hedef kullanıcı (çocuk + öğretmen) geri bildirimi yok</li>
+  </ul>
+
+  <h2 id="alt-sistemler">5. Alt Sistem Bazında THS Değerlendirmesi</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Alt Sistem</th>
+        <th>Geliştirme Fazı</th>
+        <th>Mevcut THS</th>
+        <th>Hedef THS</th>
+        <th>Kritik Boşluk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Uygulama Çekirdeği (FSM, ServiceLocator)</td>
+        <td>F1</td>
+        <td><span class="trl-badge trl-good">THS 6</span></td>
+        <td><span class="trl-badge trl-target">THS 8</span></td>
+        <td>Otomatik test yoktur</td>
+      </tr>
+      <tr>
+        <td>Canlı Veritabanı (CreatureDefinition/Database)</td>
+        <td>F2</td>
+        <td><span class="trl-badge trl-good">THS 7</span></td>
+        <td><span class="trl-badge trl-target">THS 8</span></td>
+        <td>Üretim varlıkları teslim bekliyor</td>
+      </tr>
+      <tr>
+        <td>AR Marker Takip Sistemi</td>
+        <td>F3</td>
+        <td><span class="trl-badge trl-mid">THS 5</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>Gerçek sınıf aydınlatması + çoklu kart testi gerekli</td>
+      </tr>
+      <tr>
+        <td>Canlı Görüntüleyici (3D Model Spawning)</td>
+        <td>F3</td>
+        <td><span class="trl-badge trl-mid">THS 5</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>Üretim modelleri (rigged + idle anim) entegrasyon testi</td>
+      </tr>
+      <tr>
+        <td>Ses Narasyonu Oynatıcı</td>
+        <td>F4</td>
+        <td><span class="trl-badge trl-mid">THS 5</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>Gerçek TR voiceover entegrasyonu ve ≤25 s süre doğrulaması</td>
+      </tr>
+      <tr>
+        <td>Bilgi Paneli UI</td>
+        <td>F4/F8</td>
+        <td><span class="trl-badge trl-good">THS 6</span></td>
+        <td><span class="trl-badge trl-target">THS 8</span></td>
+        <td>Gerçek kullanıcı (çocuk) okunabilirlik testi</td>
+      </tr>
+      <tr>
+        <td>Mini Quiz Sistemi</td>
+        <td>F5</td>
+        <td><span class="trl-badge trl-good">THS 6</span></td>
+        <td><span class="trl-badge trl-target">THS 8</span></td>
+        <td>Pedagojik etkinlik testi (doğru zorluk düzeyi?)</td>
+      </tr>
+      <tr>
+        <td>Öğretmen Kontrol Paneli</td>
+        <td>F6</td>
+        <td><span class="trl-badge trl-good">THS 6</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>Gerçek öğretmen kullanım testi (uzun basma süresinin uygunluğu)</td>
+      </tr>
+      <tr>
+        <td>Projeksiyon Desteği</td>
+        <td>F6</td>
+        <td><span class="trl-badge trl-low">THS 4</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>Gerçek HDMI/Miracast ekran testi yapılmamıştır</td>
+      </tr>
+      <tr>
+        <td>Erişilebilirlik (Altyazı, Azaltılmış Hareket)</td>
+        <td>F10</td>
+        <td><span class="trl-badge trl-mid">THS 5</span></td>
+        <td><span class="trl-badge trl-target">THS 7</span></td>
+        <td>İşitme güçlüğü olan çocuk gruplarıyla erişilebilirlik testi</td>
+      </tr>
+      <tr>
+        <td>CI/CD Pipeline (GitHub Actions)</td>
+        <td>Altyapı</td>
+        <td><span class="trl-badge trl-good">THS 7</span></td>
+        <td><span class="trl-badge trl-target">THS 8</span></td>
+        <td>Signing konfigürasyonu ve cihaza dağıtım testi</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="kanit">6. Kanıt Tablosu</h2>
+  <p>Mevcut THS değerlendirmesini destekleyen kanıtlar:</p>
+  <table>
+    <thead><tr><th>THS Seviyesi</th><th>Kanıt</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>THS 1–2</td>
+        <td>Proje tasarım özeti ve ürün konsepti belgesi</td>
+        <td>✅ Tamamlandı (CLAUDE.md, ArtistBrief, TeacherGuide)</td>
+      </tr>
+      <tr>
+        <td>THS 3</td>
+        <td>AR marker takip + 3D model spawning kavram kanıtı</td>
+        <td>✅ Unity Editor + XR Simülasyon'da doğrulandı (F3)</td>
+      </tr>
+      <tr>
+        <td>THS 4</td>
+        <td>Tam uygulama akışı (Bootstrap → Scanning → Viewing → Quiz → Summary) editor'da çalışır</td>
+        <td>✅ F1–F10 kapsamında tamamlandı</td>
+      </tr>
+      <tr>
+        <td>THS 5</td>
+        <td>Gerçek Android tablette AR Foundation kart takibi doğrulaması</td>
+        <td>⚠️ Sınırlı — tam Cihaz Test Protokolü uygulanmadı</td>
+      </tr>
+      <tr>
+        <td>THS 6</td>
+        <td>Yer tutucu varlıklarla tam akış demonstrasyonu (gerçek cihaz)</td>
+        <td>⚠️ Kısmi — bazı modüller simülasyonda test edildi</td>
+      </tr>
+      <tr>
+        <td>THS 7</td>
+        <td>Pilot okul ortamında öğretmen + öğrenci gruplarıyla demo</td>
+        <td>❌ Yapılmadı</td>
+      </tr>
+      <tr>
+        <td>THS 8</td>
+        <td>Tüm Cihaz Test Protokolü tamamlandı; app mağaza yüklemesi hazır</td>
+        <td>❌ Yapılmadı</td>
+      </tr>
+      <tr>
+        <td>THS 9</td>
+        <td>Birden fazla okulda başarılı düzenli kullanım kanıtı</td>
+        <td>❌ Pilot aşamasına gelinmedi</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="hedef">7. Hedef THS ve Boşluk Analizi</h2>
+  <p><strong>Pilot test için hedef THS: 7</strong> — Operasyonel ortamda sistem prototipi demonstrasyonu.</p>
+  <p><strong>Mağaza dağıtımı için hedef THS: 8</strong> — Sistem tamamlandı ve uygunluğu doğrulandı.</p>
+
+  <table>
+    <thead><tr><th>Boşluk Alanı</th><th>Mevcut</th><th>Hedef (Pilot)</th><th>Gereken Eylem</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Üretim varlıkları (3D + ses)</td>
+        <td>Yer tutucu</td>
+        <td>En az 5 canlı üretim varlığı</td>
+        <td>Sanat ekibinden teslim al, entegrasyon test et</td>
+      </tr>
+      <tr>
+        <td>Gerçek cihaz AR testi</td>
+        <td>Sınırlı (&lt;2 model)</td>
+        <td>≥3 farklı model + 2 aydınlatma koşulu</td>
+        <td>Cihaz Test Protokolü'nü uygula</td>
+      </tr>
+      <tr>
+        <td>Öğretmen kullanım testi</td>
+        <td>Hiç yapılmadı</td>
+        <td>1 öğretmenle en az 1 deneme oturumu</td>
+        <td>Pilot okul bağlantısı kur; oturum gözlem notu al</td>
+      </tr>
+      <tr>
+        <td>Projeksiyon ekran testi</td>
+        <td>Hiç yapılmadı</td>
+        <td>1 HDMI + 1 kablosuz (Miracast) testi</td>
+        <td>Cihaz Test Protokolü §7'yi tamamla</td>
+      </tr>
+      <tr>
+        <td>Erişilebilirlik doğrulaması</td>
+        <td>Kod düzeyinde</td>
+        <td>Altyazı + azaltılmış hareket kullanıcı testi</td>
+        <td>Pilot grupta kaynaştırma öğrencisi varsa gözlemle</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="eylem">8. THS Yükseltme Planı</h2>
+
+  <div class="action-item">
+    <div class="level">5→6</div>
+    <div class="body">
+      <strong>Gerçek Cihaz AR Doğrulama Paketi</strong>
+      <p>Cihaz Test Protokolü'nü en az 3 Android tablet modeli üzerinde uygulayın. AR takip başarımını 3 farklı aydınlatma koşulunda (iyi/orta/düşük) kaydedin. Çoklu kart (≥4 aynı anda) senaryosunu test edin. Tahmini süre: 3–5 gün.</p>
+    </div>
+  </div>
+
+  <div class="action-item">
+    <div class="level">6→7</div>
+    <div class="body">
+      <strong>Pilot Okul Demonstrasyonu (Operasyonel Ortam)</strong>
+      <p>1 öğretmen + 5 öğrenciyle gerçek sınıf ortamında tam etkinlik akışını çalıştırın. Üretim kalitesinde en az 5 canlı varlığı kullanın. Öğretmen kılavuzu ve hızlı referans kartını dağıtın. Gözlem notları + Pilot Feedback Protokolü formları doldurun. Tahmini süre: 1 gün demonstrasyon + 1 gün analiz.</p>
+    </div>
+  </div>
+
+  <div class="action-item">
+    <div class="level">7→8</div>
+    <div class="body">
+      <strong>Tam İçerik + Dağıtım Hazırlığı</strong>
+      <p>Kalan 15 canlının üretim varlıklarını tamamlayın. Tüm 20 canlıyla Cihaz Test Protokolü'nü tekrarlayın. App Store / Play Store dağıtım hazırlıklarını (imzalama, gizlilik politikası URL'si, mağaza listesi) tamamlayın. Tahmini süre: 4–8 hafta (sanat üretim süresine bağlı).</p>
+    </div>
+  </div>
+
+  <div class="action-item">
+    <div class="level">8→9</div>
+    <div class="body">
+      <strong>Çok Okul Kullanım Kanıtı</strong>
+      <p>En az 3 farklı okulda / akvaryum workshopunda başarılı oturum tamamlayın. Pedagojik etkinlik geri bildirimi toplayın (öğrenciler 5'ten fazla canlı ismini hatırlıyor mu?). Öğretmen memnuniyet anketi uygulayın. Geri bildirime göre v1.1 güncelleme planı oluşturun.</p>
+    </div>
+  </div>
+
+  <h2 id="sonuc">9. Sonuç</h2>
+  <p>Sistem, yazılım mimarisi ve fonksiyonel bütünlük açısından THS 6 düzeyindedir. En kritik boşluk, gerçek operasyonel ortam (sınıf) testinin henüz gerçekleştirilmemiş olmasıdır. Üretim varlıklarının teslim süreci ve planlı pilot testi bu boşluğu kapatacaktır.</p>
+
+  <p>THS 7'ye ulaşmak için gereken adımlar teknik olarak net ve uygulanabilirdir; asıl belirsizlik üretim varlıklarının teslim takvimi ve pilot okul koordinasyonudur. Bu iki bağımlılık proaktif yönetim gerektirmektedir.</p>
+
+  <div class="note">
+    Bu rapor, pilot test tamamlandıktan sonra güncellenmelidir. Özellikle AR takip güvenilirliği (aydınlatma koşulları), öğretmen kullanım kolaylığı ve öğrenci etkileşim süresi verileri, THS puanlarını önemli ölçüde etkileyecektir.
+  </div>
+</main>
+</div>
+</body>
+</html>
