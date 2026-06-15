@@ -1,4 +1,4 @@
-# ARFishing
+# ARFishing - Çağatay Alkan 220541017
 
 > AR-based marine ecosystem education app for ages 7–12.
 > Working title: **"Görünenin Ötesinde Bir Deniz"**
@@ -9,40 +9,100 @@ Unity 6 · AR Foundation 6.4 · URP · Input System · XRI 3.4
 
 ## What is this?
 
-A classroom AR experience: 5 children + 1 tablet + 10 marker cards. Each card shows a sea creature (octopus, coral, jellyfish, etc.) when scanned — 3D model appears on the card, Turkish audio narration plays, info panel shows habitat / diet / threats. Teacher runs a mini quiz, summary shows ecosystem map. **35–45 minute activity**.
+A classroom AR experience: 5 children + 1 tablet per group, drawing from a set of 20 marker cards. Each card shows a sea creature (octopus, coral, jellyfish, etc.) when scanned — a 3D model appears on the card, Turkish audio narration plays, and an info panel shows habitat / diet / threats. The teacher runs a mini quiz; the summary shows an ecosystem map. **35–45 minute activity**.
 
 Despite the repo name, this is **not** a fishing game.
 
 ## Documentation
 
-**Start here** → [`Docs/index.html`](Docs/index.html) — landing page with role-based navigation ("Sen kimsin?" chips routing to the right doc).
+**Start here** → [`Docs/index.html`](Docs/index.html) — landing page with role-based navigation ("Sen kimsin?" chips) that routes each reader to the right doc. Open this when handing the repo to anyone.
 
-Seven production documents (each MD + HTML):
+**Find your role below, read those docs, and you're set:**
 
-| Doc | Audience | What it covers |
+| You are a… | Read | What it gives you |
 |---|---|---|
-| [Artist Brief](Docs/ArtistBrief.html) | Vendors (3D, voice, illustrator, print, SFX) | Full production spec + per-creature direction + TR narration scripts |
-| [Teacher Guide](Docs/TeacherGuide.html) | Educators | Session script, observation rubric, troubleshooting, hızlı referans kartı |
-| [Engineer Onboarding](Docs/EngineerOnboarding.html) | New Unity devs | Repo tour, 8-faz history, module map, FSM, scene wiring, dev tasks |
-| [Build & Distribution](Docs/BuildAndDistribution.html) | Shipping devs | Android (ARCore) + iOS (ARKit) build pipeline, signing, store dağıtım |
-| [Device Test Protocol](Docs/DeviceTestProtocol.html) | QA | Real-device QA: smoke + functional + performance + privacy verification + sign-off |
-| [Privacy Policy](Docs/PrivacyPolicy.html) | Store listing | "Zero data collected" + KVKK/GDPR/COPPA + store form answers |
-| [Pilot Feedback Protocol](Docs/PilotFeedbackProtocol.html) | Post-pilot iteration | Feedback aggregation + decision matrix for doc/code/content updates |
+| **New Unity dev** | [Engineer Onboarding](Docs/EngineerOnboarding.html) | Repo tour, F1→F10 history, module map, FSM, scene wiring, dev tasks |
+| **Shipping dev** | [Build & Distribution](Docs/BuildAndDistribution.html) | Android (ARCore) + iOS (ARKit) build pipeline, signing, manifest, store dağıtım |
+| **Artist / vendor** | [Artist Brief](Docs/ArtistBrief.html) | Full production spec (3D, voice, illustration, print, icon, SFX) + per-creature direction + TR narration scripts |
+| **Teacher / educator** | [Teacher Guide](Docs/TeacherGuide.html) | Session script, group roles, observation rubric, troubleshooting, hızlı referans kartı |
+| **QA / tester** | [Device Test Protocol](Docs/DeviceTestProtocol.html) | Real-device QA: smoke + functional + performance + privacy verification + sign-off |
+| **Store / legal** | [Privacy Policy](Docs/PrivacyPolicy.html) | "Zero data collected" + KVKK/GDPR/COPPA + ready-to-paste store form answers |
+| **Running a pilot** | [Pilot Feedback Protocol](Docs/PilotFeedbackProtocol.html) | Feedback aggregation + severity ladder + decision matrix for doc/code/content updates |
 
-**Engineering rulebook** → [`CLAUDE.md`](CLAUDE.md). asmdef structure, scene wiring procedure, naming conventions, MVP creature set, privacy stance, AR Foundation 6.x API rules. Keep open during every dev session.
+Every production doc has a markdown source-of-truth and a self-contained, print-clean HTML version (share the HTML, edit the MD).
 
-## Quick start (Unity dev)
+### Project & analysis documents (Turkish)
 
+Stakeholder- and academic-facing reports on the project itself — scope, requirements, risk, and readiness. Each has a styled HTML version plus a print-ready PDF, both in `Docs/`.
+
+| Document | Covers |
+|---|---|
+| [Gereksinimler / Requirements](Docs/Requirements.html) ([PDF](Docs/Requirements.pdf)) | Stakeholders, user / functional / non-functional requirements |
+| [Kullanıcı Senaryoları / User Scenarios](Docs/UserScenario.html) ([PDF](Docs/UserScenario.pdf)) | Personas + use cases (teacher setup, card scan, mini quiz…) |
+| [SWOT Analizi](Docs/SWOT.html) ([PDF](Docs/swot.pdf)) | Strengths / weaknesses / opportunities / threats matrix + detail |
+| [RAMS Analizi](Docs/RAMS.html) ([PDF](Docs/RAMS.pdf)) | Reliability, availability, maintainability, safety analysis |
+| [THS Raporu / Technology Readiness](Docs/THS_report.html) ([PDF](Docs/THS_report.pdf)) | TRL scale, per-subsystem readiness assessment, evidence table |
+
+## Run from scratch (everyone, step by step)
+
+This is the full path from a clean machine to a running app — no prior setup assumed. It works on Windows, macOS, or Linux unless a step says otherwise.
+
+### 1. Install the toolchain
+
+1. **Git** — install [git](https://git-scm.com/downloads) (needed to clone and to track changes).
+2. **Unity Hub** — install from [unity.com/download](https://unity.com/download).
+3. **Unity Editor `6000.4.9f1` (exactly)** — in Unity Hub → *Installs* → *Install Editor* → *Archive* tab → find `6000.4.9f1`. A different patch version will silently re-import and may shift package versions, so match it exactly. During install, tick the modules you need:
+   - **Android Build Support** (+ Android SDK & NDK Tools + OpenJDK) — for ARCore devices.
+   - **iOS Build Support** — for ARKit devices (macOS only).
+   - You can run in the Editor without either module; you only need them to deploy to a phone/tablet.
+
+### 2. Get the project
+
+```bash
+git clone <this-repo-url> ARFishing
+cd ARFishing
 ```
-1. Install Unity Hub + Unity 6000.4.9f1 (with Android + iOS Build Support)
-2. Open this folder in Unity Hub
-3. Open Assets/ARFishing/Scenes/Bootstrap.unity
-4. Press Play
-```
 
-If you see scene wiring issues on first run, work through `Docs/EngineerOnboarding.html` §7 then `CLAUDE.md` "Scene wiring".
+Then in Unity Hub → *Projects* → *Add* → select the cloned `ARFishing` folder → open it **with `6000.4.9f1`**. The first open takes several minutes — Unity imports packages and compiles. Let it finish before doing anything else.
 
-For the first test session: `ARFishing → Create MVP Content (20 creatures + 8 tasks)` + `Create Placeholder Models/Audio/Icons/SFX/UI Sprites`.
+### 3. Generate placeholder content (one-time, in the Editor)
+
+The repo ships **no** creature assets — they're generated by Editor menus so the project stays light. From the Unity menu bar run, in order:
+
+1. `ARFishing → Create MVP Content (20 creatures + 8 tasks)` — creates all 20 `CreatureDefinition` assets, the `CreatureDatabase`, 8 `TaskDefinition` assets, and the `TaskDatabase`.
+2. `ARFishing → Create Placeholder Models (skip existing)`
+3. `ARFishing → Create Placeholder Audio (skip existing)`
+4. `ARFishing → Create Placeholder Icons (skip existing)`
+5. `ARFishing → Create UI Sprites`
+6. `ARFishing → Create Placeholder SFX (skip existing)`
+7. `ARFishing → Validate All Creature Definitions` — should report **zero problems**.
+
+These give every creature a colored primitive model, a sine-tone narration clip, an icon, and the UI/SFX assets, so the whole flow is runnable before any real art arrives. Re-running them skips assets that already exist, so real deliverables are never overwritten.
+
+### 4. Wire the scenes (one-time, manual)
+
+Script GUIDs are assigned by Unity at import, so component references can't be committed in the scene YAML — you wire them once, then save. Follow → "Scene wiring"** (Bootstrap.unity, then Activity.unity, including the reference image library) or the walkthrough in `Docs/EngineerOnboarding.html` §7. Save both scenes when done and commit them.
+
+> If a scene was already wired and committed by a teammate, skip this step.
+
+### 5. Run in the Editor
+
+1. Open `Assets/ARFishing/Scenes/Bootstrap.unity` (this is scene 0).
+2. Press **Play**. `ContentBootstrapper` loads the databases, loads `Activity.unity`, and moves the FSM to `Idle`.
+3. The Editor uses the **XR Simulation** loader. To exercise marker scanning, configure an XR Simulation environment with a printed-card image, then use `ActivityController` → right-click → *Force: Idle → Scanning* to advance the FSM. See the "Testing the F3/F4/F5 flow" section for the expected behavior at each step.
+
+### 6. Build for a device (optional)
+
+- **Android (ARCore)**: *File → Build Profiles* → switch platform to **Android** → ensure **AR Core Loader** is enabled in *Project Settings → XR Plug-in Management* → *Build*.
+- **iOS (ARKit)**: switch to **iOS** → ensure **AR Kit Loader** is enabled → build the Xcode project → archive from Xcode.
+
+Before any real build, replace the placeholder application identifiers (`com.unity.template.ar_mobile…`) in `ProjectSettings/ProjectSettings.asset`, and set Android *Internet Access = Auto*. Full pipeline (signing, manifest, store distribution) → [`Docs/BuildAndDistribution.html`](Docs/BuildAndDistribution.html).
+
+### Troubleshooting first run
+
+- **Scene wiring errors / null references on Play** → work through `Docs/EngineerOnboarding.html` §7, then the "Scene wiring" checklist.
+- **Menu items missing under `ARFishing →`** → scripts haven't compiled yet; wait for the import to finish, or check the Console for compile errors.
+- **No model appears when scanning** → confirm step 3 ran (CreatureDatabase exists) and the `XRReferenceImageLibrary` entry `name` matches the creature's `CreatureId`.
 
 ## Privacy
 
